@@ -1,0 +1,181 @@
+<div class="productionicm">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        模块数据
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openProIcmAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteProIcm()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openProIcm(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openProIcm(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>模块id号</th>
+            <th>模块名称</th>
+            <th>系统id</th>
+            <th>信息插入时间</th>
+            <th>信息更新时间</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let proicm of ProductionIcms; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{proicm.mid}}</td>
+            <td>{{proicm.name}}</td>
+            <td>{{proicm.sid}}</td>
+            <td>{{proicm.idt}}</td>
+            <td>{{proicm.udt}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagedevice [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagedevice>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">模块数据增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="proIcmAddForm">
+      <div class="form-group">
+        <label>模块id(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="mid">
+        <div [hidden]="proIcmAddForm.get('mid').valid || proIcmAddForm.get('mid').untouched" [class.hasError]="proIcmAddForm.get('mid').invalid && proIcmAddForm.get('mid').touched">
+          <span [hidden]="!proIcmAddForm.hasError('required', 'mid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>模块名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="name">
+        <div [hidden]="proIcmAddForm.get('name').valid || proIcmAddForm.get('name').untouched" [class.hasError]="proIcmAddForm.get('mid').invalid && proIcmAddForm.get('name').touched">
+          <span [hidden]="!proIcmAddForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择生产线id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.sid">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="proIcmAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">模块数据修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="proIcmModifyForm">
+      <div class="form-group">
+        <label>模块id(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="mid">
+        <div [hidden]="proIcmModifyForm.get('mid').valid || proIcmModifyForm.get('mid').untouched" [class.hasError]="proIcmModifyForm.get('mid').invalid && proIcmModifyForm.get('mid').touched">
+          <span [hidden]="!proIcmModifyForm.hasError('required', 'mid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>模块名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="name">
+        <div [hidden]="proIcmModifyForm.get('name').valid || proIcmModifyForm.get('name').untouched" [class.hasError]="proIcmModifyForm.get('mid').invalid && proIcmModifyForm.get('name').touched">
+          <span [hidden]="!proIcmModifyForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>生产线系统id: &nbsp;</label>
+        <select #device_modal_id (change)="SelectModifyModalId(device_modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.sid === proicmDetail.sid" [value]="modal.sid">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="proIcmModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+      返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+
+
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">模块数据查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>模块id(唯一标识): {{proicmDetail['mid']}}</p>
+    <p>名称:{{proicmDetail['name']}}</p>
+    <p>父id :{{proicmDetail['sid']}}</p>
+    <p>插入时间 :{{proicmDetail['idt']}}</p>
+    <p>更新时间 :{{proicmDetail['udt']}}</p>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProIcm(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

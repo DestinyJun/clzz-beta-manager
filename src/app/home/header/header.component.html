@@ -1,0 +1,203 @@
+<nav class="navbar navbar-default navbar-fixed-top">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <div class="title">
+        <i class="fa fa-navicon"></i>
+      </div>
+      <div class="user pull-right">
+        <div class="user-admin">欢迎您，管理员</div>
+        <div class="user-photo" (click)="onToggleInfo($event)">
+          <img class="rounded-circle" src="./assets/Nasta.png" alt="">
+          <div class="user-photo-toggle" [hidden]="infoToggle">
+            <ul class="list-group">
+              <li class="list-group-item" (click)="openPersonInfo(visite)">
+                <i class="fa fa-user-o" aria-hidden="true"></i>
+                <span >个人信息</span>
+              </li>
+              <li class="list-group-item">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+                <span (click)="loginOut()">退出</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div  class="user-remind-scroll" [hidden]="scrollToggle">
+          <div class="user-remind-scroll-h4">
+            <span class="pull-left">信息通知</span>
+            <!--<span class="pull-right" (click)="onScrollToggle($event)">关闭</span>-->
+            <div class="cl"></div>
+          </div>
+          <div class="user-remind-scroll-content" #userRemindScrollContent>
+            <div class="scroll-box" #scrollBox>
+              <div class="scroll-box-bar" #scrollBoxBar [ngStyle]="{height: '30px'}"></div>
+            </div>
+          <!--  <ul class="list-group" #scrollListGroup>
+              <li class="list-group-item list-group-item-danger">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>故障！一号仓库电机组出现故障！</span>
+                <span class="text-timer">1分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-success">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>操作：生产订单添加成功</span>
+                <span class="text-timer">3分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-warning">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>警告！油漆数量不足！</span>
+                <span class="text-timer">5分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-danger">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>故障！一号仓库电机组出现故障！</span>
+                <span class="text-timer">1分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-success">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>操作：生产订单添加成功</span>
+                <span class="text-timer">3分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-warning">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>警告！油漆数量不足！</span>
+                <span class="text-timer">5分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-danger">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>故障！一号仓库电机组出现故障！</span>
+                <span class="text-timer">1分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-success">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>操作：生产订单添加成功</span>
+                <span class="text-timer">3分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-warning">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>警告！油漆数量不足！</span>
+                <span class="text-timer">5分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-danger">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>故障！一号仓库电机组出现故障！</span>
+                <span class="text-timer">1分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-success">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>操作：生产订单添加成功</span>
+                <span class="text-timer">3分钟前</span>
+              </li>
+              <li class="list-group-item list-group-item-warning">
+                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
+                <span>警告！油漆数量不足！</span>
+                <span class="text-timer">5分钟前</span>
+              </li>
+            </ul>-->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+
+<ng-template #visite>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">个人信息</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p><span>真&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;名</span>: &nbsp;{{personInfo.realName}}</p><br>
+    <p><span>用&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名</span>: &nbsp;{{personInfo.userName}}</p><br>
+    <p><span>身份证号</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.idCode}}</p><br>
+    <p><span>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>: &nbsp;{{personInfo.password}}</p><br>
+    <p><span>所属组织ID</span>: &nbsp;{{personInfo.organizationId}}</p><br>
+    <p><span>联系电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.phone}}</p><br>
+    <p><span>家庭住址</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeAddress}}</p><br>
+    <p><span>家庭电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeTelephone}}</p><br>
+    <p><span>email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: &nbsp;{{personInfo.email}}</p><br>
+    <p><span>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.birthday}}</p><br>
+    <p><span>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.gender}}</p><br>
+    <button class="btn btn-danger" (click)="modalRef.hide();openPersonInfo(modify)">修改</button>
+  </div>
+</ng-template>
+
+
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">个人信息</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="personInfoModifyForm">
+      <div class="form-group">
+        <label>数据库id &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="id" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>用户编码 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="userCode" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>身份证号 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="idCode" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>真名 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="realName" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>用户名 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="userName" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>家庭住址 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="homeAddress" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>家庭电话 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="homeTelephone" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>所属组织ID &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="organizationId" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>密码 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="password" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>联系电话 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="phone" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>email &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="email" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>生日 &nbsp; : &nbsp;</label>
+        <input type="date" formControlName="birthday" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>性别 &nbsp; : &nbsp;</label>
+        <div class="form-control">
+          <input type="radio" name="gender" checked="{{genderm}}" (change)="SelectGender('m')"> &nbsp;男，
+          <input type="radio" name="gender" checked="{{genderw}}"  (change)="SelectGender('w')"> &nbsp;女
+        </div>
+      </div>
+      <div class="form-group">
+        <label>注册时间 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="idt" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>最新修改时间 &nbsp; : &nbsp;</label>
+        <input type="text" formControlName="udt" class="form-control">
+      </div>
+    </form>
+    <button class="btn btn-danger" (click)="PersonInfoModify(); modalRef.hide()">确认修改</button>
+  </div>
+</ng-template>

@@ -1,0 +1,220 @@
+<div class="modalManager">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        模块信息
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openModalAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="modalDelete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>模块id</th>
+            <th>模块名称</th>
+            <th>对应id的父id</th>
+            <th>描述</th>
+            <th>模块代号</th>
+            <th>所属组织id</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let list of ModalList; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{list['id']}}</td>
+            <td>{{list['name']}}</td>
+            <td>{{list['pid']}}</td>
+            <td>{{list['description']}}</td>
+            <td>{{list['mcode']}}</td>
+            <td>{{list['oid']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">模块数据增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="modalAddForm">
+      <div class="form-group">
+        <label>模块名称&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="modalAddForm.get('name').invalid && modalAddForm.get('name').touched">
+        <div [hidden]="modalAddForm.get('name').valid || modalAddForm.get('name').untouched">
+          <span [hidden]="!modalAddForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>对应id的父id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalFid(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of FmodalFid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>描述&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="description" [class.hasError]="modalAddForm.get('description').invalid && modalAddForm.get('description').touched">
+        <div [hidden]="modalAddForm.get('description').valid || modalAddForm.get('description').untouched">
+          <span [hidden]="!modalAddForm.hasError('required', 'description')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>模块代号&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="mcode" [class.hasError]="modalAddForm.get('mcode').invalid && modalAddForm.get('mcode').touched">
+        <div [hidden]="modalAddForm.get('mcode').valid || modalAddForm.get('mcode').untouched">
+          <span [hidden]="!modalAddForm.hasError('required', 'mcode')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择所属组织id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">接口数据修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="modalModifyForm">
+      <div class="form-group">
+        <label>模块id&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="modalModifyForm.get('id').invalid && modalModifyForm.get('id').touched">
+        <div [hidden]="modalModifyForm.get('id').valid || modalModifyForm.get('id').untouched">
+          <span [hidden]="!modalModifyForm.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>模块名称&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="modalModifyForm.get('name').invalid && modalModifyForm.get('name').touched">
+        <div [hidden]="modalModifyForm.get('name').valid || modalModifyForm.get('name').untouched">
+          <span [hidden]="!modalModifyForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>对应id的父id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalFid(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of FmodalFid" [selected]="modal.id === modalModifyForm.get('pid').value" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>描述&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="description" [class.hasError]="modalModifyForm.get('description').invalid && modalModifyForm.get('description').touched">
+        <div [hidden]="modalModifyForm.get('description').valid || modalModifyForm.get('description').untouched">
+          <span [hidden]="!modalModifyForm.hasError('required', 'description')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>模块代号&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="mcode" [class.hasError]="modalModifyForm.get('mcode').invalid && modalModifyForm.get('mcode').touched">
+        <div [hidden]="modalModifyForm.get('mcode').valid || modalModifyForm.get('mcode').untouched">
+          <span [hidden]="!modalModifyForm.hasError('required', 'mcode')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>所属组织id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modalModifyForm.get('oid').value" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">生产线查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>模块id(唯一标识): {{Detail['id']}}</p>
+    <p>模块名称:{{Detail['name']}}</p>
+    <p>对应id的父id :{{Detail['pid']}}</p>
+    <p>描述 :{{Detail['description']}}</p>
+    <p>模块代号 :{{Detail['mcode']}}</p>
+    <p>所属组织id :{{Detail['oid']}}</p>
+    <p>信息插入时间 :{{Detail['idt']}}</p>
+    <p>信息更新时间 :{{Detail['udt']}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

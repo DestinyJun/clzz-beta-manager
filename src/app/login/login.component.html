@@ -1,0 +1,54 @@
+<div class="container-fluid">
+  <div class="login">
+    <div class="login-box text-center">
+      <p><i class="fa fa-user-circle-o"></i></p>
+      <p>welcome <span style="color:#D9E470;">back</span></p>
+      <form class="form-horizontal" [formGroup]="userLoginInfoForm" (submit)="OnSubmitInfo()">
+        <div class="form-group has-error">
+          <label for="username" class="col-sm-2 control-label">
+            <i class="fa fa-user"></i>
+          </label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="username" placeholder="username" formControlName="uname">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="password" class="col-sm-2 control-label">
+            <i class="fa fa-lock"></i>
+          </label>
+          <div class="col-sm-10">
+            <input type="password" class="form-control" id="password" placeholder="password" formControlName="upwd">
+          </div>
+        </div>
+       <!-- <div class="form-group">
+          <div class="col-sm-offset-2 col-sm-10">
+            <div class="checkbox">
+              <span class="checkbox-1"></span>
+              <span class="checkbox-2"></span>
+              <span class="checkbox-3">记住我</span>
+            </div>
+          </div>
+        </div>-->
+        <div class="hasError">
+          <span *ngIf="status === 13">账户错误！</span>
+          <span *ngIf="status === 14">账户已经在线！</span>
+        </div>
+        <div class="form-group">
+          <div class="btn-login">
+            <button type="submit" class="btn btn-danger btn-block">登录</button>
+          </div>
+        </div>
+      </form>
+      <h4 class="text-center">贵州中铝彩铝科技有限公司</h4>
+      <h4 class="text-center">贵州红鸟智能技术服务有限公司</h4>
+    </div>
+  </div>
+  <div class="login-footer text-center">
+    <span>联系电话：1234567890</span>
+    <span>邮箱：hongniao@thinkjoy.cn</span>
+    <span>copynight@2018</span>
+  </div>
+</div>
+
+
+

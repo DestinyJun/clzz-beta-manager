@@ -1,0 +1,156 @@
+<div class="usermanager">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        用户权限
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openUserPowerAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteUserPower()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openUserPower(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openUserPower(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>id</th>
+            <th>用户姓名</th>
+            <th>模块名称</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let user of UserPowers; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{user['id']}}</td>
+            <td>{{user['realname']}}</td>
+            <td>{{user['modulename']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">用户权限数据增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="userPowerAddForm">
+      <div class="form-group">
+        <label>用户ID: &nbsp;</label>
+        <select #user_id (change)="SelectAdduserid(user_id.value)" class="form-control">
+          <option *ngFor="let modal of userid" [value]="modal.id">{{modal.realName}}</option>
+        </select>
+      </div>
+      <br />
+      <div class="form-group">
+        <label>模块id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="submit" class="btn btn-info" (click)="userPowerAdd()">确定增加</button>
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">用户权限数据修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="userPowerModifyForm">
+      <div class="form-group">
+        <label>用户ID</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="userPowerModifyForm.get('id').invalid && userPowerModifyForm.get('id').touched">
+        <div [hidden]="userPowerModifyForm.get('id').valid || userPowerModifyForm.get('id').untouched">
+          <span [hidden]="!userPowerModifyForm.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <br />
+      <div class="form-group">
+        <label>用户ID: &nbsp;</label>
+        <select #user_id (change)="SelectModifyuserid(user_id.value)" class="form-control">
+          <option *ngFor="let modal of userid" [selected]="modal.id === Detail.userid" [value]="modal.id">{{modal.realName}}</option>
+        </select>
+      </div>
+      <br />
+      <div class="form-group">
+        <label>模块id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === userPowerModifyForm.get('moduleid').value"  [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="submit" class="btn btn-info" (click)="userPowerModify()">确定修改</button>
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #lookdesc>
+    <div class="modal-header">
+      <h4 class="modal-title pull-left">用户权限查看详情</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  <div class="modal-body">
+    <p>Id(唯一标识): {{Detail['id']}}</p>
+    <p>用户id:{{Detail['userid']}}</p>
+    <p>模块id :{{Detail['moduleid']}}</p>
+    <p>level :{{Detail['level']}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openUserPower(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

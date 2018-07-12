@@ -1,0 +1,212 @@
+<div class="container-fluid" style="padding-top: 10px;">
+  <div class="main" style="border: 1px solid #acacac">
+    <div class="row" style="padding: 0px 16px;">
+      <div class="col-md-12 col-xs-12 title">部门管理</div>
+    </div>
+    <div class="row" style="background-color: #efefef;margin: 0 1px;">
+      <div class="button">
+        <div class="col-xs-12">
+          <button type="button" class="btn btn-default" (click)="openModal(plus)"><span class="fa fa-plus"></span>增加</button>
+          <button type="button" class="btn btn-default"  (click)="Delete()"><span class="fa fa-trash-o" ></span>删除</button>
+          <button type="button" class="btn btn-default" (click)="openModal2(update)"><span class="fa fa-edit"></span>修改</button>
+          <button type="button" class="btn btn-default" (click)="openModal2(find)"><span class="fa fa-search"></span>查看</button>
+          <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+          <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-12">
+        <table class="table table-responsive">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" [checked]="boo" (click)="All2()" >全选/全不选</th>
+            <th>部门ID</th>
+            <th>部门名称</th>
+            <th>部门编号</th>
+            <th>部门电话</th>
+            <th>所属组织机构ID</th>
+            <th>部门父id</th>
+            <th>插入时间</th>
+            <th>更新时间</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let list of Departments;let i=index;">
+            <td ><input type="checkbox" [checked]="status[i]" (click)="Obtain(i)"></td>
+            <td>{{list['id']}}</td>
+            <td>{{list['name']}}</td>
+            <td>{{list['dcode']}}</td>
+            <td>{{list['tel']}}</td>
+            <td>{{list['oid']}}</td>
+            <td>{{list['pid']}}</td>
+            <td>{{list['idt']}}</td>
+            <td>{{list['udt']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagedepartment [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagedepartment>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--增加的模态框-->
+<ng-template #plus>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">部门增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="forms" [formGroup]="formModel">
+      <div class="form-group">
+        <label for="id1">部门ID</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="formModel.get('id').invalid && formModel.get('id').touched">
+        <div [hidden]="formModel.get('id').valid || formModel.get('id').untouched">
+          <span [hidden]="!formModel.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name1">部门名称</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="formModel.get('name').invalid && formModel.get('name').touched">
+        <div [hidden]="formModel.get('name').valid || formModel.get('name').untouched">
+          <span [hidden]="!formModel.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="number1">部门编号</label>
+        <input type="text" class="form-control" formControlName="dcode" [class.hasError]="formModel.get('dcode').invalid && formModel.get('dcode').touched">
+        <div [hidden]="formModel.get('dcode').valid || formModel.get('dcode').untouched">
+          <span [hidden]="!formModel.hasError('required', 'dcode')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="tel1">部门电话</label>
+        <input type="text" class="form-control" formControlName="tel" [class.hasError]="formModel.get('tel').invalid && formModel.get('tel').touched">
+        <div [hidden]="formModel.get('tel').valid || formModel.get('tel').untouched">
+          <span [hidden]="!formModel.hasError('required', 'tel')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>所属组织机构ID: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalOrgaId(modal_id.value)" class="form-control">
+          <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>部门父ID: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalDeparId(modal_id.value)" class="form-control">
+          <option *ngFor="let department of Fmodalid.departments" [value]="department.id">{{department.name}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="btn-box text-center">
+      <button type="submit" class="btn btn-info" (click)="insert()">确定增加</button>
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+    </div>
+  </div>
+</ng-template>
+
+<!--修改的模态框-->
+<ng-template #update>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">部门修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="forms" [formGroup]="formModel3">
+      <div class="form-group">
+        <label for="id1">部门ID</label>
+        <input id="id1" type="text" class="form-control" formControlName="id" [class.hasError]="formModel3.get('id').invalid && formModel3.get('id').touched">
+        <div [hidden]="formModel3.get('id').valid || formModel3.get('id').untouched">
+          <span [hidden]="!formModel3.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="name1">部门名称</label>
+        <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="formModel3.get('name').invalid && formModel3.get('name').touched">
+        <div [hidden]="formModel3.get('name').valid || formModel3.get('name').untouched">
+          <span [hidden]="!formModel3.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="number1">部门编号</label>
+        <input id="number1" type="text" class="form-control" formControlName="dcode" [class.hasError]="formModel3.get('dcode').invalid && formModel3.get('dcode').touched">
+        <div [hidden]="formModel3.get('dcode').valid || formModel3.get('dcode').untouched">
+          <span [hidden]="!formModel3.hasError('required', 'dcode')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="tel1">部门电话</label>
+        <input id="tel1" type="text" class="form-control" formControlName="tel" [class.hasError]="formModel3.get('tel').invalid && formModel3.get('tel').touched">
+        <div [hidden]="formModel3.get('tel').valid || formModel3.get('tel').untouched">
+          <span [hidden]="!formModel3.hasError('required', 'tel')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>所属组织机构ID: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalOrgaId(modal_id.value)" class="form-control">
+          <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === formModel3.get('oid').value" [value]="organization.id">{{organization.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>部门父ID: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalDeparId(modal_id.value)" class="form-control">
+          <option *ngFor="let department of Fmodalid.departments" [selected]="department.id === formModel3.get('pid').value" [value]="department.id">{{department.name}}</option>
+        </select>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="btn-box text-center">
+      <button type="submit" class="btn btn-info" (click)="Update()">确定修改</button>
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+    </div>
+  </div>
+</ng-template>
+
+<!--查看的模态框-->
+<ng-template #find>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">部门查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>部门ID &nbsp; : &nbsp; {{Detail.id}}</p>
+    <p>部门名称&nbsp; : &nbsp;	{{Detail.name}}</p>
+    <p>部门编号&nbsp; : &nbsp;	{{Detail.dcode}}</p>
+    <p>部门电话&nbsp; : &nbsp;	{{Detail.tel}}</p>
+    <p>机构id&nbsp; : &nbsp;	{{Detail.oid}}</p>
+    <p>部门父id&nbsp; : &nbsp;	{{Detail.pid}}</p>
+    <p>插入时间&nbsp; : &nbsp;	{{Detail.idt}}</p>
+    <p>更新时间&nbsp; : &nbsp;	{{Detail.udt}}</p>
+    <div class="clearfix"></div>
+    <div class="btn-box text-center">
+      <button type="submit" class="btn btn-info" (click)="modalRef.hide(); openModal2(update)">跳转到修改</button>
+      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+    </div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status1 !== 0 && status1 === 10" [class.fail]="status1 === 11 || status1 === 13">
+    <span *ngIf="status1 === 10">{{resMessage}}</span>
+    <span *ngIf="status1 === 11 || status1 === 13 || status1 === 12" >{{resMessage}}</span>
+  </div>
+</div>

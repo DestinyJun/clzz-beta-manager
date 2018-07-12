@@ -1,0 +1,173 @@
+<div class="technicsamendpack">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        系数工艺包
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openAddModal(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="Delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>方案名称</th>
+            <th>面漆颜色</th>
+            <th>底漆干膜厚度</th>
+            <th>底漆干膜厚度误差</th>
+            <th>底漆干膜厚度修正左</th>
+            <th>底漆干膜厚度修正右</th>
+            <th>...</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let param of Paramdatas; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)" title="点击查看详情"></td>
+            <td>{{param.name}}</td>
+            <td>{{param.finishtype}}</td>
+            <td>{{param['amenddata'].bottom_dry_thickness}}</td>
+            <td>{{param['amenddata'].bottom_dry_thickness_d}}</td>
+            <td>{{param['amenddata'].bottom_dry_thickness_d_l}}</td>
+            <td>{{param['amenddata'].bottom_dry_thickness_d_r}}</td>
+            <td>....</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagetechnology [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagetechnology>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">系数工艺包增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-inline" [formGroup]="paramAddForm">
+      <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
+        <label>{{pa.chinese_variable_name}} <span *ngIf="pa.unit !== ''">({{pa.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" formControlName="{{pa?.word_variable_name}}">
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">系数工艺包修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-inline" [formGroup]="paramModifyForm">
+      <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
+        <label>{{pa.chinese_variable_name}}<span *ngIf="pa.unit !== ''">({{pa.unit}})</span>&nbsp;&nbsp;:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" formControlName="{{pa.word_variable_name}}">
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">系数工艺包查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>方 案 名 称&nbsp; :&nbsp;	{{Detail.name}}</p>
+    <p>面 漆 颜 色&nbsp;: &nbsp;	{{Detail.finishtype}}</p>
+    <p>底漆干膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness}}&nbsp;	微米</p>
+    <p>底漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness_d}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正右&nbsp;: &nbsp;	{{Detail.amenddata.bottom_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.bottom_wet_thickness}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度误差&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正左&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正右&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆干膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness}}&nbsp;	微米</p>
+    <p>背漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.back_wet_thickness}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.back_wet_thickness_d}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正左&nbsp;:&nbsp;	{{Detail.amenddata.back_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正右&nbsp;:&nbsp;	{{Detail.amenddata.back_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆干膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.surface_dry_thickness}}&nbsp;	微米</p>
+    <p>面漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.surface_wet_thickness}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>一涂排气风量&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_1}}&nbsp;	CMH</p>
+    <p>一涂排气风量差值&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_1_d}}&nbsp;	CMH</p>
+    <p>二涂排气风量&nbsp;: &nbsp;	{{Detail.amenddata.exhaust_air_volume_2}}&nbsp;	CMH</p>
+    <p>二涂排气风量差值&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_2_d}}&nbsp;	CMH</p>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>
+

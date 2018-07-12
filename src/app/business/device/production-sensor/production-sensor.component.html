@@ -1,0 +1,308 @@
+<div class="produtionsensor">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        传感器
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openProSensorAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteProSensor()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openProSensor(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openProSensor(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>sid</th>
+            <th>名称</th>
+            <th>类型</th>
+            <th>数据类型</th>
+            <th>变量地址</th>
+            <th>状态</th>
+            <th>数值最大值</th>
+            <th>数值最小值</th>
+            <th>推荐值</th>
+            <th>设备id</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let prosensor of ProductionSensors; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{prosensor.sid}}</td>
+            <td>{{prosensor.sname}}</td>
+            <td>{{prosensor.stype}}</td>
+            <td>{{prosensor.sdatatype}}</td>
+            <td>{{prosensor.saddress}}</td>
+            <td>{{prosensor.sstatus}}</td>
+            <td>{{prosensor.smax}}</td>
+            <td>{{prosensor.smin}}</td>
+            <td>{{prosensor.srecomm}}</td>
+            <td>{{prosensor.did}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagedevice [num]="num" (pageBodyChange)=" getPageBody($event)"></app-pagedevice>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="proSensorAddForm">
+      <div class="form-group">
+        <label>Sid&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="sid"  [class.hasError]="proSensorAddForm.get('sid').invalid && proSensorAddForm.get('sid').touched">
+        <div [hidden]="proSensorAddForm.get('sid').valid || proSensorAddForm.get('sid').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'sid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="sname"  [class.hasError]="proSensorAddForm.get('sname').invalid && proSensorAddForm.get('sname').touched">
+        <div [hidden]="proSensorAddForm.get('sname').valid || proSensorAddForm.get('sname').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'sname')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	类型: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="stype" [class.hasError]="proSensorAddForm.get('stype').invalid && proSensorAddForm.get('stype').touched">
+        <div [hidden]="proSensorAddForm.get('stype').valid || proSensorAddForm.get('stype').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'stype')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数据类型: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="sdatatype" [class.hasError]="proSensorAddForm.get('sdatatype').invalid && proSensorAddForm.get('sdatatype').touched">
+        <div [hidden]="proSensorAddForm.get('sdatatype').valid || proSensorAddForm.get('sdatatype').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'sdatatype')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	变量地址: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="saddress" [class.hasError]="proSensorAddForm.get('saddress').invalid && proSensorAddForm.get('saddress').touched">
+        <div [hidden]="proSensorAddForm.get('saddress').valid || proSensorAddForm.get('saddress').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'saddress')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	状态: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="sstatus" [class.hasError]="proSensorAddForm.get('sstatus').invalid && proSensorAddForm.get('sstatus').touched">
+        <div [hidden]="proSensorAddForm.get('sstatus').valid || proSensorAddForm.get('sstatus').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'sstatus')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数值最大值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="smax" [class.hasError]="proSensorAddForm.get('smax').invalid && proSensorAddForm.get('smax').touched">
+        <div [hidden]="proSensorAddForm.get('smax').valid || proSensorAddForm.get('smax').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'smax')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数值最小值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="smin" [class.hasError]="proSensorAddForm.get('smin').invalid && proSensorAddForm.get('smin').touched">
+        <div [hidden]="proSensorAddForm.get('smin').valid || proSensorAddForm.get('smin').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'smin')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	推荐值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="srecomm" [class.hasError]="proSensorAddForm.get('srecomm').invalid && proSensorAddForm.get('srecomm').touched">
+        <div [hidden]="proSensorAddForm.get('srecomm').valid || proSensorAddForm.get('srecomm').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'srecomm')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.did">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="proSensorAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="proSensorModifyForm">
+      <div class="form-group">
+        <label>Sid&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="sid"  [class.hasError]="proSensorModifyForm.get('sid').invalid && proSensorModifyForm.get('sid').touched">
+        <div [hidden]="proSensorModifyForm.get('sid').valid || proSensorModifyForm.get('sid').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'sid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="sname"  [class.hasError]="proSensorModifyForm.get('sname').invalid && proSensorModifyForm.get('sname').touched">
+        <div [hidden]="proSensorModifyForm.get('sname').valid || proSensorModifyForm.get('sname').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'sname')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	类型: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="stype" [class.hasError]="proSensorModifyForm.get('stype').invalid && proSensorModifyForm.get('stype').touched">
+        <div [hidden]="proSensorModifyForm.get('stype').valid || proSensorModifyForm.get('stype').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'stype')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数据类型: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="sdatatype" [class.hasError]="proSensorModifyForm.get('sdatatype').invalid && proSensorModifyForm.get('sdatatype').touched">
+        <div [hidden]="proSensorModifyForm.get('sdatatype').valid || proSensorModifyForm.get('sdatatype').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'sdatatype')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	变量地址: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="saddress" [class.hasError]="proSensorModifyForm.get('saddress').invalid && proSensorModifyForm.get('saddress').touched">
+        <div [hidden]="proSensorModifyForm.get('saddress').valid || proSensorModifyForm.get('saddress').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'saddress')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	状态: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="sstatus" [class.hasError]="proSensorModifyForm.get('sstatus').invalid && proSensorModifyForm.get('sstatus').touched">
+        <div [hidden]="proSensorModifyForm.get('sstatus').valid || proSensorModifyForm.get('sstatus').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'sstatus')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数值最大值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="smax" [class.hasError]="proSensorModifyForm.get('smax').invalid && proSensorModifyForm.get('smax').touched">
+        <div [hidden]="proSensorModifyForm.get('smax').valid || proSensorModifyForm.get('smax').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'smax')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	数值最小值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="smin" [class.hasError]="proSensorModifyForm.get('smin').invalid && proSensorModifyForm.get('smin').touched">
+        <div [hidden]="proSensorModifyForm.get('smin').valid || proSensorModifyForm.get('smin').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'smin')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	推荐值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="srecomm" [class.hasError]="proSensorModifyForm.get('srecomm').invalid && proSensorModifyForm.get('srecomm').touched">
+        <div [hidden]="proSensorModifyForm.get('srecomm').valid || proSensorModifyForm.get('srecomm').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'srecomm')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.did === Detail.did" [value]="modal.did">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="proSensorModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>sid	:&nbsp;{{Detail.sid}}</p>
+    <p>名称:&nbsp;	{{Detail.sname}}</p>
+    <p>类型:&nbsp;	{{Detail.stype}}</p>
+    <p>数据类型:&nbsp;	{{Detail.sdatatype}}</p>
+    <p>变量地址:&nbsp;	{{Detail.saddress}}</p>
+    <p>状态:&nbsp;	{{Detail.sstatus}}</p>
+    <p>数值最大值:&nbsp;	{{Detail.smax}}</p>
+    <p>数值最小值:&nbsp;	{{Detail.smin}}</p>
+    <p>推荐值:&nbsp;	{{Detail.srecomm}}</p>
+    <p>设备id:&nbsp;	{{Detail.did}}</p>
+    <p>插入时间:&nbsp;	{{Detail.idt}}</p>
+    <p>更新时间:&nbsp;	{{Detail.udt}}</p>
+    <div class="clearfix"></div>
+   <div class="text-center">
+     <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProSensor(modify)">
+       跳转到修改
+     </button>
+     <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+       返回
+     </button>
+   </div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

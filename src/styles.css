@@ -1,0 +1,47 @@
+*{
+  margin: 0px;
+  padding: 0px;
+}
+/* You can add global styles to this file, and also import other style files */
+
+
+.loadimage1 {
+  margin: auto;
+  width: 6px;
+  height: 40px;
+  transform-origin: bottom;
+  position: fixed;
+  top: 40%;
+  left: 50%;
+}
+.loadimage2 {
+  width: 6px;
+  height: 25px;
+  background-color: #646464;
+  position: relative;
+  top: 0px;
+  left: 0px;
+}
+.loadimage3 {
+  width: 6px;
+  height: 15px;
+  position: relative;
+  top: 18px;
+  left: 0px;
+}
+@keyframes keyframesname{
+  0%{
+    transform: rotate(0deg);
+  }
+  100%{
+    transform: rotate(360deg);
+  }
+}
+.loadimage1 {
+  -webkit-animation-name: keyframesname;
+  -webkit-animation-duration: 600ms;
+  -webkit-animation-timing-function: linear;
+  -webkit-animation-iteration-count: infinite;
+}
+
+

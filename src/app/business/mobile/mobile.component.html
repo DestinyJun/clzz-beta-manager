@@ -1,0 +1,114 @@
+<div class="appmanager">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        移动app管理
+      </div>
+    </div>
+    <div class="row">
+      <table class="table table-responsive">
+        <thead>
+        <tr>
+          <th>ID</th>
+          <th>版本</th>
+          <th>版本名称</th>
+          <th>版本描述</th>
+          <th>服务器路径</th>
+          <th>最新更新时间</th>
+          <th>app下载</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let app of apps">
+          <td>{{app.id}}</td>
+          <td>{{app.version}}</td>
+          <td>{{app.versionName}}</td>
+          <td>{{app.description}}</td>
+          <td>{{app.path}}</td>
+          <td>{{app.utime}}</td>
+          <td>
+            <div *ngIf="app.url.indexOf('APP01') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                材料出库&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+            <div *ngIf="app.url.indexOf('APP02') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                成品入库&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+            <div *ngIf="app.url.indexOf('APP03') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                成品出库&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+            <div *ngIf="app.url.indexOf('APP04') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                工艺干预&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+            <div *ngIf="app.url.indexOf('APP05') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                生产监视&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+            <div *ngIf="app.url.indexOf('APP06') != -1">
+              <button class="btn btn-primary" (click)="downloadFile(app.url)">
+                设备巡检&nbsp;<span class="fa fa-download"></span>
+              </button>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="row text-center">
+      <button class="btn btn-primary" (click)="uploadfileModal(open)">
+        <span>上传更新版本文件</span>
+        <span class="fa fa-upload"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #open style="padding: 15px">
+  <div class="modal-header">
+    <div class="modal-title" >
+      <h4 class="modal-title pull-left">App&nbsp; 文件上传</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="infoForm" (submit)="uploadfile();modalRef.hide()">
+      <div class="form-group">
+        <label>上传文件:</label>
+        <div>
+          <input type="file" (change)="getFile($event)" class="form-control">
+          <!--<span *ngIf="event.target.files[0] != undefined">请选择上传文件</span>-->
+        </div>
+      </div>
+      <div class="form-group">
+        <label>APP类型:</label>
+        <select #selectElem (change)="typeSelect(selectElem.value)" class="form-control">
+          <option *ngFor="let option of options; let i = index" [value]="option.value">{{option.content}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>版本描述: </label>
+        <textarea name="description" id="versiondesc" cols="15" rows="5" formControlName="description" class="form-control"></textarea>
+      </div>
+      <input type="submit" class="btn btn-success" value="上传">
+    </form>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="(status !== 0 && status === 10) || status === 0" [class.fail]="status !== 0 && (status === 11 || status === 13)">
+    <span *ngIf="status === 0">文件正在上传,请稍后......</span>
+    <span *ngIf="status === 10">文件上传成功</span>
+    <span *ngIf="status === 11 || status === 13" >文件上传失败</span>
+  </div>
+</div>

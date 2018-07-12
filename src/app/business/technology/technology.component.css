@@ -1,0 +1,29 @@
+.container-fluid{
+  background-color: rgba(37,165,255,.1);
+  border: 1px rgba(3, 164, 164, .5) solid;
+  border-top: 1px #646464 solid;
+  color: #000000;
+  padding-top: 5px;
+}
+.index{
+  height: 30px;
+  line-height: 30px;
+  background-color: #ffffff;
+}
+.options{
+  padding-top: 5px;
+  padding-bottom: 5px;
+  background-color: #efefef;
+}
+.options button{
+  padding: 3px 8px;
+  outline: none;
+}
+.table-responsive{
+  font-size: 0.72rem;
+}
+.modal-body ul {
+  list-style: none;
+  padding-left: 15px;
+  font-size: 24px;
+}

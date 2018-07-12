@@ -1,0 +1,204 @@
+<div class="interfacemanager">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        接口管理
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openInterfaceAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteInterface()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openInterface(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openInterface(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>id</th>
+            <th>接口名称</th>
+            <th>接口路径</th>
+            <th>权限编码</th>
+            <th>模块id</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let interface of Interfacemanagers; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{interface['id']}}</td>
+            <td>{{interface['iname']}}</td>
+            <td>{{interface['path']}}</td>
+            <td>{{interface['pcode']}}</td>
+            <td>{{interface['mid']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">接口数据增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="interfacemanagerAddForm">
+      <div class="form-group">
+        <label>接口名称&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="iname" [class.hasError]="interfacemanagerAddForm.get('iname').invalid && interfacemanagerAddForm.get('iname').touched">
+        <div [hidden]="interfacemanagerAddForm.get('iname').valid || interfacemanagerAddForm.get('iname').untouched">
+          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'iname')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>接口路径&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="path" [class.hasError]="interfacemanagerAddForm.get('path').invalid && interfacemanagerAddForm.get('path').touched">
+        <div [hidden]="interfacemanagerAddForm.get('path').valid || interfacemanagerAddForm.get('path').untouched">
+          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'path')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>权限编码&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="pcode" [class.hasError]="interfacemanagerAddForm.get('pcode').invalid && interfacemanagerAddForm.get('pcode').touched">
+        <div [hidden]="interfacemanagerAddForm.get('pcode').valid || interfacemanagerAddForm.get('pcode').untouched">
+          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'pcode')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="interfacemanagerAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">接口数据修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="interfacemanagerModifyForm">
+      <div class="form-group">
+        <label>id&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="interfacemanagerModifyForm.get('id').invalid && interfacemanagerModifyForm.get('id').touched">
+        <div [hidden]="interfacemanagerModifyForm.get('id').valid || interfacemanagerModifyForm.get('id').untouched">
+          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>接口名称&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="iname" [class.hasError]="interfacemanagerModifyForm.get('iname').invalid && interfacemanagerModifyForm.get('iname').touched">
+        <div [hidden]="interfacemanagerModifyForm.get('iname').valid || interfacemanagerModifyForm.get('iname').untouched">
+          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'iname')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>接口路径&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="path" [class.hasError]="interfacemanagerModifyForm.get('path').invalid && interfacemanagerModifyForm.get('path').touched">
+        <div [hidden]="interfacemanagerModifyForm.get('path').valid || interfacemanagerModifyForm.get('path').untouched">
+          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'path')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>权限编码&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="pcode" [class.hasError]="interfacemanagerModifyForm.get('pcode').invalid && interfacemanagerModifyForm.get('pcode').touched">
+        <div [hidden]="interfacemanagerModifyForm.get('pcode').valid || interfacemanagerModifyForm.get('pcode').untouched">
+          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'pcode')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.mid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="interfacemanagerModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">生产线查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>Id(唯一标识): {{Detail['id']}}</p>
+    <p>接口名称:{{Detail['iname']}}</p>
+    <p>接口路径 :{{Detail['path']}}</p>
+    <p>权限编码 :{{Detail['pcode']}}</p>
+    <p>模块id :{{Detail['mid']}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openInterface(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

@@ -1,0 +1,43 @@
+.title{
+  background-color: white;
+  font-size: 1.5rem;
+  padding: 0.3vw 1vw;
+  color: #737982;
+}
+table{
+  background-color: #d1d8e0;
+}
+table tbody tr{
+  border-bottom: 2px solid #b8b8b8;
+}
+table thead tr{
+  background-color: #048992;
+  color: white;
+}
+.hasError{
+  border: 1px red solid;
+}
+.status{
+  padding: 15px;
+  width: 280px;
+  height: 45px;
+  position: fixed;
+  top: 20px;
+  left: 45%;
+  color: #FFFFFF;
+  border-radius: 3px;
+  z-index: 1100;
+}
+.success{
+  background: rgba(0,128,125,0.7);
+  box-shadow: 2px -2px 2px rgba(0,128,125,0.7) inset;
+  border: 1px #008069 solid;
+}
+.fail{
+  background: rgba(200,0,0,0.7);
+  box-shadow: 2px -2px 2px rgba(200,0,0,0.9) inset;
+  border: 1px #c30000 solid;
+}
+.remind{
+  color: red;
+}

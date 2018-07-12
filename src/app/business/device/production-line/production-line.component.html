@@ -1,0 +1,188 @@
+<div class="productionline" >
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        生产线模块
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openProLineAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteProLine()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openProLine(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openProLine(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>id号</th>
+            <th>生产线系统名称</th>
+            <th>部门id</th>
+            <th>插入时间</th>
+            <th>更新时间</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let proline of ProductionLines; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{proline['sid']}}</td>
+            <td>{{proline['name']}}</td>
+            <td>{{proline['did']}}</td>
+            <td>{{proline['idt']}}</td>
+            <td>{{proline['udt']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-pagedevice [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagedevice>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">生产线增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="prolineAddForm">
+      <div class="form-group">
+        <label>id号(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="sid" [class.hasError]="prolineAddForm.get('sid').invalid && prolineAddForm.get('sid').touched">
+        <div [hidden]="prolineAddForm.get('sid').valid || prolineAddForm.get('sid').untouched">
+          <span [hidden]="!prolineAddForm.hasError('required', 'sid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>生产线系统名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="prolineAddForm.get('name').invalid && prolineAddForm.get('name').touched">
+        <div [hidden]="prolineAddForm.get('name').valid || prolineAddForm.get('name').untouched">
+          <span [hidden]="!prolineAddForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择部门id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="prolineAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">生产线修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="prolineModifyForm">
+      <div class="form-group">
+        <label>id号(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="sid" [class.hasError]="prolineModifyForm.get('sid').invalid && prolineModifyForm.get('sid').touched">
+        <div [hidden]="prolineModifyForm.get('sid').valid || prolineModifyForm.get('sid').untouched">
+          <span [hidden]="!prolineModifyForm.hasError('required', 'sid')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>生产线系统名称&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="prolineModifyForm.get('name').invalid && prolineModifyForm.get('name').touched">
+        <div [hidden]="prolineModifyForm.get('name').valid || prolineModifyForm.get('name').untouched">
+          <span [hidden]="!prolineModifyForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>	部门id: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="did" [class.hasError]="prolineModifyForm.get('did').invalid && prolineModifyForm.get('did').touched">
+        <div [hidden]="prolineModifyForm.get('did').valid || prolineModifyForm.get('did').untouched">
+          <span [hidden]="!prolineModifyForm.hasError('required', 'did')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>请选择部门id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.did" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="prolineModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">生产线查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>id号(唯一标识): {{Detail['sid']}}</p>
+    <p>生产线系统名称:{{Detail['name']}}</p>
+    <p>父id :{{Detail['did']}}</p>
+    <p>插入时间 :{{Detail['idt']}}</p>
+    <p>更新时间 :{{Detail['udt']}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProLine(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

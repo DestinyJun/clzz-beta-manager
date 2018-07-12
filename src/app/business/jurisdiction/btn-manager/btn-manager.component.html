@@ -1,0 +1,191 @@
+<div class="btnmanager">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        按钮管理
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="openBtnmanagerAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteBtnmanager()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openBtnmanager(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openBtnmanager(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>id</th>
+            <th>按钮名称</th>
+            <th>描述</th>
+            <th>父级模块id</th>
+            <th>插入时间</th>
+            <th>更新时间</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let btnmanager of Btnmanagers; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{btnmanager['id']}}</td>
+            <td>{{btnmanager['name']}}</td>
+            <td>{{btnmanager['decription']}}</td>
+            <td>{{btnmanager['mid']}}</td>
+            <td>{{btnmanager['idt']}}</td>
+            <td>{{btnmanager['udt']}}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+          <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">按钮增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="btnmanagerAddForm">
+      <div class="form-group">
+        <label>按钮名称&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="btnmanagerAddForm.get('name').invalid && btnmanagerAddForm.get('name').touched">
+        <div [hidden]="btnmanagerAddForm.get('name').valid || btnmanagerAddForm.get('name').untouched">
+          <span [hidden]="!btnmanagerAddForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>描述&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="decription" [class.hasError]="btnmanagerAddForm.get('decription').invalid && btnmanagerAddForm.get('decription').touched">
+        <div [hidden]="btnmanagerAddForm.get('decription').valid || btnmanagerAddForm.get('decription').untouched">
+          <span [hidden]="!btnmanagerAddForm.hasError('required', 'decription')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="btnmanagerAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">按钮修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="btnmanagerModifyForm">
+      <div class="form-group">
+        <label>按钮id&nbsp;&nbsp;:&nbsp;</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="btnmanagerModifyForm.get('id').invalid && btnmanagerModifyForm.get('id').touched">
+        <div [hidden]="btnmanagerModifyForm.get('id').valid || btnmanagerModifyForm.get('id').untouched">
+          <span [hidden]="!btnmanagerModifyForm.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>按钮名称&nbsp;&nbsp;:&nbsp;</label>// 不能超过十个字节
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="btnmanagerModifyForm.get('name').invalid && btnmanagerModifyForm.get('name').touched">
+        <div [hidden]="btnmanagerModifyForm.get('name').valid || btnmanagerModifyForm.get('name').untouched">
+          <span [hidden]="!btnmanagerModifyForm.hasError('required', 'name')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>描述&nbsp;&nbsp;: &nbsp;</label>
+        <input type="text" class="form-control" formControlName="decription" [class.hasError]="btnmanagerModifyForm.get('decription').invalid && btnmanagerModifyForm.get('decription').touched">
+        <div [hidden]="btnmanagerModifyForm.get('decription').valid || btnmanagerModifyForm.get('decription').untouched">
+          <span [hidden]="!btnmanagerModifyForm.hasError('required', 'decription')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
+        <label>请选择设备id: &nbsp;</label>
+        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.mid" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <br>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="btnmanagerModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">按钮查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>sid(唯一标识): {{Detail['id']}}</p>
+    <p>名称:{{Detail['name']}}</p>
+    <p>父id :{{Detail['decription']}}</p>
+    <p>父id :{{Detail['mid']}}</p>
+    <p>插入时间 :{{Detail['idt']}}</p>
+    <p>更新时间 :{{Detail['udt']}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openBtnmanager(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <div class="clearfix"></div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span *ngIf="status === 10">{{resMessage}}</span>
+    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  </div>
+</div>

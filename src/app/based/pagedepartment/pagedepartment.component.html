@@ -1,0 +1,10 @@
+<div class="pagination">
+  <ul class="pagination">
+    <li><a (click)="firstPage()">首页</a></li>
+    <li><a (click)="previousPage()">上一页</a></li>
+    <li><a (click)="nextPage()">下一页</a></li>
+    <li><a (click)="lastPage()">尾页</a></li>
+    <li><a>{{nowPage}}/{{num}}</a></li>
+    <li><a>跳转到: &nbsp;<input type="number" name="skpPage"  class="skip-input" [(ngModel)]="skpPage" (keydown)="appointPage($event)">页</a></li>
+  </ul>
+</div>
