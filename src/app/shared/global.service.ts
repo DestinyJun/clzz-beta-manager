@@ -246,7 +246,7 @@ export class AppManager {
 // 摄像机组管理
 export class CameraGroup {
   constructor(
-    public name: string,
+    public value: string,
     public id: string,
     public creator: string,
     public status: string,
@@ -260,7 +260,7 @@ export class Cameras {
     public g_id: string,
     public id: string,
     public inner_url: string,
-    public name: string,
+    public value: string,
     public outer_url: string
 ) {}
 }

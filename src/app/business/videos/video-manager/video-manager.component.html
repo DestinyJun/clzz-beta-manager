@@ -38,7 +38,7 @@
               <th class="checkboxoption"><input type="checkbox" [checked]="boo" (click)="All2()">全选/全不选</th>
               <th>摄像机组名称</th>
               <th>摄像机组id</th>
-              <th>摄像机创建人</th>
+              <th>摄像机组创建人</th>
               <th>摄像机组状态</th>
               <th>所属部门ID</th>
             </tr>
@@ -46,7 +46,7 @@
           <tbody>
             <tr *ngFor="let list of videoGroups;let i =index;">
               <td ><input type="checkbox" [checked]="status[i]" (click)="Obtain(i)"></td>
-              <td>{{list['name']}}</td>
+              <td>{{list['value']}}</td>
               <td>{{list['id']}}</td>
               <td>{{list['creator']}}</td>
               <td>{{list['status']}}</td>
@@ -73,7 +73,7 @@
           <tbody>
             <tr *ngFor="let list of videos;let i =index;">
               <td ><input type="checkbox" [checked]="status[i]" (click)="Obtain(i)"></td>
-              <td>{{list.name}}</td>
+              <td>{{list.value}}</td>
               <td>{{list.id}}</td>
               <td>{{list.creator}}</td>
               <td>{{list.inner_url}}</td>

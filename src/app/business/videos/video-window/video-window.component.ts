@@ -1,8 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
 import {NodeEvent, NodeMenuItemAction, TreeModel} from 'ng2-tree';
 import {DomSanitizer} from '@angular/platform-browser';
-import {ReqService} from '../../../shared/req.service';
 import {PageBody} from '../../../shared/global.service';
+import {ReqService} from '../../../shared/req.service';
 
 
 @Component({
@@ -20,94 +21,56 @@ export class VideoWindowComponent implements OnInit {
   public videoLocation3: any;
   public videoLocation4: any;
   public pageBody: PageBody;
+  public c1: Array<any>;
+  public c2: Array<any>;
+  public c3: Array<any>;
+  public c4: Array<any>;
+  public domSanitizer: DomSanitizer;
   /**************  ng2-tree ************/
   public tree: TreeModel;
-  constructor(
-    private req: ReqService,
-    public html: DomSanitizer
-  ) { }
+
+  constructor(private http: HttpClient,
+              public html: DomSanitizer,
+              private req: ReqService) {
+  }
+
   ngOnInit() {
+    this.c1 = [];
+    this.c2 = [];
+    this.c3 = [];
+    this.c4 = [];
     this.pageBody = new PageBody(1, 4);
-    this.tree = {
-      value: '彩铝智能制造视频监控平台',
-      settings: {
-        static: true, // 禁止拖动以及右键删除修改菜单
-        isCollapsedOnInit: true, // 设置隐藏与展开
-        leftMenu: false, // 左菜单栏
-        cssClasses: {
-          expanded: 'fa fa-caret-down',
-          collapsed: 'fa fa-caret-right',
-          leaf: 'fa',
-          empty: 'fa fa-caret-right disabled'
-        },
-        templates: {
-          node: '<i class="fa fa-folder-o"></i>',
-          leaf: '<i class="fa fa-file-o"></i>',
-          leftMenu: '<i class="fa fa-navicon"></i>'
-        },
-        menuItems: [
-          { action: NodeMenuItemAction.Custom, name: 'Foo', cssClass: 'fa fa-arrow-right' },
-          { action: NodeMenuItemAction.Custom, name: 'Bar', cssClass: 'fa fa-arrow-right' },
-          { action: NodeMenuItemAction.Custom, name: 'Baz', cssClass: 'fa fa-arrow-right'}
-        ]
-      },
-      children: [
-        {
-          value: '1号监视窗口',
-          children: [
-            // {value: '1楼楼梯口', place: '1', url: 'rtsp://admin:12345@58.42.229.135:33335/Streaming/Channels/102?transportmode-unicast'},
-            // {value: '1楼楼梯口', place: '1', url: 'rtsp://admin:12345@58.42.229.135:33335/Streaming/Channels/102?transportmode-unicast'},
-            // {value: '1楼楼梯口', place: '1', url: 'rtsp://admin:12345@58.42.229.135:33335/Streaming/Channels/102?transportmode-unicast'},
-          ]
-        },
-        {
-          value: '2号监视窗口',
-          settings: {
-            static: true,
-          },
-          children: []
-        },
-        {
-          value: '3号监视窗口',
-          settings: {
-            static: true,
-          },
-          children: []
-        },
-        {
-          value: '4号监视窗口',
-          settings: {
-            static: true,
-          },
-          children: []
-        },
-      ]
-    };
+    this.videoLocation1 = '1楼楼梯口';
+    this.videoLocation2 = '2楼楼梯口';
+    this.videoLocation3 = '3楼楼梯口';
+    this.videoLocation4 = '4楼楼梯口';
     this.Request();
   }
+
   public logEvent(e: NodeEvent): void {
-    let videOPlace = e.node.node.place;
-    if (videOPlace === '1') {
-      console.log(e.node.node.value);
+    console.log(e.node.node.outer_url);
+    console.log(e.node.node.value);
+    if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
-      this.videoUrl1 = e.node.node.url;
-      document.querySelector('#window1').innerHTML = this.addHtmlVideo1(e.node.node.url);
-    } else if (videOPlace === '2') {
+      this.videoUrl1 = e.node.node.outer_url;
+      document.querySelector('#window1').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+    } else if (e.node.parent.positionInParent === 1) {
       this.videoLocation2 = e.node.node.value;
-      document.querySelector('#window2').innerHTML = this.addHtmlVideo1(e.node.node.url);
-      this.videoUrl2 = e.node.node.url;
-    }  else if (videOPlace === '3') {
+      this.videoUrl2 = e.node.node.outer_url;
+      document.querySelector('#window2').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+    } else if (e.node.parent.positionInParent === 2) {
       this.videoLocation3 = e.node.node.value;
-      this.videoUrl3 = e.node.node.url;
-      document.querySelector('#window3').innerHTML = this.addHtmlVideo1(e.node.node.url);
+      this.videoUrl3 = e.node.node.outer_url;
+      document.querySelector('#window3').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else {
       this.videoLocation4 = e.node.node.value;
-      this.videoUrl4 = e.node.node.url;
-      document.querySelector('#window4').innerHTML = this.addHtmlVideo1(e.node.node.url);
+      this.videoUrl4 = e.node.node.outer_url;
+      document.querySelector('#window4').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     }
   }
+
   public addHtmlVideo1(url: string): string {
-    let html = `<object type='application/x-vlc-plugin' id='' width="100%" height="100%" events='True'
+    const html = `<object type='application/x-vlc-plugin' id='' width="100%" height="100%" events='True'
                 pluginspage="http://www.videolan.org"
                 codebase="http://downloads.videolan.org/pub/videolan/vlc-webplugins/2.0.6/npapi-vlc-2.0.6.tar.xz">
                 <param name='mrl' value='${url}' />
@@ -124,24 +87,82 @@ export class VideoWindowComponent implements OnInit {
   }
 
   public Request(): void {
+    // 发送请求拿到 摄像机组的id, 用来获取该组的全部摄像机
     this.req.findVideomanager(this.parameterSerialization(this.pageBody))
       .subscribe((gvalue) => {
         for (let i = 0; i < gvalue.values.number; ++i) {
+          // 发送请求拿到摄像机组的摄像机数量
           this.req.findVideos('gid=' + gvalue.values.datas[i].id + '&page=1' + '&row=1')
             .subscribe(cvalue => {
               this.req.findVideos('gid=' + gvalue.values.datas[i].id + '&page=' + this.pageBody.page + '&row=' + cvalue.values.number)
                 .subscribe(ccvalue => {
-                  let value = ccvalue.values.datas;
-                  for (let j = 0; j < cvalue.values.number; ++j) {
-                    let cc = {
-                      value: value[j].name,
-                      place: String(i + 1),
-                      url: value[j].outer_url
-                    };
-                    this.tree.children[i].children.push(cc);
-                  }
-                  console.log(this.tree);
-                  console.log('--------------------------------------------------------------------');
+                  // 用 values  拿到该组全部的摄像机
+                  const values = ccvalue.values.datas;
+                  // console.log(values);
+                  values.map((value, index) => {
+                    // value = JSON.stringify(value).replace('name', 'value');
+                    // value = JSON.parse(value);
+                    switch (index % 4) {
+                      case 0:
+                        this.c1.push(value);
+                        break;
+                      case 1:
+                        this.c2.push(value);
+                        break;
+                      case 2:
+                        this.c3.push(value);
+                        break;
+                      case 3:
+                        this.c4.push(value);
+                    }
+                  });
+                  this.tree = {
+                    value: '彩铝智能制造视频监控平台',
+                    settings: {
+                      static: true, // 禁止拖动以及右键删除修改菜单
+                      isCollapsedOnInit: true, // 设置隐藏与展开
+                      leftMenu: false, // 左菜单栏
+                      cssClasses: {
+                        expanded: 'fa fa-caret-down',
+                        collapsed: 'fa fa-caret-right',
+                        leaf: 'fa',
+                        empty: 'fa fa-caret-right disabled'
+                      },
+                      templates: {
+                        node: '<i class="fa fa-folder-o"></i>',
+                        leaf: '<i class="fa fa-file-o"></i>',
+                        leftMenu: '<i class="fa fa-navicon"></i>'
+                      },
+                      menuItems: [
+                        {action: NodeMenuItemAction.Custom, name: 'Foo', cssClass: 'fa fa-arrow-right'},
+                        {action: NodeMenuItemAction.Custom, name: 'Bar', cssClass: 'fa fa-arrow-right'},
+                        {action: NodeMenuItemAction.Custom, name: 'Baz', cssClass: 'fa fa-arrow-right'}
+                      ]
+                    },
+                    children: [
+                      {
+                        value: '1号监视窗口',
+                        children: this.c1
+                      },
+                      {
+                        value: '2号监视窗口',
+                        children: this.c2
+                      },
+                      {
+                        value: '3号监视窗口',
+                        children: this.c3
+                      },
+                      {
+                        value: '4号监视窗口',
+                        children: this.c4
+                      },
+                    ]
+                  };
+                  // 初始化每个摄像机位置的url
+                  this.videoUrl1 = this.tree.children[0].children[0]['outer_url'];
+                  this.videoUrl2 = this.tree.children[1].children[0]['outer_url'];
+                  this.videoUrl3 = this.tree.children[2].children[0]['outer_url'];
+                  this.videoUrl4 = this.tree.children[3].children[0]['outer_url'];
                 });
             });
         }
@@ -162,12 +183,13 @@ export class VideoWindowComponent implements OnInit {
     }
     return result;
   }
+
 }
+
 export class VideoChildrenList {
-  constructor (
-    public id: string,
-    public name: string,
-    public place: string,
-    public url: string
-  ) {}
+  constructor(public id: string,
+              public name: string,
+              public place: string,
+              public url: string) {
+  }
 }

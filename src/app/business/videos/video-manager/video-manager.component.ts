@@ -143,7 +143,6 @@ export class VideoManagerComponent implements OnInit {
     this.mustone = false;
     this.req.findVideomanager(this.parameterSerialization(this.pageBody))
       .subscribe((value) => {
-        console.log(value);
         this.videoGroups = value.values.datas;
         this.num = Math.ceil(value.values.number / 10);
         setTimeout(() => {
@@ -217,7 +216,6 @@ export class VideoManagerComponent implements OnInit {
     this.mustone = false;
     this.req.findVideos('gid=' + g_id + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
-        console.log(value);
         this.videos = value.values.datas;
         this.num = Math.ceil(value.values.number / 10);
         setTimeout(() => {
