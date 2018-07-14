@@ -1,8 +1,9 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CameraGroup, Cameras, PageBody} from '../../../shared/global.service';
+import 'rxjs/Rx';
 
 @Component({
   selector: 'app-video-manager',
@@ -18,6 +19,7 @@ export class VideoManagerComponent implements OnInit {
   public DetailCameraGroup: CameraGroup;
   public DetailCamera: Cameras;
   public formModel1: FormGroup;
+  public cameraGroupStatus: FormControl;
   public formModel3: FormGroup;
   public formModel1s: FormGroup;
   public formModel3s: FormGroup;
@@ -31,43 +33,45 @@ export class VideoManagerComponent implements OnInit {
   public inputvalid: boolean;
   public mustone: boolean;
   public gtone: boolean;
+  public resMessage: string;
+
   constructor(private req: ReqService,
               private modalService: BsModalService,
-              private fb: FormBuilder
-  ) {
+              private fb: FormBuilder) {
     this.formModel1 = fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       creator: ['', Validators.required],
-      status: ['', Validators.required],
+      status: ['0', Validators.required],
       p_id: ['', Validators.required]
     });
     this.formModel1s = fb.group({
-      id : ['', Validators.required],
-      name : ['', Validators.required],
-      creator : ['', Validators.required],
-      inner_url : ['', Validators.required],
-      outer_url : ['', Validators.required],
-      g_id : ['', Validators.required]
-    });
-    this.formModel3 = fb.group({
       id: ['', Validators.required],
-      Update_id: ['', Validators.required],
       name: ['', Validators.required],
       creator: ['', Validators.required],
-      status: ['', Validators.required],
-      p_id: ['', Validators.required]
-    });
-    this.formModel3s = fb.group({
-      id: ['', Validators.required],
-      Update_id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
-      inner_url: ['', Validators.required],
+      inner_url: [''],
       outer_url: ['', Validators.required],
       g_id: ['', Validators.required]
     });
+    this.formModel3 = fb.group({
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      status: [''],
+      p_id: ['']
+    });
+    this.formModel3s = fb.group({
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      inner_url: [''],
+      outer_url: [''],
+      g_id: ['']
+    });
   }
+
   ngOnInit() {
     this.status = [];
     this.status1 = 0;
@@ -87,13 +91,23 @@ export class VideoManagerComponent implements OnInit {
       }
       this.formModel1.patchValue({'p_id': this.Fmodalid.departments[0].id});
     });
+    // 摄像机组的状态
+    this.cameraGroupStatus = new FormControl();
+    this.cameraGroupStatus.valueChanges
+      .debounceTime(500)
+      .subscribe(value => {
+      console.log(value);
+    });
   }
+
   public SelectAddModalId(value): void {
     this.formModel1.patchValue({'p_id': value});
   }
+
   public SelectModifyModalId(value): void {
     this.formModel3.patchValue({'p_id': value});
   }
+
   // modal
   public openModal(template: TemplateRef<any>) {
     this.inputvalid = false;
@@ -101,25 +115,30 @@ export class VideoManagerComponent implements OnInit {
     this.mustone = false;
     this.modalRef = this.modalService.show(template);
   }
+
   // 模态框二
   public openModal2(template: TemplateRef<any>) {
     this.inputvalid = false;
     this.gtone = false;
-    let i: number, j;
+    let i: number, j = -1;
     let n = 0;
-    for (i = 0; i < this.status.length; i++) {
+    for (i = 0; i < this.videoGroups.length; i++) {
       if (this.status[i] === true) {
         j = i;
         n++;
       }
     }
-    if ( n === 1 && this.boo !== true) {
+    if (n === 1 && this.boo !== true) {
       this.mustone = false;
       this.gtone = false;
+      console.log(this.videoGroups[j]);
       if (this.downWindow === true) {
         this.DetailCameraGroup = this.videoGroups[j];
         this.formModel3.patchValue(this.videoGroups[j]);
       } else {
+        this.DetailCameraGroup = this.videoGroups[j];
+        console.log(this.DetailCameraGroup);
+        // console.log(this.DetailCameraGroup.id);
         this.DetailCamera = this.videos[j];
         this.formModel3s.patchValue(this.videos[j]);
       }
@@ -128,6 +147,7 @@ export class VideoManagerComponent implements OnInit {
       this.mustone = true;
     }
   }
+
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
@@ -137,6 +157,7 @@ export class VideoManagerComponent implements OnInit {
       this.RequestCamera(this.G_id);
     }
   }
+
   // 组查看
   public Request(): void {
     this.gtone = false;
@@ -151,12 +172,21 @@ export class VideoManagerComponent implements OnInit {
         }, 2500);
         const s: Array<boolean> = [];
         const length = this.videoGroups.length;
-        for (let i = 0; i < length ; i++) {
-            s.push(false);
+        for (let i = 0; i < length; i++) {
+          s.push(false);
         }
         this.status = s;
       });
   }
+
+  // 选择摄像机组的 状态, 只能输入0 和 1
+  // public selectStatusId(): void {
+  //   console.log(this.formModel1.get('status').value);
+  //   if (this.formModel1.get('status').value !== '0' || this.formModel1.get('status').value !== '1') {
+  //       console.log(this.formModel1.get('status').value);
+  //   }
+  // }
+
   // 组增加
   public insert() {
     if (this.formModel1.valid) {
@@ -164,28 +194,32 @@ export class VideoManagerComponent implements OnInit {
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.addVideomanager(this.parameterSerializationForm(this.formModel1.value))
-        .subscribe(data => {
-          this.status1 = Number(data.status);
+        .subscribe(res => {
+          this.status1 = Number(res.status);
+          this.resMessage = res.message;
           this.Request();
         });
     } else {
       this.inputvalid = true;
     }
   }
+
   // 组删除
   public Delete() {
     let deleteNum = 0;
     this.mustone = false;
+    this.openstatus = false;
     let i: number;
     // 判断是否被选中，若选中，则执行删除
     for (i = 0; i < this.status.length; i++) {
-      if (this.status[i] === true ) {
+      if (this.status[i] === true) {
         deleteNum += 1;
         const body = 'id=' + this.videoGroups[i].id + '&creator=' + this.videoGroups[i].creator;
         this.req.deleteVideomanager(body)
-          .subscribe(data => {
-            this.status1 = Number(data.status);
-            if (i === 1) {
+          .subscribe(res => {
+            this.status1 = Number(res.status);
+            this.resMessage = res.message;
+            if (i === this.status.length) {
               this.Request();
             }
           });
@@ -195,6 +229,7 @@ export class VideoManagerComponent implements OnInit {
       this.gtone = true;
     }
   }
+
   // 组修改
   public Update() {
     if (this.formModel3.valid) {
@@ -202,14 +237,16 @@ export class VideoManagerComponent implements OnInit {
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.updateVideomanager(this.parameterSerializationForm(this.formModel3.value))
-        .subscribe(data => {
-          this.status1 = Number(data.status);
+        .subscribe(res => {
+          this.status1 = Number(res.status);
+          this.resMessage = res.message;
           this.Request();
         });
     } else {
       this.inputvalid = true;
     }
   }
+
   // 查看
   public RequestCamera(g_id): void {
     this.gtone = false;
@@ -223,17 +260,18 @@ export class VideoManagerComponent implements OnInit {
           this.status1 = 0;
         }, 2500);
         this.status = [];
-        if (this.videos.length === 0 ) {
+        if (this.videos.length === 0) {
           this.videos = undefined;
         } else {
           const s: Array<boolean> = [];
-          let length = this.videos.length;
-          for (let i = 0; i < length ; i++)
+          const length = this.videos.length;
+          for (let i = 0; i < length; i++)
             s.push(false);
           this.status = s;
         }
       });
   }
+
   // 增加
   public insertCamera() {
     if (this.formModel1s.valid) {
@@ -241,8 +279,9 @@ export class VideoManagerComponent implements OnInit {
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.addVideo(this.parameterSerializationForm(this.formModel1s.value))
-        .subscribe(data => {
-          this.status1 = Number(data.status);
+        .subscribe(res => {
+          this.status1 = Number(res.status);
+          this.resMessage = res.message;
           this.RequestCamera(this.G_id);
         });
     } else {
@@ -257,14 +296,15 @@ export class VideoManagerComponent implements OnInit {
     this.mustone = false;
     let i: number;
     for (i = 0; i < this.status.length; i++) {
-      if (this.status[i] === true ) {
+      if (this.status[i] === true) {
         deleteNum += 1;
         const body = 'id=' + this.videos[i].id + '&creator=' + this.videos[i].creator;
         this.req.deleteVideo(body)
-          .subscribe(data => {
-            this.status1 = Number(data.status);
-            if (i === 1) {
-              this.RequestCamera(this.G_id);
+          .subscribe(res => {
+            if (i === this.status.length) {
+              this.status1 = Number(res.status);
+              this.resMessage = res.message;
+              this.Request();
             }
           });
       }
@@ -282,14 +322,16 @@ export class VideoManagerComponent implements OnInit {
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.updateVideo(this.parameterSerializationForm(this.formModel3s.value))
-        .subscribe(data => {
-          this.status1 = Number(data.status);
+        .subscribe(res => {
+          this.status1 = Number(res.status);
+          this.resMessage = res.message;
           this.RequestCamera(this.G_id);
         });
     } else {
       this.inputvalid = true;
     }
   }
+
   // 复选框全选
   All2() {
     this.boo = !this.boo;
@@ -308,6 +350,7 @@ export class VideoManagerComponent implements OnInit {
       }
     }
   }
+
   // 下拉选择项 切换
   public DownDropSelect(value: any): void {
     this.mustone = false;
@@ -322,6 +365,7 @@ export class VideoManagerComponent implements OnInit {
       this.RequestCamera(this.G_id);
     }
   }
+
   // 翻页参数序列化
   public parameterSerialization(obj: PageBody): string {
     let result: string;
@@ -336,6 +380,7 @@ export class VideoManagerComponent implements OnInit {
     }
     return result;
   }
+
   // 表单参数序列化
   public parameterSerializationForm(form: JSON): string {
     let result: string;

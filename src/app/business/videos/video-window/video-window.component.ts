@@ -1,7 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {NodeEvent, NodeMenuItemAction, TreeModel} from 'ng2-tree';
-import {DomSanitizer} from '@angular/platform-browser';
+import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {PageBody} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 
@@ -12,10 +12,10 @@ import {ReqService} from '../../../shared/req.service';
   styleUrls: ['./video-window.component.css']
 })
 export class VideoWindowComponent implements OnInit {
-  public videoUrl1: string;
-  public videoUrl2: string;
-  public videoUrl3: string;
-  public videoUrl4: string;
+  public videoUrl1: any;
+  public videoUrl2: any;
+  public videoUrl3: any;
+  public videoUrl4: any;
   public videoLocation1: any;
   public videoLocation2: any;
   public videoLocation3: any;
@@ -35,36 +35,37 @@ export class VideoWindowComponent implements OnInit {
   }
 
   ngOnInit() {
+    // 初始化四个监视窗口的数据，为空
     this.c1 = [];
     this.c2 = [];
     this.c3 = [];
     this.c4 = [];
     this.pageBody = new PageBody(1, 4);
-    this.videoLocation1 = '1楼楼梯口';
-    this.videoLocation2 = '2楼楼梯口';
-    this.videoLocation3 = '3楼楼梯口';
-    this.videoLocation4 = '4楼楼梯口';
+    this.videoUrl1 = `${null}`;
+    this.videoUrl2 = `${null}`;
+    this.videoUrl3 = `${null}`;
+    this.videoUrl4 = `${null}`;
     this.Request();
   }
 
   public logEvent(e: NodeEvent): void {
-    console.log(e.node.node.outer_url);
-    console.log(e.node.node.value);
+    // console.log(e.node.node.outer_url);
+    // console.log(e.node.node.value);
     if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
-      this.videoUrl1 = e.node.node.outer_url;
+      // this.videoUrl1 = `${e.node.node.outer_url}`;
       document.querySelector('#window1').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else if (e.node.parent.positionInParent === 1) {
       this.videoLocation2 = e.node.node.value;
-      this.videoUrl2 = e.node.node.outer_url;
+      // this.videoUrl2 = e.node.node.outer_url;
       document.querySelector('#window2').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else if (e.node.parent.positionInParent === 2) {
       this.videoLocation3 = e.node.node.value;
-      this.videoUrl3 = e.node.node.outer_url;
+      // this.videoUrl3 = e.node.node.outer_url;
       document.querySelector('#window3').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else {
       this.videoLocation4 = e.node.node.value;
-      this.videoUrl4 = e.node.node.outer_url;
+      // this.videoUrl4 = e.node.node.outer_url;
       document.querySelector('#window4').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     }
   }
@@ -80,7 +81,7 @@ export class VideoWindowComponent implements OnInit {
                 <param value="transparent" name="wmode">
                 <embed id='vlc1' wmode="transparent" type="application/x-vlc-plugin" width="100%" height="100%"
                        pluginspage="http://www.videolan.org" allownetworking="internal" allowscriptaccess="always" quality="high"
-                       src="${url}">
+                       src='${url}'>
             </object>
 `;
     return html;
@@ -158,11 +159,18 @@ export class VideoWindowComponent implements OnInit {
                       },
                     ]
                   };
-                  // 初始化每个摄像机位置的url
-                  this.videoUrl1 = this.tree.children[0].children[0]['outer_url'];
-                  this.videoUrl2 = this.tree.children[1].children[0]['outer_url'];
-                  this.videoUrl3 = this.tree.children[2].children[0]['outer_url'];
-                  this.videoUrl4 = this.tree.children[3].children[0]['outer_url'];
+                  // 初始化每个摄像机位置的url,如果摄像机窗口里面没有摄像机，则为null
+                  this.videoUrl1 = `${this.c1.length === 0 ? null : this.c1[0].outer_url}`;
+                  this.videoUrl2 = `${this.c2.length === 0 ? null : this.c2[0].outer_url}`;
+                  this.videoUrl3 = `${this.c3.length === 0 ? null : this.c3[0].outer_url}`;
+                  this.videoUrl4 = `${this.c4.length === 0 ? null : this.c4[0].outer_url}`;
+
+                  // 初始化摄像机窗口的名称
+                  const tooltip = '该窗口没有摄像机';
+                  this.videoLocation1 = `${this.c1.length === 0 ? tooltip : this.c1[0].value}`;
+                  this.videoLocation2 = `${this.c2.length === 0 ? tooltip : this.c2[0].value}`;
+                  this.videoLocation3 = `${this.c3.length === 0 ? tooltip : this.c3[0].value}`;
+                  this.videoLocation4 = `${this.c4.length === 0 ? tooltip : this.c4[0].value}`;
                 });
             });
         }
@@ -183,7 +191,6 @@ export class VideoWindowComponent implements OnInit {
     }
     return result;
   }
-
 }
 
 export class VideoChildrenList {
