@@ -4,9 +4,9 @@ import {TechnologyComponent} from './technology.component';
 import {TechnologyRoutersModule} from './technology.routers.module';
 import {ModalModule, PaginationModule} from 'ngx-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {PagetechnologyComponent} from '../../based/pagetechnology/pagetechnology.component';
 import {TechnicspackAmendComponent} from './technicspack-amend/technicspack-amend.component';
 import {TechnicspackTemperatureComponent} from './technicspack-temperature/technicspack-temperature.component';
+import {BasedModule} from '../../based/based.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -14,11 +14,11 @@ import {TechnicspackTemperatureComponent} from './technicspack-temperature/techn
     ModalModule.forRoot(),
     PaginationModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    BasedModule
   ],
   declarations: [
     TechnologyComponent,
-    PagetechnologyComponent,
     TechnicspackAmendComponent,
     TechnicspackTemperatureComponent
   ],

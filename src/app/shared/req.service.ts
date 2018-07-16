@@ -331,6 +331,27 @@ export class ReqService {
   public DeleteTechnicsPackTemperature(body): Observable<any> {
     return this.http.post('http://120.78.137.182/element-admin/delete-technics-pack-temperature', body, this.headers);
   }
+  // 查看项目
+  public ItemFind(body): Observable<any> {
+    return this.http.post('http://120.78.137.182/element-admin/item-info/find-all', body, this.headers);
+  }
+  // 按编号查找项目
+  public ItemFindInNumber(body): Observable<any> {
+    return this.http.post('http://120.78.137.182/element-admin/item-info/find', body, this.headers);
+  }
+  // 新增项目
+  public ItemAdd(body): Observable<any> {
+    return this.http.post('http://120.78.137.182/element-admin/item-info/add', body, this.headers);
+  }
+  // 修改项目
+  public ItemModify(body): Observable<any> {
+    return this.http.post('http://120.78.137.182/element-admin/item-info/update', body, this.headers);
+  }
+  // 删除项目
+  public ItemDelete(body): Observable<any> {
+    return this.http.post('http://120.78.137.182/element-admin/item-info/delete', body, this.headers);
+  }
+
 //  以下是查看父id请求
   // 组织和部门ID
   public FindDepartOrgani(): Observable<any> {

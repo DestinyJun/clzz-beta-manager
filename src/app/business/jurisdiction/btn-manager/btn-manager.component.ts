@@ -3,6 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import { JurisdictionBtnManager, PageBody} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-btn-manager',
@@ -27,9 +28,10 @@ export class BtnManagerComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
     //     增加模态框表单
     this.btnmanagerAddForm = fb.group({
@@ -56,7 +58,7 @@ export class BtnManagerComponent implements OnInit {
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
       if (this.Fmodalid !== undefined) {
-        this.btnmanagerAddForm.patchValue({'mid': this.Fmodalid[0].id});
+        // this.btnmanagerAddForm.patchValue({'mid': this.Fmodalid[0].id});
       }
     });
   }
@@ -149,7 +151,7 @@ export class BtnManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerAdd(this.parameterSerializationForm(this.btnmanagerAddForm.value))
+      this.req.JurisdictionBtnManagerAdd(this.commonfun.parameterSerialization(this.btnmanagerAddForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -165,7 +167,7 @@ export class BtnManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerModify(this.parameterSerializationForm(this.btnmanagerModifyForm.value))
+      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.btnmanagerModifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -179,7 +181,7 @@ export class BtnManagerComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getJurisdictionBtnManager(this.parameterSerialization(this.pageBody))
+    this.req.getJurisdictionBtnManager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.Btnmanagers = value.values.datas;
@@ -191,32 +193,4 @@ export class BtnManagerComponent implements OnInit {
         this.checked = '';
       });
   }
-
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
-  }
-
 }

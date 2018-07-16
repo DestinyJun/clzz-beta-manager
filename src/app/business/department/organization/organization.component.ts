@@ -3,6 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {DeparmentList, PageBody} from '../../../shared/global.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 
 @Component({
@@ -30,19 +31,18 @@ export class OrganizationComponent implements OnInit {
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-    // 修改表单信息
+    // 增加表单信息
     this.formModel = fb.group({
-      id: ['', [Validators.required]],
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
       tel: ['', [Validators.required]],
-      oid: ['', [Validators.required]],
-      pid: ['', [Validators.required]],
-      idt: ['', [Validators.required]],
-      udt: ['', [Validators.required]]
+      oid: ['-1', [Validators.required]],
+      pid: ['-1', [Validators.required]]
     });
+    // 修改表单信息
     this.formModel3 = fb.group({
       id: ['', [Validators.required]],
       name: ['', [Validators.required]],
@@ -63,8 +63,8 @@ export class OrganizationComponent implements OnInit {
     this.Request();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values;
-      this.formModel.patchValue({'oid': this.Fmodalid.organizations[0].id});
-      this.formModel.patchValue({'pid': this.Fmodalid.departments[0].id});
+      // this.formModel.patchValue({'oid': this.Fmodalid.organizations[0].id});
+      // this.formModel.patchValue({'pid': this.Fmodalid.departments[0].id});
     });
   }
   public SelectAddModalOrgaId(value): void {
@@ -134,7 +134,7 @@ export class OrganizationComponent implements OnInit {
   public Request(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findDepartment(this.parameterSerialization(this.pageBody))
+    this.req.findDepartment(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe((value) => {
         this.Departments = value.values.datas;
         this.num = Math.ceil(value.values.num / 10);
@@ -154,10 +154,12 @@ export class OrganizationComponent implements OnInit {
   // 增加
   public insert() {
     if (this.formModel.valid) {
+      console.log(this.formModel.value);
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addDepartment(this.parameterSerialization(this.formModel.value)).subscribe((res) => {
+      this.req.addDepartment(this.commonfun.parameterSerialization(this.formModel.value)).subscribe((res) => {
+        console.log(res);
         this.resMessage = res.message;
         this.status1 = Number(res.status);
         this.Request();
@@ -190,7 +192,7 @@ export class OrganizationComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateDepartment(this.parameterSerialization(this.formModel3.value))
+      this.req.updateDepartment(this.commonfun.parameterSerialization(this.formModel3.value))
         .subscribe((res) => {
           this.resMessage = res.message;
           this.status1 = Number(res.status);
@@ -200,32 +202,5 @@ export class OrganizationComponent implements OnInit {
       this.inputvalid = true;
     }
   }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
-  }
-
 
 }

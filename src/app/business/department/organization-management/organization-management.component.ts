@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {OrganizationList, PageBody} from '../../../shared/global.service';
 import {mobileValidators} from '../../../validator/Validators';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 
 @Component({
@@ -31,12 +32,13 @@ export class OrganizationManagementComponent implements OnInit {
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
 
-    // 修改表单信息
+    // 增加表单信息
     this.formModel = fb.group({
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required]],
       code: ['', [Validators.required]],
       otype: ['', [Validators.required]],
       tel: ['', [Validators.required, mobileValidators]],
@@ -47,8 +49,9 @@ export class OrganizationManagementComponent implements OnInit {
       corpname: ['', [Validators.required]],
       registerdate: ['', [Validators.required]],
       zipcode: ['', [Validators.required]],
-      pid: ['', [Validators.required]]
+      pid: ['-1', [Validators.required]]
     });
+    // 修改表单信息
     this.formModel3 = fb.group({
       id: ['', [Validators.required]],
       name: ['', [Validators.required, Validators.minLength(3)]],
@@ -76,10 +79,11 @@ export class OrganizationManagementComponent implements OnInit {
     this.Request();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values.organizations;
-      this.formModel.patchValue({'pid': this.Fmodalid[0].id});
+      // this.formModel.patchValue({'pid': this.Fmodalid[0].id});
     });
   }
   public SelectAddModalId(value): void {
+    console.log(value);
     this.formModel.patchValue({'pid': value});
   }
   public SelectModifyModalId(value): void {
@@ -119,13 +123,14 @@ export class OrganizationManagementComponent implements OnInit {
   public Request(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findOrganization(this.parameterSerialization(this.pageBody))
+    this.req.findOrganization(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe((value) => {
         this.organizations = value.values.datas;
         this.num = Math.ceil(value.values.num / 10);
         setTimeout(() => {
           this.openstatus = true;
           this.status1 = 0;
+          this.resMessage = null;
         }, 2500);
         const s: Array<boolean> = [];
         const length = this.organizations.length;
@@ -164,7 +169,8 @@ export class OrganizationManagementComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addOrganization(this.parameterSerialization(this.formModel.value)).subscribe((res) => {
+      console.log(this.formModel.value);
+      this.req.addOrganization(this.commonfun.parameterSerialization(this.formModel.value)).subscribe((res) => {
         this.resMessage = res.message;
         this.status1 = Number(res.status);
         this.Request();
@@ -193,13 +199,11 @@ export class OrganizationManagementComponent implements OnInit {
   }
   // 修改
   public Update() {
-    console.log(this.formModel3.value);
-    console.log(this.formModel3.valid);
     if (this.formModel3.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateOrganization(this.parameterSerialization(this.formModel3.value)).subscribe((res) => {
+      this.req.updateOrganization(this.commonfun.parameterSerialization(this.formModel3.value)).subscribe((res) => {
         this.resMessage = res.message;
         this.status1 = Number(res.status);
         this.Request();
@@ -207,31 +211,5 @@ export class OrganizationManagementComponent implements OnInit {
     } else {
       this.inputvalid = true;
     }
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 }

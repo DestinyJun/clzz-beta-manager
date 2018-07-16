@@ -3,6 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {DeviceProductionSensorList, PageBody} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-production-sensor',
@@ -27,35 +28,11 @@ export class ProductionSensorComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-    // 模态框表单
-    this.proSensorAddForm = fb.group({
-      sid: ['', Validators.required],
-      sname: ['', Validators.required],
-      stype: ['', Validators.required],
-      sdatatype: ['', Validators.required],
-      saddress: ['', Validators.required],
-      sstatus: ['', Validators.required],
-      smax: ['', Validators.required],
-      smin: ['', Validators.required],
-      srecomm: ['', Validators.required],
-      did: ['', Validators.required]
-    });
-    this.proSensorModifyForm = fb.group({
-      sid: ['', Validators.required],
-      sname: ['', Validators.required],
-      stype: ['', Validators.required],
-      sdatatype: ['', Validators.required],
-      saddress: ['', Validators.required],
-      sstatus: ['', Validators.required],
-      smax: ['', Validators.required],
-      smin: ['', Validators.required],
-      srecomm: ['', Validators.required],
-      did: ['', Validators.required]
-    });
   }
 
   ngOnInit() {
@@ -66,10 +43,35 @@ export class ProductionSensorComponent implements OnInit {
     this.gtone = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
+    // 模态框表单
+    this.proSensorAddForm = this.fb.group({
+      sid: ['', Validators.required],
+      sname: ['', Validators.required],
+      stype: ['', Validators.required],
+      sdatatype: ['', Validators.required],
+      saddress: ['', Validators.required],
+      sstatus: ['', Validators.required],
+      smax: ['', Validators.required],
+      smin: ['', Validators.required],
+      srecomm: ['', Validators.required],
+      did: ['', Validators.required]
+    });
+    this.proSensorModifyForm = this.fb.group({
+      sid: ['', Validators.required],
+      sname: ['', Validators.required],
+      stype: ['', Validators.required],
+      sdatatype: ['', Validators.required],
+      saddress: ['', Validators.required],
+      sstatus: ['', Validators.required],
+      smax: ['', Validators.required],
+      smin: ['', Validators.required],
+      srecomm: ['', Validators.required],
+      did: ['', Validators.required]
+    });
     this.Update();
     this.req.FindDeviceDeviceid().subscribe(value => {
       this.Fmodalid = value.values;
-      this.proSensorAddForm.patchValue({'did': this.Fmodalid[0].did});
+      // this.proSensorAddForm.patchValue({'did': this.Fmodalid[0].did});
     });
   }
 // 选择增加设备id
@@ -142,11 +144,12 @@ export class ProductionSensorComponent implements OnInit {
 
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proSensorAdd(): void {
+    console.log(this.proSensorAddForm.value);
     if (this.proSensorAddForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorAdd(this.parameterSerializationForm(this.proSensorAddForm.value))
+      this.req.DeviceProductionSensorAdd(this.commonfun.parameterSerialization(this.proSensorAddForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -183,7 +186,7 @@ export class ProductionSensorComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorModify(this.parameterSerializationForm(this.proSensorModifyForm.value))
+      this.req.DeviceProductionSensorModify(this.commonfun.parameterSerialization(this.proSensorModifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -198,7 +201,7 @@ export class ProductionSensorComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionSensor(this.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionSensor(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.ProductionSensors = value.values.datas;
@@ -209,34 +212,6 @@ export class ProductionSensorComponent implements OnInit {
         this.hasChecked = [];
         this.checked = '';
       });
-  }
-
-
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 
 }

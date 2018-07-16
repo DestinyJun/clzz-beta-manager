@@ -89,7 +89,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagevideo [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagevideo>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -138,6 +138,7 @@
       <div class="form-group">
         <label>所属部门ID: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid.departments" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -217,13 +218,6 @@
   <div class="modal-body">
     <form *ngIf="downWindow" class="forms" [formGroup]="formModel3">
       <div class="form-group">
-        <label>摄像头组ID</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="formModel3.get('id').invalid && formModel3.get('id').touched">
-        <div [hidden]="formModel3.get('id').valid || formModel3.get('id').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
         <label>修改摄像机组ID</label>
         <input type="text" class="form-control" formControlName="Update_id" placeholder="请输入修改的摄像机ID">
       </div>
@@ -261,10 +255,6 @@
       </div>
     </form>
     <form *ngIf="!downWindow" class="forms" [formGroup]="formModel3s">
-      <div class="form-group">
-        <label>摄像头ID</label>
-        <input type="text" class="form-control" formControlName="id">
-      </div>
       <div class="form-group">
         <label>修改摄像机id</label>
         <input type="text" class="form-control" formControlName="Update_id" [class.hasError]="formModel3s.get('Update_id').invalid && formModel3s.get('Update_id').touched">
@@ -355,8 +345,7 @@
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status1 !== 0 && status1 === 10" [class.fail]="status1 === 11 || status1 === 13 || status1 === 14">
-    <span *ngIf="status1 === 10">{{resMessage}}</span>
-    <span *ngIf="status1 === 11 || status1 === 13 || status1 === 12 || status1 === 14" >{{resMessage}}</span>
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 14">
+    <span>{{resMessage}}</span>
   </div>
 </div>

@@ -8,8 +8,8 @@ import {ProductionDataComponent} from './production-data/production-data.compone
 import {ProductionSensorComponent} from './production-sensor/production-sensor.component';
 import { ModalModule} from 'ngx-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {PagedeviceComponent} from '../../based/pagedevice/pagedevice.component';
-import {SlimLoadingBarModule} from './../../../../node_modules/ng2-slim-loading-bar';
+import {BasedModule} from '../../based/based.module';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -17,17 +17,16 @@ import {SlimLoadingBarModule} from './../../../../node_modules/ng2-slim-loading-
     ModalModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    SlimLoadingBarModule
+    BasedModule
   ],
   declarations: [
     DeviceComponent,
     ProductionLineComponent,
     ProductionIcmComponent,
     ProductionDataComponent,
-    ProductionSensorComponent,
-    PagedeviceComponent
+    ProductionSensorComponent
   ],
   providers: [],
-  exports: [SlimLoadingBarModule]
+  exports: []
 })
 export class DeviceModule { }

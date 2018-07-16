@@ -43,7 +43,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -86,6 +86,7 @@
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -115,14 +116,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="interfacemanagerModifyForm">
-      <div class="form-group">
-        <label>id&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="interfacemanagerModifyForm.get('id').invalid && interfacemanagerModifyForm.get('id').touched">
-        <div [hidden]="interfacemanagerModifyForm.get('id').valid || interfacemanagerModifyForm.get('id').untouched">
-          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>接口名称&nbsp;&nbsp;:&nbsp;</label>
         <input type="text" class="form-control" formControlName="iname" [class.hasError]="interfacemanagerModifyForm.get('iname').invalid && interfacemanagerModifyForm.get('iname').touched">
@@ -198,7 +191,6 @@
 
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+    <span>{{resMessage}}</span>
   </div>
 </div>

@@ -4,6 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {DeviceProductionDataList, PageBody} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-production-data',
@@ -28,43 +29,11 @@ export class ProductionDataComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-  //  增加表单
-    this.prodataAddForm = fb.group({
-      did: ['', Validators.required],
-      name: ['', Validators.required],
-      fnum: ['', Validators.required],
-      dvender: ['', Validators.required],
-      dmodule: ['', Validators.required],
-      dprodate: ['', Validators.required],
-      dinstalldate: ['', Validators.required],
-      power: ['', Validators.required],
-      current: ['', Validators.required],
-      voltage: ['', Validators.required],
-      usestatus: ['', Validators.required],
-      dtype: ['', Validators.required],
-      dstatus: ['', Validators.required],
-      mid: ['', Validators.required]
-    });
-    this.prodataModifyForm = fb.group({
-      did: ['', Validators.required],
-      name: ['', Validators.required],
-      fnum: ['', Validators.required],
-      dvender: ['', Validators.required],
-      dmodule: ['', Validators.required],
-      dprodate: ['', Validators.required],
-      dinstalldate: ['', Validators.required],
-      power: ['', Validators.required],
-      current: ['', Validators.required],
-      voltage: ['', Validators.required],
-      usestatus: ['', Validators.required],
-      dtype: ['', Validators.required],
-      dstatus: ['', Validators.required],
-      mid: ['', Validators.required]
-    });
   }
 
   ngOnInit() {
@@ -75,10 +44,42 @@ export class ProductionDataComponent implements OnInit {
     this.gtone = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
+    //  增加表单
+    this.prodataAddForm = this.fb.group({
+      did: ['', Validators.required],
+      name: ['', Validators.required],
+      fnum: ['', Validators.required],
+      dvender: ['', Validators.required],
+      dmodule: ['', Validators.required],
+      dprodate: ['', Validators.required],
+      dinstalldate: ['', Validators.required],
+      power: ['', Validators.required],
+      current: ['', Validators.required],
+      voltage: ['', Validators.required],
+      usestatus: ['', Validators.required],
+      dtype: ['', Validators.required],
+      dstatus: ['', Validators.required],
+      mid: ['', Validators.required]
+    });
+    this.prodataModifyForm = this.fb.group({
+      did: ['', Validators.required],
+      name: ['', Validators.required],
+      fnum: ['', Validators.required],
+      dvender: ['', Validators.required],
+      dmodule: ['', Validators.required],
+      dprodate: ['', Validators.required],
+      dinstalldate: ['', Validators.required],
+      power: ['', Validators.required],
+      current: ['', Validators.required],
+      voltage: ['', Validators.required],
+      usestatus: ['', Validators.required],
+      dtype: ['', Validators.required],
+      dstatus: ['', Validators.required],
+      mid: ['', Validators.required]
+    });
     this.Update();
     this.req.FindmodularMid().subscribe(value => {
       this.Fmodalid = value.values;
-      this.prodataAddForm.patchValue({'mid': this.Fmodalid[0].mid});
     });
   }
   // 选择增加设备id
@@ -170,7 +171,7 @@ export class ProductionDataComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionDataAdd(this.parameterSerializationForm(this.prodataAddForm.value))
+      this.req.DeviceProductionDataAdd(this.commonfun.parameterSerialization(this.prodataAddForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -186,7 +187,7 @@ export class ProductionDataComponent implements OnInit {
         this.openstatus = false;
         this.inputvalid = false;
         this.modalRef.hide();
-        this.req.DeviceProductionDataModify(this.parameterSerializationForm(this.prodataModifyForm.value))
+        this.req.DeviceProductionDataModify(this.commonfun.parameterSerialization(this.prodataModifyForm.value))
           .subscribe(res => {
             this.resMessage = res.message;
             this.status = Number(res.status);
@@ -200,7 +201,7 @@ export class ProductionDataComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionData(this.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionData(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];
         this.checked = '';
@@ -211,31 +212,5 @@ export class ProductionDataComponent implements OnInit {
           this.status = 0;
         }, 2500);
       });
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 }

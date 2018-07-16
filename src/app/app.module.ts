@@ -1,4 +1,4 @@
-import {BrowserModule } from '@angular/platform-browser';
+ import {BrowserModule } from '@angular/platform-browser';
 import {NgModule } from '@angular/core';
 import {AppRouterModule} from './app.router.module';
 import {AppComponent } from './app.component';
@@ -9,6 +9,7 @@ import {ReqService} from './shared/req.service';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 import {LoginGuard} from './guard/login.guard';
 import {TreeModule} from 'ng2-tree';
+ import {CommonfunService} from './shared/commonfun.service';
 
 @NgModule({
   imports: [
@@ -24,6 +25,7 @@ import {TreeModule} from 'ng2-tree';
   providers: [
     GlobalService,
     ReqService,
+    CommonfunService,
     LoginGuard,
     {provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]

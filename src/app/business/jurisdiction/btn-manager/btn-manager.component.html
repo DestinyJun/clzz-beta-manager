@@ -45,7 +45,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-          <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -80,6 +80,7 @@
       <div class="form-group">
         <label>设备id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -109,14 +110,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="btnmanagerModifyForm">
-      <div class="form-group">
-        <label>按钮id&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="btnmanagerModifyForm.get('id').invalid && btnmanagerModifyForm.get('id').touched">
-        <div [hidden]="btnmanagerModifyForm.get('id').valid || btnmanagerModifyForm.get('id').untouched">
-          <span [hidden]="!btnmanagerModifyForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>按钮名称&nbsp;&nbsp;:&nbsp;</label>// 不能超过十个字节
         <input type="text" class="form-control" formControlName="name" [class.hasError]="btnmanagerModifyForm.get('name').invalid && btnmanagerModifyForm.get('name').touched">
@@ -185,7 +178,6 @@
 
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+    <span>{{resMessage}}</span>
   </div>
 </div>

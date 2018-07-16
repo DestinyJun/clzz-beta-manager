@@ -6,7 +6,7 @@ import {VideoWindowComponent} from './video-window/video-window.component';
 import {VideoManagerComponent} from './video-manager/video-manager.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { TreeModule } from 'ng2-tree';
-import {PagevideoComponent} from '../../based/pagevideo/pagevideo.component';
+import {BasedModule} from '../../based/based.module';
 
 @NgModule({
   imports: [
@@ -14,13 +14,13 @@ import {PagevideoComponent} from '../../based/pagevideo/pagevideo.component';
     FormsModule,
     VideosRoutersModule,
     ReactiveFormsModule,
-    TreeModule
+    TreeModule,
+    BasedModule
   ],
   declarations: [
     VideosComponent,
     VideoWindowComponent,
-    VideoManagerComponent,
-    PagevideoComponent
+    VideoManagerComponent
   ],
   exports: [],
   providers: [],

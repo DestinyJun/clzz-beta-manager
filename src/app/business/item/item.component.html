@@ -1,0 +1,157 @@
+<div class="productiondata">
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-xs-12 index">
+        项目
+      </div>
+    </div>
+    <div class="row options">
+      <div class="col-xs-12">
+        <button type="button" class="btn btn-default" (click)="itemAddModal(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="itemModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="itemModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+      </div>
+    </div>
+    <div class="row content">
+      <div class="col-xs-12">
+        <table class="table table-responsive table-bordered">
+          <thead>
+          <tr>
+            <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>项目编号</th>
+            <th>项目名称</th>
+            <th>项目位置</th>
+            <th>项目位置经度</th>
+            <th>项目位置纬度</th>
+            <th>...</th>
+          </tr>
+          </thead>
+          <tbody>
+          <tr *ngFor="let it of items; let i = index">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
+            <td>{{it.itemcode}}</td>
+            <td>{{it.itemname}}</td>
+            <td>{{it.itemposition}}</td>
+            <td>{{it.longitude}}</td>
+            <td>{{it.latitude}}</td>
+            <td>...</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="row text-center">
+      <div class="col-xs-12">
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!--模态框-->
+<ng-template #add>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">项目数据增加</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="itemAddForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}</label>
+        <input [type]="add.field === 'starttime'?'date':'text'" class="form-control" formControlName="{{add.field}}" [class.hasError]="itemAddForm.get(add.field).invalid && itemAddForm.get(add.field).touched">
+        <div [hidden]="itemAddForm.get(add.field).valid || itemAddForm.get(add.field).untouched">
+          <span [hidden]="!itemAddForm.hasError('required', add.field)">必填</span>
+        </div>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="itemAdd()">
+        确定增加
+      </button>
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #modify>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">项目数据修改</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <form class="form-horizontal" [formGroup]="itemModifyForm">
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}</label>
+        <input [type]="(add.field === 'starttime' || add.field === 'idt')?'date':'text'" class="form-control" formControlName="{{modify.field}}" [class.hasError]="itemModifyForm.get(modify.field).invalid && itemModifyForm.get(modify.field).touched">
+        <div [hidden]="itemModifyForm.get(modify.field).valid || itemModifyForm.get(modify.field).untouched">
+          <span [hidden]="!itemModifyForm.hasError('required', modify.field)">必填</span>
+        </div>
+      </div>
+    </form>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+    </div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="itemModify()">
+        确定修改
+      </button>
+      <button type="button" class="btn  btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+    <br>
+  </div>
+</ng-template>
+<ng-template #lookdesc>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">项目数据查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <p>项目编号	: &nbsp;I{{detail.itemcode}}</p>
+    <p>项目名称	: &nbsp;{{detail.itemname}}</p>
+    <p>项目位置	: &nbsp;{{detail.itemposition}}</p>
+    <p>项目位置经度: &nbsp;	{{detail.longitude}}</p>
+    <p>项目位置纬度: &nbsp;	{{detail.latitude}}</p>
+    <p>项目明细项目所属单位编号: &nbsp;	{{detail.itemdetail}}</p>
+    <p>单位编号: &nbsp;	{{detail.unitcode}}</p>
+    <p>项目巡检成员: &nbsp;	{{detail.itemmembers}}</p>
+    <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
+    <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
+    <p>巡检结束时间: &nbsp;	{{detail.endtime}}</p>
+    <p>状态: &nbsp;	{{detail.status}}</p>
+    <p>插入时间: &nbsp;	{{detail.idt}}</p>
+    <p>更新时间: &nbsp;	{{detail.udt}}</p>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();itemModal(modify)">
+        跳转到修改
+      </button>
+      <button type="button" class="btn  btn-danger" aria-label="Close" (click)="modalRef.hide()">
+        返回
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span>{{resMessage}}</span>
+  </div>
+</div>

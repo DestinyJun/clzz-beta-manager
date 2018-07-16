@@ -49,8 +49,6 @@ export class VideoWindowComponent implements OnInit {
   }
 
   public logEvent(e: NodeEvent): void {
-    // console.log(e.node.node.outer_url);
-    // console.log(e.node.node.value);
     if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
       // this.videoUrl1 = `${e.node.node.outer_url}`;
@@ -71,7 +69,7 @@ export class VideoWindowComponent implements OnInit {
   }
 
   public addHtmlVideo1(url: string): string {
-    const html = `<object type='application/x-vlc-plugin' id='' width="100%" height="100%" events='True'
+    const html = `<object type='application/x-vlc-plugin' id='' style="position: relative;top: 0px;left: 0px;" width="100%" height="100%" events='True'
                 pluginspage="http://www.videolan.org"
                 codebase="http://downloads.videolan.org/pub/videolan/vlc-webplugins/2.0.6/npapi-vlc-2.0.6.tar.xz">
                 <param name='mrl' value='${url}' />
@@ -79,9 +77,10 @@ export class VideoWindowComponent implements OnInit {
                 <param name='autoplay' value='true' />
                 <param name='loop' value='false' />
                 <param value="transparent" name="wmode">
-                <embed id='vlc1' wmode="transparent" type="application/x-vlc-plugin" width="100%" height="100%"
-                       pluginspage="http://www.videolan.org" allownetworking="internal" allowscriptaccess="always" quality="high"
-                       src='${url}'>
+                <!-- <embed id='vlc1' *ngIf="true" wmode="transparent" type="application/x-vlc-plugin" width="100%" height="100%"
+                        pluginspage="http://www.videolan.org" allownetworking="internal" allowscriptaccess="always" quality="high"
+                        src='${url}'>
+                -->
             </object>
 `;
     return html;
@@ -101,8 +100,6 @@ export class VideoWindowComponent implements OnInit {
                   const values = ccvalue.values.datas;
                   // console.log(values);
                   values.map((value, index) => {
-                    // value = JSON.stringify(value).replace('name', 'value');
-                    // value = JSON.parse(value);
                     switch (index % 4) {
                       case 0:
                         this.c1.push(value);

@@ -3,6 +3,7 @@ import {PageBody, UserPowerInfo} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-user-manager',
@@ -29,10 +30,11 @@ export class UserManagerComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
-  ) {
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
+) {
     this.userPowerAddForm = fb.group({
       userid: ['', Validators.required],
       moduleid: ['', Validators.required]
@@ -55,13 +57,13 @@ export class UserManagerComponent implements OnInit {
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
       if (this.Fmodalid !== undefined) {
-        this.userPowerAddForm.patchValue({'moduleid': this.Fmodalid[0].id});
+        // this.userPowerAddForm.patchValue({'moduleid': this.Fmodalid[0].id});
       }
     });
     this.req.FinduserIdname().subscribe(value => {
       this.userid = value.values;
       if (this.userid !== undefined) {
-        this.userPowerAddForm.patchValue({'userid': this.userid[0].id});
+        // this.userPowerAddForm.patchValue({'userid': this.userid[0].id});
       }
     });
   }
@@ -157,7 +159,7 @@ public userPowerAdd(): void {
     this.openstatus = false;
     this.inputvalid = false;
     this.modalRef.hide();
-    this.req.JurisdictionuUserPowerAdd(this.parameterSerializationForm(this.userPowerAddForm.value))
+    this.req.JurisdictionuUserPowerAdd(this.commonfun.parameterSerialization(this.userPowerAddForm.value))
       .subscribe(res => {
         this.resMessage = res.message;
         this.status = Number(res.status);
@@ -173,7 +175,7 @@ public userPowerAdd(): void {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionuUserPowerModify(this.parameterSerializationForm(this.userPowerModifyForm.value))
+      this.req.JurisdictionuUserPowerModify(this.commonfun.parameterSerialization(this.userPowerModifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -187,7 +189,7 @@ public userPowerAdd(): void {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getJurisdictionuUserPower(this.parameterSerialization(this.pageBody))
+    this.req.getJurisdictionuUserPower(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.UserPowers = value.values.datas;
@@ -198,32 +200,6 @@ public userPowerAdd(): void {
         this.hasChecked = [];
         this.checked = '';
       });
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 
 }

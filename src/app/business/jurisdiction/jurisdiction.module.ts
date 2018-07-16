@@ -8,7 +8,7 @@ import {InterfaceManagerComponent} from './interface-manager/interface-manager.c
 import {UserManagerComponent} from './user-manager/user-manager.component';
 import {AlertModule, ModalModule} from 'ngx-bootstrap';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {PagejurisComponent} from '../../based/pagejuris/pagejuris.component';
+import {BasedModule} from '../../based/based.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -16,15 +16,15 @@ import {PagejurisComponent} from '../../based/pagejuris/pagejuris.component';
     ModalModule.forRoot(),
     AlertModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BasedModule
   ],
   declarations: [
     JurisdictionComponent,
     BtnManagerComponent,
     ModalManagerComponent,
     InterfaceManagerComponent,
-    UserManagerComponent,
-    PagejurisComponent
+    UserManagerComponent
   ],
   providers: [],
 })

@@ -56,7 +56,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pageusers [num]="num" (pageBodyChange)="getPageBody($event)"></app-pageusers>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -124,6 +124,7 @@
       <div class="form-group">
         <label>所属组织ID: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
@@ -166,10 +167,14 @@
       <br>
       <div class="form-group">
         <label>性别: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="gender" [class.hasError]="userAddForm.get('gender').invalid && userAddForm.get('gender').touched">
-        <div [hidden]="userAddForm.get('gender').valid || userAddForm.get('gender').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'gender')">必填</span>
+        <div class="form-control">
+          <input type="radio" #m name="add_gender" value="m" (click)="selectGender(m.value);">男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" #w name="add_gender" value="w" (click)="selectGender(w.value)">女
         </div>
+        <!--<input type="text"  class="form-control" formControlName="gender" [class.hasError]="userAddForm.get('gender').invalid && userAddForm.get('gender').touched">-->
+        <!--<div [hidden]="userAddForm.get('gender').valid || userAddForm.get('gender').untouched">-->
+          <!--<span [hidden]="!userAddForm.hasError('required', 'gender')">必填</span>-->
+        <!--</div>-->
       </div>
       <br>
     </form>
@@ -197,13 +202,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="userModifyForm">
-      <div class="form-group">
-        <label>用户ID&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="userModifyForm.get('id').invalid && userModifyForm.get('id').touched">
-        <div [hidden]="userModifyForm.get('id').valid || userModifyForm.get('id').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
       <div class="form-group">
         <label>用户编码&nbsp;&nbsp;: &nbsp;</label>
         <input type="text" class="form-control" formControlName="userCode" [class.hasError]="userModifyForm.get('userCode').invalid && userModifyForm.get('userCode').touched">
@@ -298,9 +296,9 @@
       <br>
       <div class="form-group">
         <label>性别: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="gender" [class.hasError]="userModifyForm.get('gender').invalid && userModifyForm.get('gender').touched">
-        <div [hidden]="userModifyForm.get('gender').valid || userModifyForm.get('gender').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'gender')">必填</span>
+        <div class="form-control">
+          <input type="radio" #m name="gender" value="m" (click)="selectGender(m.value)" [checked]="userDetail.gender === 'm' || userDetail.gender === '男'">男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" #w name="gender" value="w" (click)="selectGender(w.value)" [checked]="userDetail.gender === 'w' || userDetail.gender === '女'">女
         </div>
       </div>
       <br>
@@ -358,7 +356,6 @@
 
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span *ngIf="status === 10">操作成功</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >操作失败</span>
+    <span>{{resMessage}}</span>
   </div>
 </div>

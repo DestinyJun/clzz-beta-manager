@@ -1,8 +1,12 @@
 .center-left-top-video{
   width: 100%;
   height: 40vh;
+  padding: 10px;
   background-color: black;
-  margin-bottom: 2vh;
+  margin-bottom: 5vh;
+}
+object > embed{
+  display: none;
 }
 .list-group-item{
   border: none;

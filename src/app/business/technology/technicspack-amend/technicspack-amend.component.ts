@@ -3,6 +3,7 @@ import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord} from '../.
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-technicspack-amend',
@@ -28,11 +29,20 @@ export class TechnicspackAmendComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-    this.paramAddForm = fb.group({
+  }
+  ngOnInit() {
+    this.status = 0;
+    this.openstatus = true;
+    this.inputvalid = false;
+    this.mustone = false;
+    this.gtone = false;
+    this.pageBody = new PageBody(1, 10);
+    this.paramAddForm = this.fb.group({
       name: ['', Validators.required],
       finish_type: ['', Validators.required],
       bottom_dry_thickness: ['', Validators.required],
@@ -64,7 +74,7 @@ export class TechnicspackAmendComponent implements OnInit {
       exhaust_air_volume_2: ['', Validators.required],
       exhaust_air_volume_2_d: ['', Validators.required]
     });
-    this.paramModifyForm = fb.group({
+    this.paramModifyForm = this.fb.group({
       name: ['', Validators.required],
       finish_type: ['', Validators.required],
       bottom_dry_thickness: ['', Validators.required],
@@ -128,14 +138,6 @@ export class TechnicspackAmendComponent implements OnInit {
       new TechnologyParamsPackWord('二涂排气风量',	'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定'),
       new TechnologyParamsPackWord('二涂排气风量差值',	'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定'),
     ];
-  }
-  ngOnInit() {
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    this.pageBody = new PageBody(1, 10);
     this.Update();
   }
   // 控制模态框
@@ -252,7 +254,7 @@ export class TechnicspackAmendComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.FindTechnicsPackAmend(this.parameterSerialization(this.pageBody)).subscribe(
+    this.req.FindTechnicsPackAmend(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.Paramdatas = value.values.amenddata;
@@ -266,32 +268,6 @@ export class TechnicspackAmendComponent implements OnInit {
         this.hasChecked = [];
         this.checked = '';
       });
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 
 }

@@ -34,10 +34,11 @@ export class SidebarComponent implements OnInit {
       new NavListChild('温度工艺包', false, 'technology/temperature')
     ] , true),
     new NavList('用户管理', 'users', 'fa fa-graduation-cap', false, [] , true),
-    new NavList('视频管理', '', 'fa fa-graduation-cap', false, [
+    new NavList('视频管理', '', 'fa fa-video-camera', false, [
       new NavListChild('监控窗口', false, 'videos/videowin'),
       new NavListChild('视频管理', false, 'videos/videoman')
-    ] , true)
+    ] , true),
+    new NavList('项目管理', 'item', 'fa fa-bug', false, [] , true)
   ];
   public slidinghight: number;
   public slidingTop: number;
@@ -70,9 +71,9 @@ export class SidebarComponent implements OnInit {
       this.navLists.forEach((item) => {
         item.open = true;
         item.clsstate = false;
-        if (item.children) {
-          console.log('hello');
-        }
+        // if (item.children) {
+        //   console.log('hello');
+        // }
         item.children.forEach((itemchild) => {
           itemchild.setState = false;
         });

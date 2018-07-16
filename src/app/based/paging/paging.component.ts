@@ -3,11 +3,11 @@ import {ReqService} from '../../shared/req.service';
 import {PageBody} from '../../shared/global.service';
 
 @Component({
-  selector: 'app-pagedevice',
-  templateUrl: './pagedevice.component.html',
-  styleUrls: ['./pagedevice.component.css']
+  selector: 'app-paging',
+  templateUrl: './paging.component.html',
+  styleUrls: ['./paging.component.css']
 })
-export class PagedeviceComponent implements OnInit {
+export class PagingComponent implements OnInit {
   @Input()
   public pageBody: PageBody;
   @Output()
@@ -74,7 +74,4 @@ export class PagedeviceComponent implements OnInit {
       }
     }
   }
-
-
-
 }

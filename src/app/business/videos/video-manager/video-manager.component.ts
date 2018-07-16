@@ -4,6 +4,8 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CameraGroup, Cameras, PageBody} from '../../../shared/global.service';
 import 'rxjs/Rx';
+import {tryCatch} from 'rxjs/util/tryCatch';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-video-manager',
@@ -37,39 +39,9 @@ export class VideoManagerComponent implements OnInit {
 
   constructor(private req: ReqService,
               private modalService: BsModalService,
-              private fb: FormBuilder) {
-    this.formModel1 = fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
-      status: ['0', Validators.required],
-      p_id: ['', Validators.required]
-    });
-    this.formModel1s = fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
-      inner_url: [''],
-      outer_url: ['', Validators.required],
-      g_id: ['', Validators.required]
-    });
-    this.formModel3 = fb.group({
-      id: [''],
-      Update_id: ['', Validators.required],
-      value: [''],
-      creator: [''],
-      status: [''],
-      p_id: ['']
-    });
-    this.formModel3s = fb.group({
-      id: [''],
-      Update_id: ['', Validators.required],
-      value: [''],
-      creator: [''],
-      inner_url: [''],
-      outer_url: [''],
-      g_id: ['']
-    });
+              private fb: FormBuilder,
+              private commonfun: CommonfunService
+  ) {
   }
 
   ngOnInit() {
@@ -82,6 +54,38 @@ export class VideoManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     this.G_id = -1;
     this.downWindow = true;
+    this.formModel1 = this.fb.group({
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      creator: ['', Validators.required],
+      status: ['0', Validators.required],
+      p_id: ['', Validators.required]
+    });
+    this.formModel1s = this.fb.group({
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      creator: ['', Validators.required],
+      inner_url: [''],
+      outer_url: ['', Validators.required],
+      g_id: ['', Validators.required]
+    });
+    this.formModel3 = this.fb.group({
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      status: [''],
+      p_id: ['']
+    });
+    this.formModel3s = this.fb.group({
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      inner_url: [''],
+      outer_url: [''],
+      g_id: ['']
+    });
     this.Request();
     this.req.FindDepartOrgani().subscribe(value => {
       // this.Fmodalid = value.values.departments;  // 这有问题，id 为undefined， 只有下面才不会出现问题
@@ -89,14 +93,13 @@ export class VideoManagerComponent implements OnInit {
       for (let i = 0; i < this.Fmodalid.departments.length; i++) {
         this.Fmodalid.departments[i].id = String(this.Fmodalid.departments[i].id);
       }
-      this.formModel1.patchValue({'p_id': this.Fmodalid.departments[0].id});
+      // this.formModel1.patchValue({'p_id': this.Fmodalid.departments[0].id});
     });
     // 摄像机组的状态
     this.cameraGroupStatus = new FormControl();
     this.cameraGroupStatus.valueChanges
       .debounceTime(500)
       .subscribe(value => {
-      console.log(value);
     });
   }
 
@@ -131,14 +134,11 @@ export class VideoManagerComponent implements OnInit {
     if (n === 1 && this.boo !== true) {
       this.mustone = false;
       this.gtone = false;
-      console.log(this.videoGroups[j]);
       if (this.downWindow === true) {
         this.DetailCameraGroup = this.videoGroups[j];
         this.formModel3.patchValue(this.videoGroups[j]);
       } else {
         this.DetailCameraGroup = this.videoGroups[j];
-        console.log(this.DetailCameraGroup);
-        // console.log(this.DetailCameraGroup.id);
         this.DetailCamera = this.videos[j];
         this.formModel3s.patchValue(this.videos[j]);
       }
@@ -162,7 +162,7 @@ export class VideoManagerComponent implements OnInit {
   public Request(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findVideomanager(this.parameterSerialization(this.pageBody))
+    this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe((value) => {
         this.videoGroups = value.values.datas;
         this.num = Math.ceil(value.values.number / 10);
@@ -193,7 +193,7 @@ export class VideoManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addVideomanager(this.parameterSerializationForm(this.formModel1.value))
+      this.req.addVideomanager(this.commonfun.parameterSerialization(this.formModel1.value))
         .subscribe(res => {
           this.status1 = Number(res.status);
           this.resMessage = res.message;
@@ -236,11 +236,15 @@ export class VideoManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateVideomanager(this.parameterSerializationForm(this.formModel3.value))
+      this.req.updateVideomanager(this.commonfun.parameterSerialization(this.formModel3.value))
         .subscribe(res => {
-          this.status1 = Number(res.status);
-          this.resMessage = res.message;
-          this.Request();
+          try {
+            this.status1 = Number(res.status);
+            this.resMessage = res.message;
+            this.Request();
+          }catch (e) {
+            console.log('服务器故障！');
+          }
         });
     } else {
       this.inputvalid = true;
@@ -278,7 +282,7 @@ export class VideoManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addVideo(this.parameterSerializationForm(this.formModel1s.value))
+      this.req.addVideo(this.commonfun.parameterSerialization(this.formModel1s.value))
         .subscribe(res => {
           this.status1 = Number(res.status);
           this.resMessage = res.message;
@@ -321,11 +325,15 @@ export class VideoManagerComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateVideo(this.parameterSerializationForm(this.formModel3s.value))
+      this.req.updateVideo(this.commonfun.parameterSerialization(this.formModel3s.value))
         .subscribe(res => {
-          this.status1 = Number(res.status);
-          this.resMessage = res.message;
-          this.RequestCamera(this.G_id);
+          // try {
+            this.status1 = Number(res.status);
+            this.resMessage = res.message;
+            this.RequestCamera(this.G_id);
+          // }catch (e) {
+          //   console.log('服务器故障！');
+          // }
         });
     } else {
       this.inputvalid = true;
@@ -364,34 +372,6 @@ export class VideoManagerComponent implements OnInit {
       this.G_id = Number(value);
       this.RequestCamera(this.G_id);
     }
-  }
-
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 
 }

@@ -5,7 +5,7 @@ import {UsersRoutersModule} from './users .routers.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AlertModule, ModalModule} from 'ngx-bootstrap';
 import {CustomFormsModule} from 'ng4-validators';
-import {PageusersComponent} from '../../based/pageusers/pageusers.component';
+import {BasedModule} from '../../based/based.module';
 @NgModule({
   imports: [
     CommonModule,
@@ -14,11 +14,11 @@ import {PageusersComponent} from '../../based/pageusers/pageusers.component';
     AlertModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    CustomFormsModule
+    CustomFormsModule,
+    BasedModule
   ],
   declarations: [
-    UsersComponent,
-    PageusersComponent
+    UsersComponent
   ],
   providers: [],
 })

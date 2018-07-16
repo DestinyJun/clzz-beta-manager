@@ -43,7 +43,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagedevice [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagedevice>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -78,6 +78,7 @@
       <div class="form-group">
         <label>请选择部门id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -107,13 +108,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="prolineModifyForm">
-      <div class="form-group">
-        <label>id号(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="sid" [class.hasError]="prolineModifyForm.get('sid').invalid && prolineModifyForm.get('sid').touched">
-        <div [hidden]="prolineModifyForm.get('sid').valid || prolineModifyForm.get('sid').untouched">
-          <span [hidden]="!prolineModifyForm.hasError('required', 'sid')">必填</span>
-        </div>
-      </div>
       <br>
       <div class="form-group">
         <label>生产线系统名称&nbsp;&nbsp;: &nbsp;</label>
@@ -181,8 +175,7 @@
 
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span>{{resMessage}}</span>
   </div>
 </div>

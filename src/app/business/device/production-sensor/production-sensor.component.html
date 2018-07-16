@@ -53,7 +53,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagedevice [num]="num" (pageBodyChange)=" getPageBody($event)"></app-pagedevice>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -144,6 +144,7 @@
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.did">{{modal.name}}</option>
         </select>
       </div>
@@ -173,14 +174,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="proSensorModifyForm">
-      <div class="form-group">
-        <label>Sid&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="sid"  [class.hasError]="proSensorModifyForm.get('sid').invalid && proSensorModifyForm.get('sid').touched">
-        <div [hidden]="proSensorModifyForm.get('sid').valid || proSensorModifyForm.get('sid').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'sid')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>名称&nbsp;&nbsp;: &nbsp;</label>
         <input type="text" class="form-control" formControlName="sname"  [class.hasError]="proSensorModifyForm.get('sname').invalid && proSensorModifyForm.get('sname').touched">
@@ -301,8 +294,7 @@
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span>{{resMessage}}</span>
   </div>
 </div>

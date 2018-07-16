@@ -47,7 +47,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagetechnology [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagetechnology>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -165,9 +165,8 @@
 
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
+    <span>{{resMessage}}</span>
   </div>
 </div>
 

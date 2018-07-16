@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {PageBody, DeviceProductionLineList} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ActivatedRoute} from '@angular/router';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-production-line',
@@ -29,22 +29,11 @@ export class ProductionLineComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder,
-    public routerInfo: ActivatedRoute
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-    // 增加模态框表单
-    this.prolineAddForm = fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
-    this.prolineModifyForm = fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
   }
   ngOnInit() {
     this.status = 0;
@@ -53,10 +42,20 @@ export class ProductionLineComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.pageBody = new PageBody(1, 10);
+    // 增加模态框表单
+    this.prolineAddForm = this.fb.group({
+      sid: ['', Validators.required],
+      name: ['', Validators.required],
+      did: ['', Validators.required]
+    });
+    this.prolineModifyForm = this.fb.group({
+      sid: ['', Validators.required],
+      name: ['', Validators.required],
+      did: ['', Validators.required]
+    });
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values['departments'];
-      this.prolineAddForm.patchValue({'did': this.Fmodalid[0].id});
     });
   }
   public SelectAddModalId(value): void {
@@ -146,8 +145,9 @@ export class ProductionLineComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineAdd(this.parameterSerializationForm(this.prolineAddForm.value))
+      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.prolineAddForm.value))
         .subscribe(res => {
+          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -162,7 +162,7 @@ export class ProductionLineComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineModify(this.parameterSerializationForm(this.prolineModifyForm.value))
+      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.prolineModifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -176,7 +176,7 @@ export class ProductionLineComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionLine(this.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.ProductionLines = value.values.datas;
@@ -187,32 +187,6 @@ export class ProductionLineComponent implements OnInit {
         this.hasChecked = [];
         this.checked = '';
       });
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-        if (result) {
-          result = result + f + '=' + form[f] + '&';
-        } else {
-          result = f + '=' + form[f] + '&';
-        }
-    }
-    return result;
   }
 }
 

@@ -45,7 +45,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagejuris [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagejuris>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -70,8 +70,9 @@
       </div>
       <br>
       <div class="form-group">
-        <label>对应id的父id: &nbsp;</label>
+        <label>对应模块的父id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalFid(modal_id.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of FmodalFid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -93,7 +94,8 @@
       <br>
       <div class="form-group">
         <label>请选择所属组织id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option [value]="-1">默认值为 -1</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -123,13 +125,6 @@
   </div>
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="modalModifyForm">
-      <div class="form-group">
-        <label>模块id&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="modalModifyForm.get('id').invalid && modalModifyForm.get('id').touched">
-        <div [hidden]="modalModifyForm.get('id').valid || modalModifyForm.get('id').untouched">
-          <span [hidden]="!modalModifyForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
       <div class="form-group">
         <label>模块名称&nbsp;&nbsp;:&nbsp;</label>
         <input type="text" class="form-control" formControlName="name" [class.hasError]="modalModifyForm.get('name').invalid && modalModifyForm.get('name').touched">
@@ -214,7 +209,6 @@
 
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span *ngIf="status === 10">{{resMessage}}</span>
-    <span *ngIf="status === 11 || status === 13 || status === 12" >{{resMessage}}</span>
+    <span>{{resMessage}}</span>
   </div>
 </div>

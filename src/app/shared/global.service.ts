@@ -84,8 +84,8 @@ export class OrganizationList {
     public corpname: string,
     public registerdate: string,
     public zipcode: string,
-    public Pid: string,
-    public Idt: string,
+    public pid: string,
+    public idt: string,
     public udt: string
 ) {}
 }
@@ -265,7 +265,7 @@ export class Cameras {
 ) {}
 }
 
-// 默认工艺
+// 工艺增加和修改表字段的构造器
 export class TechnologyParamsPackWord {
   constructor(
     public chinese_variable_name: string,
@@ -274,7 +274,7 @@ export class TechnologyParamsPackWord {
     public notes: string
   ) {}
 }
-// 温度工艺
+// 默认工艺
 export class TechnologyAmendQueryList {
   constructor(
     public name: number,
@@ -333,7 +333,7 @@ export class TechnologyAmendQueryList {
     public exhaust_air_volume_2_d: number
 ) {}
 }
-
+// 温度
 export class TechnologyTemperatureQueryList {
   constructor(
     public name: number,
@@ -388,5 +388,34 @@ export class TechnologyTemperatureQueryList {
     public exhaust_air_volume_1_d: number,
     public exhaust_air_volume_2: number,
     public exhaust_air_volume_2_d: number
+) {}
+}
+
+
+// 项目数据增加和修改 字段构造器
+export class ItemField {
+  constructor(
+    public name: string,
+    public field: string
+  ) {}
+}
+// 项目
+export class ItemList {
+  constructor(
+  public itemcode: string,
+  public itemname:	string,
+  public itemposition:	string,
+  public longitude:	number,
+  public latitude:	number,
+  public itemdetail:	string,
+  public unitcode:	number,
+  public itemmembers:	string,
+  public timecell:	number,
+  public starttime:	number,
+  public endtime: number,
+  public status: number,
+  public idt:	Date,
+  public udt:	Date
+
 ) {}
 }

@@ -26,11 +26,23 @@ export class UsersComponent implements OnInit {
   public inputvalid: boolean;
   public mustone: boolean;
   public gtone: boolean;
-  constructor(public modalService: BsModalService,
-              public req: ReqService,
-              public fb: FormBuilder) {
+  constructor(
+              private modalService: BsModalService,
+              private req: ReqService,
+              private fb: FormBuilder
+  ) {
+  }
+
+  ngOnInit() {
+    this.status = 0;
+    this.openstatus = true;
+    this.inputvalid = false;
+    this.mustone = false;
+    this.gtone = false;
+    // 对表格的初始化
+    this.pageBody = new PageBody(1, 6);
     //  增加模态框表单
-    this.userAddForm = fb.group({
+    this.userAddForm = this.fb.group({
       userCode: ['', Validators.required],
       idCode: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18)]],
       realName: ['', Validators.required],
@@ -44,7 +56,7 @@ export class UsersComponent implements OnInit {
       birthday: ['', Validators.required],
       gender: ['', Validators.required]
     });
-    this.userModifyForm = fb.group({
+    this.userModifyForm = this.fb.group({
       id: ['', Validators.required],
       userCode: ['', Validators.required],
       idCode: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18)]],
@@ -59,27 +71,24 @@ export class UsersComponent implements OnInit {
       birthday: ['', Validators.required],
       gender: ['', Validators.required]
     });
-  }
-
-  ngOnInit() {
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 6);
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values;
-      this.userAddForm.patchValue({'organizationId': this.Fmodalid.organizations[0].id});
+      // this.userAddForm.patchValue({'organizationId': this.Fmodalid.organizations[0].id});
     });
   }
+
+  // 增加时，选择部门id
   public SelectAddModalId(value): void {
     this.userAddForm.patchValue({'organizationId': value});
   }
+  // 修改时，选择部门id
   public SelectModifyModalId(value): void {
     this.userModifyForm.patchValue({'organizationId': value});
+  }
+  // 增加时，选择用户性别
+  public selectGender(value): void {
+      this.userAddForm.patchValue({gender: value});
   }
   public getPageBody(event): void {
     this.pageBody = event;

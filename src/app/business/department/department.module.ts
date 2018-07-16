@@ -7,7 +7,7 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {OrganizationComponent} from './organization/organization.component';
 import {OrganizationManagementComponent} from './organization-management/organization-management.component';
 import {CustomFormsModule} from 'ng4-validators';
-import {PagedepartmentComponent} from '../../based/pagedepartment/pagedepartment.component';
+import {BasedModule} from '../../based/based.module';
 
 
 
@@ -19,13 +19,13 @@ import {PagedepartmentComponent} from '../../based/pagedepartment/pagedepartment
     DepartmentRoutersModule,
     ModalModule.forRoot(),
     PaginationModule,
-    CustomFormsModule
+    CustomFormsModule,
+    BasedModule
   ],
   declarations: [
     DepartmentComponent,
     OrganizationComponent,
-    OrganizationManagementComponent,
-    PagedepartmentComponent
+    OrganizationManagementComponent
   ],
   providers: [],
 })

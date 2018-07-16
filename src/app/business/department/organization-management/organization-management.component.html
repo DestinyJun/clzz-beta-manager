@@ -49,7 +49,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-pagedepartment [num]="num" (pageBodyChange)="getPageBody($event)"></app-pagedepartment>
+        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -147,7 +147,8 @@
       </div>
       <div class="form-group">
         <label>父机构: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+          <option value="-1">默认值为 -1 (表示最高层)</option>
           <option *ngFor="let organization of Fmodalid" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
@@ -173,13 +174,6 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="formModel3">
-      <div class="form-group">
-        <label for="name1">组织id</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="formModel3.get('id').invalid && formModel3.get('id').touched">
-        <div [hidden]="formModel3.get('id').valid || formModel3.get('id').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
       <div class="form-group">
         <label for="name1">组织名称</label>
         <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="formModel3.get('name').invalid && formModel3.get('name').touched">
@@ -299,8 +293,8 @@
     <p>法人代表&nbsp; : &nbsp;	{{Detail.corpname}}</p>
     <p>成立日期&nbsp; : &nbsp;	{{Detail.registerdate}}</p>
     <p>邮编&nbsp; : &nbsp;	{{Detail.zipcode}}</p>
-    <p>父机构&nbsp; : &nbsp;	{{Detail.Pid}}</p>
-    <p>插入时间&nbsp; : &nbsp;	{{Detail.Idt}}</p>
+    <p>父机构&nbsp; : &nbsp;	{{Detail.pid}}</p>
+    <p>插入时间&nbsp; : &nbsp;	{{Detail.idt}}</p>
     <p>更新时间&nbsp; : &nbsp;	{{Detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="btn-box text-center">
@@ -311,8 +305,7 @@
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status1 !== 0 && status1 === 10" [class.fail]="status1 === 11 || status1 === 13">
-    <span *ngIf="status1 === 10">{{resMessage}}</span>
-    <span *ngIf="status1 === 11 || status1 === 13 || status1 === 12" >{{resMessage}}</span>
+  <div class="status text-center"  [class.success]="status1 !== 0 && status1 === 10" [class.fail]="status1 === 11 || status1 === 13 || status1 === 12">
+    <span>{{resMessage}}</span>
   </div>
 </div>

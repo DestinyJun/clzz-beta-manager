@@ -3,6 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {PageBody, DeviceProductionIcmList} from '../../../shared/global.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
   selector: 'app-production-icm',
@@ -27,20 +28,12 @@ export class ProductionIcmComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   constructor(
-    public modalService: BsModalService,
-    public req: ReqService,
-    public fb: FormBuilder
+    private modalService: BsModalService,
+    private req: ReqService,
+    private fb: FormBuilder,
+    private commonfun: CommonfunService
   ) {
-      this.proIcmAddForm = fb.group({
-        mid: ['', Validators.required],
-        name: ['', Validators.required],
-        sid: ['', Validators.required]
-      });
-      this.proIcmModifyForm = fb.group({
-        mid: ['', Validators.required],
-        name: ['', Validators.required],
-        sid: ['', Validators.required]
-      });
+
   }
 
   ngOnInit(): void {
@@ -50,11 +43,20 @@ export class ProductionIcmComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.pageBody = new PageBody(1, 10);
+    this.proIcmAddForm = this.fb.group({
+      mid: ['', Validators.required],
+      name: ['', Validators.required],
+      sid: ['', Validators.required]
+    });
+    this.proIcmModifyForm = this.fb.group({
+      mid: ['', Validators.required],
+      name: ['', Validators.required],
+      sid: ['', Validators.required]
+    });
     this.Update();
     // 得到系统id
     this.req.FindsystemSysid().subscribe(value => {
       this.Fmodalid = value.values;
-      this.proIcmAddForm.patchValue({'sid': this.Fmodalid[0].sid});
     });
   }
 
@@ -146,7 +148,7 @@ export class ProductionIcmComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionIcmAdd(this.parameterSerializationForm(this.proIcmAddForm.value))
+      this.req.DeviceProductionIcmAdd(this.commonfun.parameterSerialization(this.proIcmAddForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -162,7 +164,7 @@ export class ProductionIcmComponent implements OnInit {
     this.inputvalid = false;
     this.modalRef.hide();
     if (this.proIcmModifyForm.valid) {
-      this.req.DeviceProductionIcmModify(this.parameterSerializationForm(this.proIcmModifyForm.value))
+      this.req.DeviceProductionIcmModify(this.commonfun.parameterSerialization(this.proIcmModifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -176,7 +178,7 @@ export class ProductionIcmComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionIcm(this.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionIcm(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.ProductionIcms = value.values.datas;
@@ -187,31 +189,5 @@ export class ProductionIcmComponent implements OnInit {
         this.hasChecked = [];
         this.checked = '';
       });
-  }
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
-  }
-  // 表单参数序列化
-  public parameterSerializationForm(form: JSON): string {
-    let result: string;
-    for (const f in form) {
-      if (result) {
-        result = result + f + '=' + form[f] + '&';
-      } else {
-        result = f + '=' + form[f] + '&';
-      }
-    }
-    return result;
   }
 }
