@@ -96,7 +96,7 @@
       <div class="form-group">
         <label>部门父ID: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalDeparId(modal_id.value)" class="form-control">
-          <option [value]="null">默认值为空，请选择</option>
+          <option value="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [value]="department.id">{{department.name}}</option>
         </select>
       </div>
@@ -145,6 +145,7 @@
       </div>
       <div class="form-group">
         <label>所属组织机构ID: &nbsp;</label>
+        <option [value]="null">默认值为空，请选择</option>
         <select #modal_id (change)="SelectModifyModalOrgaId(modal_id.value)" class="form-control">
           <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === formModel3.get('oid').value" [value]="organization.id">{{organization.name}}</option>
         </select>
@@ -152,6 +153,7 @@
       <div class="form-group">
         <label>部门父ID: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalDeparId(modal_id.value)" class="form-control">
+          <option value="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [selected]="department.id === formModel3.get('pid').value" [value]="department.id">{{department.name}}</option>
         </select>
       </div>

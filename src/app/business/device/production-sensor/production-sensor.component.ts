@@ -52,8 +52,7 @@ export class ProductionSensorComponent implements OnInit {
       saddress: ['', Validators.required],
       sstatus: ['', Validators.required],
       smax: ['', Validators.required],
-      smin: ['', Validators.required],
-      srecomm: ['', Validators.required],
+      initialvalue: ['', Validators.required],
       did: ['', Validators.required]
     });
     this.proSensorModifyForm = this.fb.group({
@@ -64,8 +63,7 @@ export class ProductionSensorComponent implements OnInit {
       saddress: ['', Validators.required],
       sstatus: ['', Validators.required],
       smax: ['', Validators.required],
-      smin: ['', Validators.required],
-      srecomm: ['', Validators.required],
+      initialvalue: ['', Validators.required],
       did: ['', Validators.required]
     });
     this.Update();
@@ -203,6 +201,7 @@ export class ProductionSensorComponent implements OnInit {
     this.mustone = false;
     this.req.getDeviceProductionSensor(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
+        console.log(value);
         this.num = Math.ceil(value.values.num / 10);
         this.ProductionSensors = value.values.datas;
         setTimeout(() => {

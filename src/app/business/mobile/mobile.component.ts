@@ -44,7 +44,7 @@ export class MobileComponent implements OnInit {
 
     ];
     this.req.getAppInfo().subscribe(value => {
-      // console.log(value);
+      console.log(value);
       this.apps = value.data;
     });
   }

@@ -69,3 +69,18 @@
 .remind{
   color: red;
 }
+.year, .mouth, .day, .hour, .minutes {
+   text-decoration: black;
+   border-bottom: #484a55 solid 1px;
+   display: inline-block;
+   min-width: 20px;
+   height: 100%;
+ }
+.year:focus,
+.mouth:focus,
+.day:focus,
+.hour:focus,
+.minutes:focus{
+  /*border: none;*/
+  outline: none;
+}

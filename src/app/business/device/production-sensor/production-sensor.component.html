@@ -28,8 +28,7 @@
             <th>变量地址</th>
             <th>状态</th>
             <th>数值最大值</th>
-            <th>数值最小值</th>
-            <th>推荐值</th>
+            <th>初始值</th>
             <th>设备id</th>
           </tr>
           </thead>
@@ -43,8 +42,7 @@
             <td>{{prosensor.saddress}}</td>
             <td>{{prosensor.sstatus}}</td>
             <td>{{prosensor.smax}}</td>
-            <td>{{prosensor.smin}}</td>
-            <td>{{prosensor.srecomm}}</td>
+            <td>{{prosensor.initialvalue}}</td>
             <td>{{prosensor.did}}</td>
           </tr>
           </tbody>
@@ -126,18 +124,10 @@
       </div>
       <br>
       <div class="form-group">
-        <label>	数值最小值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="smin" [class.hasError]="proSensorAddForm.get('smin').invalid && proSensorAddForm.get('smin').touched">
-        <div [hidden]="proSensorAddForm.get('smin').valid || proSensorAddForm.get('smin').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'smin')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	推荐值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="srecomm" [class.hasError]="proSensorAddForm.get('srecomm').invalid && proSensorAddForm.get('srecomm').touched">
-        <div [hidden]="proSensorAddForm.get('srecomm').valid || proSensorAddForm.get('srecomm').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'srecomm')">必填</span>
+        <label>	初始值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="initialvalue" [class.hasError]="proSensorAddForm.get('initialvalue').invalid && proSensorAddForm.get('initialvalue').touched">
+        <div [hidden]="proSensorAddForm.get('initialvalue').valid || proSensorAddForm.get('initialvalue').untouched">
+          <span [hidden]="!proSensorAddForm.hasError('required', 'initialvalue')">必填</span>
         </div>
       </div>
       <br>
@@ -223,18 +213,10 @@
       </div>
       <br>
       <div class="form-group">
-        <label>	数值最小值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="smin" [class.hasError]="proSensorModifyForm.get('smin').invalid && proSensorModifyForm.get('smin').touched">
-        <div [hidden]="proSensorModifyForm.get('smin').valid || proSensorModifyForm.get('smin').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'smin')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	推荐值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="srecomm" [class.hasError]="proSensorModifyForm.get('srecomm').invalid && proSensorModifyForm.get('srecomm').touched">
-        <div [hidden]="proSensorModifyForm.get('srecomm').valid || proSensorModifyForm.get('srecomm').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'srecomm')">必填</span>
+        <label>	初始值: &nbsp;</label>
+        <input type="text"  class="form-control" formControlName="initialvalue" [class.hasError]="proSensorModifyForm.get('initialvalue').invalid && proSensorModifyForm.get('initialvalue').touched">
+        <div [hidden]="proSensorModifyForm.get('initialvalue').valid || proSensorModifyForm.get('initialvalue').untouched">
+          <span [hidden]="!proSensorModifyForm.hasError('required', 'initialvalue')">必填</span>
         </div>
       </div>
       <br>
@@ -276,8 +258,7 @@
     <p>变量地址:&nbsp;	{{Detail.saddress}}</p>
     <p>状态:&nbsp;	{{Detail.sstatus}}</p>
     <p>数值最大值:&nbsp;	{{Detail.smax}}</p>
-    <p>数值最小值:&nbsp;	{{Detail.smin}}</p>
-    <p>推荐值:&nbsp;	{{Detail.srecomm}}</p>
+    <p>初始值:&nbsp;	{{Detail.initialvalue}}</p>
     <p>设备id:&nbsp;	{{Detail.did}}</p>
     <p>插入时间:&nbsp;	{{Detail.idt}}</p>
     <p>更新时间:&nbsp;	{{Detail.udt}}</p>

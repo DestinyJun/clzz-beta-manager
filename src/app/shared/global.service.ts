@@ -164,8 +164,7 @@ export class DeviceProductionSensorList {
     public saddress: string,
     public sstatus: number,
     public smax: number,
-    public smin: number,
-    public srecomm: number,
+    public initialvalue: number,
     public did: string,
     public idt: string,
     public udt: string

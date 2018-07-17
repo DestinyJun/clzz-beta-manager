@@ -37,7 +37,7 @@ export class ModalManagerComponent implements OnInit {
     //     增加模态框表单
     this.modalAddForm = fb.group({
       name: ['', Validators.required],
-      pid: ['', Validators.required],
+      pid: ['-1', Validators.required],
       description: ['', Validators.required],
       mcode: ['', Validators.required],
       oid: ['', Validators.required]
@@ -73,17 +73,17 @@ export class ModalManagerComponent implements OnInit {
       }
     });
   }
-  public SelectAddModalId(value): void {
+  public SelectAddModalOid(value): void {
     this.modalAddForm.patchValue({'oid': value});
   }
-  public SelectModifyModalId(value): void {
+  public SelectModifyModalOid(value): void {
     this.modalModifyForm.patchValue({'oid': value});
   }
-  public SelectAddModalFid(value): void {
+  public SelectAddModalPid(value): void {
     console.log(value);
     this.modalAddForm.patchValue({'pid': value});
   }
-  public SelectModifyModalFid(value): void {
+  public SelectModifyModalPid(value): void {
     this.modalModifyForm.patchValue({'pid': value});
   }
   // 控制模态框

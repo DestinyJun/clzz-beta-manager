@@ -71,8 +71,8 @@
       <br>
       <div class="form-group">
         <label>对应模块的父id: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalFid(modal_id.value)" class="form-control">
-          <option [value]="null">默认值为空，请选择</option>
+        <select #modal_id (change)="SelectAddModalPid(modal_id.value)" class="form-control">
+          <option [value]="-1">默认值为 -1</option>
           <option *ngFor="let modal of FmodalFid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -94,8 +94,8 @@
       <br>
       <div class="form-group">
         <label>请选择所属组织id: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
-          <option [value]="-1">默认值为 -1</option>
+        <select #modal_id (change)="SelectAddModalOid(modal_id.value)" class="form-control">
+          <option [value]="null">默认为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -135,7 +135,7 @@
       <br>
       <div class="form-group">
         <label>对应id的父id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalFid(modal_id.value)" class="form-control">
+        <select #modal_id (change)="SelectModifyModalPid(modal_id.value)" class="form-control">
           <option *ngFor="let modal of FmodalFid" [selected]="modal.id === modalModifyForm.get('pid').value" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -157,7 +157,7 @@
       <br>
       <div class="form-group">
         <label>所属组织id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modal_id (change)="SelectModifyModalOid(modal_id.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modalModifyForm.get('oid').value" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
