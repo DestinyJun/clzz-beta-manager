@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {DeviceProductionSensorList, PageBody} from '../../../shared/global.service';
+import {DeviceProductionSensorList, Field, PageBody} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -11,13 +11,16 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./production-sensor.component.css']
 })
 export class ProductionSensorComponent implements OnInit {
-  public ProductionSensors: Array<DeviceProductionSensorList>;
+  public datas: Array<DeviceProductionSensorList>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
+  public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public proSensorAddForm: FormGroup;
-  public proSensorModifyForm: FormGroup;
-  public Detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
+  public detail: any;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -41,10 +44,25 @@ export class ProductionSensorComponent implements OnInit {
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('监控器sid',	'sid'),
+      new Field('名称',	'sname'),
+      new Field('类型',	'stype'),
+      new Field('数据类型',	'sdatatype'),
+      new Field('变量地址',	'saddress'),
+      new Field('状态',	'sstatus'),
+      new Field('数值最大值',	'smax'),
+      new Field('初始值',	'initialvalue')
+      // new Field('推荐值',	'srecomm'),
+      // new Field('设备id',	'did')
+    ];
+    this.fieldsModify = this.fieldsAdd;
     // 模态框表单
-    this.proSensorAddForm = this.fb.group({
+    this.addForm = this.fb.group({
       sid: ['', Validators.required],
       sname: ['', Validators.required],
       stype: ['', Validators.required],
@@ -55,7 +73,7 @@ export class ProductionSensorComponent implements OnInit {
       initialvalue: ['', Validators.required],
       did: ['', Validators.required]
     });
-    this.proSensorModifyForm = this.fb.group({
+    this.modifyForm = this.fb.group({
       sid: ['', Validators.required],
       sname: ['', Validators.required],
       stype: ['', Validators.required],
@@ -72,13 +90,42 @@ export class ProductionSensorComponent implements OnInit {
       // this.proSensorAddForm.patchValue({'did': this.Fmodalid[0].did});
     });
   }
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
+    this.inputvalid = false;
+    this.gtone = false;
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
+  }
 // 选择增加设备id
   public SelectAddModalId(value): void {
-    this.proSensorAddForm.patchValue({'did': value});
+    this.addForm.patchValue({'did': value});
   }
 // 选择修改设备id
   public SelectModifyModalId(value): void {
-    this.proSensorModifyForm.patchValue({'did': value});
+    this.modifyForm.patchValue({'did': value});
   }
   // 控制模态框
   public openProSensor(template: TemplateRef<any>): void {
@@ -88,8 +135,8 @@ export class ProductionSensorComponent implements OnInit {
       this.mustone = true;
     } else {
       this.mustone = false;
-      this.Detail.did = String(this.Detail.did);
-      this.proSensorModifyForm.reset(this.Detail);
+      this.detail.did = String(this.detail.did);
+      this.modifyForm.reset(this.detail);
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -113,7 +160,7 @@ export class ProductionSensorComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.ProductionSensors.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -134,20 +181,20 @@ export class ProductionSensorComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.ProductionSensors[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
 
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proSensorAdd(): void {
-    console.log(this.proSensorAddForm.value);
-    if (this.proSensorAddForm.valid) {
+    console.log(this.addForm.value);
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorAdd(this.commonfun.parameterSerialization(this.proSensorAddForm.value))
+      this.req.DeviceProductionSensorAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -166,7 +213,7 @@ export class ProductionSensorComponent implements OnInit {
     } else {
       this.mustone = false;
       for (let j = 0; j < haschecklen; j++) {
-          this.req.DeviceProductionSensorDelete('sid=' + this.ProductionSensors[this.hasChecked[j]].sid)
+          this.req.DeviceProductionSensorDelete('sid=' + this.datas[this.hasChecked[j]].sid)
             .subscribe(res => {
               if (j === haschecklen - 1) {
                 this.status = Number(res.status);
@@ -180,11 +227,11 @@ export class ProductionSensorComponent implements OnInit {
 
 //  修改表格内容
   public proSensorModify(): void {
-    if (this.proSensorModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorModify(this.commonfun.parameterSerialization(this.proSensorModifyForm.value))
+      this.req.DeviceProductionSensorModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -203,7 +250,20 @@ export class ProductionSensorComponent implements OnInit {
       (value) => {
         console.log(value);
         this.num = Math.ceil(value.values.num / 10);
-        this.ProductionSensors = value.values.datas;
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

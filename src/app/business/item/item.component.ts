@@ -4,8 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
 import {BsModalService} from 'ngx-bootstrap/modal';
 import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import {ItemField, ItemList, PageBody} from '../../shared/global.service';
-import {getFullYear} from 'ngx-bootstrap/chronos/utils/date-getters';
+import {Field, ItemList, PageBody} from '../../shared/global.service';
 
 @Component({
   selector: 'app-item',
@@ -14,8 +13,8 @@ import {getFullYear} from 'ngx-bootstrap/chronos/utils/date-getters';
 })
 export class ItemComponent implements OnInit {
   public items: Array<ItemList>;
-  public fieldsAdd: Array<ItemField>;
-  public fieldsModify: Array<ItemField>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
@@ -32,6 +31,9 @@ export class ItemComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   public validTimeFormat: boolean;
+  public controlSearchText: boolean;
+  // 用来监听模态框 是否 是从查看详情 跳转到 修改模态框
+  public listenDescModal: boolean;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
@@ -47,30 +49,30 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.validTimeFormat = false;
+    this.controlSearchText = false;
+    this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     this.fieldsAdd = [
-      new ItemField('项目名称',	'itemname'),
-      new ItemField('项目位置',	'itemposition'),
-      new ItemField('项目位置经度',	'longitude'),
-      new ItemField('项目位置纬度',	'latitude'),
-      new ItemField('项目明细',	'itemdetail'),
-      new ItemField('单位编号',	'unitcode'),
-      new ItemField('项目巡检成员',	'itemmembers'),
-      new ItemField('巡检时间间隔（单位：小时）',	'timecell'),
-      // new ItemField('巡检起始时间',	'starttime')
+      new Field('项目名称',	'itemname'),
+      new Field('项目位置',	'itemposition'),
+      new Field('项目位置经度',	'longitude'),
+      new Field('项目位置纬度',	'latitude'),
+      new Field('项目明细',	'itemdetail'),
+      new Field('单位编号',	'unitcode'),
+      new Field('项目巡检成员',	'itemmembers'),
+      new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
     this.fieldsModify = [
-      new ItemField('项目编号',	'itemcode'),
-      new ItemField('项目名称',	'itemname'),
-      new ItemField('项目位置',	'itemposition'),
-      new ItemField('经度',	'longitude'),
-      new ItemField('纬度',	'latitude'),
-      new ItemField('项目明细',	'itemdetail'),
-      new ItemField('单位编号',	'unitcode'),
-      new ItemField('项目巡检成员',	'itemmembers'),
-      new ItemField('巡检时间间隔（单位：小时）',	'timecell'),
-      // new ItemField('巡检起始时间',	'starttime')
+      new Field('项目编号',	'itemcode'),
+      new Field('项目名称',	'itemname'),
+      new Field('项目位置',	'itemposition'),
+      new Field('经度',	'longitude'),
+      new Field('纬度',	'latitude'),
+      new Field('项目明细',	'itemdetail'),
+      new Field('单位编号',	'unitcode'),
+      new Field('项目巡检成员',	'itemmembers'),
+      new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
     //  增加表单
     this.itemAddForm = this.fb.group({
@@ -94,31 +96,38 @@ export class ItemComponent implements OnInit {
       itemdetail: ['', Validators.required],
       unitcode: ['', Validators.required],
       itemmembers: ['', Validators.required],
-      timecell: ['', Validators.required],
-      // starttime: ['', Validators.required]
+      timecell: ['', Validators.required]
     });
     this.Update();
   }
   // 控制模态框
-  public itemModal(template: TemplateRef<any>): void {
+  public itemModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      // 拿到时间戳
-      const dateEle = document.getElementsByTagName('input');
-      this.mustone = false;
-      this.itemModifyForm.reset(this.detail);
+    this.mustone = false;
+    this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.items[i];
       this.modalRef = this.modalService.show(template);
     }
-  }
-  // 控制模态框增加
-  public itemAddModal(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.gtone = false;
-    this.inputvalid = false;
-    this.modalRef = this.modalService.show(template);
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.itemModifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
   }
   // 监控翻页事件
   public getPageBody(event): void {
@@ -134,6 +143,24 @@ export class ItemComponent implements OnInit {
     } else {
       this.hasChecked = [];
       this.checked = '';
+    }
+  }
+  // 按编号查找
+  public numSearch(searchContext, template: TemplateRef<any>): void {
+    if (this.controlSearchText) {
+      this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
+        if (String(res.values) !== 'null') {
+          console.log(typeof res.values);
+          this.detail = res.values;
+          this.modalRef = this.modalService.show(template);
+          this.controlSearchText = false;
+        }else {
+          this.status = 13;
+          this.resMessage = '项目编号不存在';
+        }
+      });
+    }else {
+      this.controlSearchText = true;
     }
   }
   // 得到已选择的checkBox
@@ -156,6 +183,7 @@ export class ItemComponent implements OnInit {
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public deleteItem(): void {
+    this.controlSearchText = false;
     const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
@@ -218,6 +246,22 @@ export class ItemComponent implements OnInit {
         this.checked = '';
         this.num = Math.ceil(value.values.num / 10);
         this.items = value.values.itemInfoDTOs;
+        // event.stopPropagation();    阻止冒泡,即该方法不仅仅可以阻止冒泡，还可以阻止捕获和处于目标阶段。
+        //     stopImmediatePropagation() 和 stopPropagation()的区别在哪儿呢？
+        // 　　后者只会阻止冒泡或者是捕获。 但是前者除此之外还会阻止该元素的其他事件发生，但是后者就不会阻止其他事件的发生。
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

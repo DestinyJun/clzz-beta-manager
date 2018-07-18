@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openInterfaceAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteInterface()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openInterface(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openInterface(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -29,7 +28,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let interface of Interfacemanagers; let i = index">
+          <tr *ngFor="let interface of datas; let i = index" (click)="openModal(modify, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{interface['id']}}</td>
             <td>{{interface['iname']}}</td>
@@ -58,34 +57,17 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="interfacemanagerAddForm">
-      <div class="form-group">
-        <label>接口名称&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="iname" [class.hasError]="interfacemanagerAddForm.get('iname').invalid && interfacemanagerAddForm.get('iname').touched">
-        <div [hidden]="interfacemanagerAddForm.get('iname').valid || interfacemanagerAddForm.get('iname').untouched">
-          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'iname')">必填</span>
+    <form class="form-horizontal" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
+          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>接口路径&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="path" [class.hasError]="interfacemanagerAddForm.get('path').invalid && interfacemanagerAddForm.get('path').touched">
-        <div [hidden]="interfacemanagerAddForm.get('path').valid || interfacemanagerAddForm.get('path').untouched">
-          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'path')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>权限编码&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="pcode" [class.hasError]="interfacemanagerAddForm.get('pcode').invalid && interfacemanagerAddForm.get('pcode').touched">
-        <div [hidden]="interfacemanagerAddForm.get('pcode').valid || interfacemanagerAddForm.get('pcode').untouched">
-          <span [hidden]="!interfacemanagerAddForm.hasError('required', 'pcode')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
@@ -115,31 +97,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="interfacemanagerModifyForm">
-      <div class="form-group">
-        <label>接口名称&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="iname" [class.hasError]="interfacemanagerModifyForm.get('iname').invalid && interfacemanagerModifyForm.get('iname').touched">
-        <div [hidden]="interfacemanagerModifyForm.get('iname').valid || interfacemanagerModifyForm.get('iname').untouched">
-          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'iname')">必填</span>
+    <form class="form-horizontal" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}:</label>
+        <input type="text" formControlName="{{modify.field}}" class="form-control" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
+          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>接口路径&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="path" [class.hasError]="interfacemanagerModifyForm.get('path').invalid && interfacemanagerModifyForm.get('path').touched">
-        <div [hidden]="interfacemanagerModifyForm.get('path').valid || interfacemanagerModifyForm.get('path').untouched">
-          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'path')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>权限编码&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="pcode" [class.hasError]="interfacemanagerModifyForm.get('pcode').invalid && interfacemanagerModifyForm.get('pcode').touched">
-        <div [hidden]="interfacemanagerModifyForm.get('pcode').valid || interfacemanagerModifyForm.get('pcode').untouched">
-          <span [hidden]="!interfacemanagerModifyForm.hasError('required', 'pcode')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
@@ -171,14 +136,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>Id(唯一标识): {{Detail['id']}}</p>
-    <p>接口名称:{{Detail['iname']}}</p>
-    <p>接口路径 :{{Detail['path']}}</p>
-    <p>权限编码 :{{Detail['pcode']}}</p>
-    <p>模块id :{{Detail['mid']}}</p>
+    <p>Id(唯一标识): {{detail['id']}}</p>
+    <p>接口名称:{{detail['iname']}}</p>
+    <p>接口路径 :{{detail['path']}}</p>
+    <p>权限编码 :{{detail['pcode']}}</p>
+    <p>模块id :{{detail['mid']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openInterface(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(add, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

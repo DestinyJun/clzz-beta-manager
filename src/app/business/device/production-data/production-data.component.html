@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openProDataAddMadol(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteProData()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openProDataModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openProDataModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -38,7 +37,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let prodata of ProductionDatas; let i = index">
+          <tr *ngFor="let prodata of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{prodata.did}}</td>
             <td>{{prodata.name}}</td>
@@ -76,105 +75,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="prodataAddForm">
-      <div class="form-group">
-        <label>设备id号(唯一标识): </label>
-        <input type="text" formControlName="did" class="form-control" [class.hasError]="prodataAddForm.get('did').invalid && prodataAddForm.get('did').touched">
-        <div [hidden]="prodataAddForm.get('did').valid || prodataAddForm.get('did').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'did')">必填</span>
+    <form class="form-horizontal" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
+          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>名称: </label>
-        <input type="text" formControlName="name" class="form-control" [class.hasError]="prodataAddForm.get('name').invalid && prodataAddForm.get('name').touched">
-        <div [hidden]="prodataAddForm.get('name').valid || prodataAddForm.get('name').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	厂家编号: </label>
-        <input type="text" formControlName="fnum" class="form-control" [class.hasError]="prodataAddForm.get('fnum').invalid && prodataAddForm.get('fnum').touched">
-        <div [hidden]="prodataAddForm.get('fnum').valid || prodataAddForm.get('fnum').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'fnum')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	生产厂家: </label>
-        <input type="text" formControlName="dvender" class="form-control" [class.hasError]="prodataAddForm.get('dvender').invalid && prodataAddForm.get('dvender').touched">
-        <div [hidden]="prodataAddForm.get('dvender').valid || prodataAddForm.get('dvender').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'dvender')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	设备型号: </label>
-        <input type="text" formControlName="dmodule" class="form-control" [class.hasError]="prodataAddForm.get('dmodule').invalid && prodataAddForm.get('dmodule').touched">
-        <div [hidden]="prodataAddForm.get('dmodule').valid || prodataAddForm.get('dmodule').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'dmodule')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	生产日期: </label>
-        <input type="date" formControlName="dprodate" class="form-control" [class.hasError]="prodataAddForm.get('dprodate').invalid && prodataAddForm.get('dprodate').touched">
-        <div [hidden]="prodataAddForm.get('dprodate').valid || prodataAddForm.get('dprodate').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'dprodate')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	安装日期: </label>
-        <input type="date" formControlName="dinstalldate" class="form-control" [class.hasError]="prodataAddForm.get('dinstalldate').invalid && prodataAddForm.get('dinstalldate').touched">
-        <div [hidden]="prodataAddForm.get('dinstalldate').valid || prodataAddForm.get('dinstalldate').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'dinstalldate')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定功率: </label>
-        <input type="text" formControlName="power" class="form-control" [class.hasError]="prodataAddForm.get('power').invalid && prodataAddForm.get('power').touched">
-        <div [hidden]="prodataAddForm.get('power').valid || prodataAddForm.get('power').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'power')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定电流: </label>
-        <input type="text" formControlName="current" class="form-control" [class.hasError]="prodataAddForm.get('current').invalid && prodataAddForm.get('current').touched">
-        <div [hidden]="prodataAddForm.get('current').valid || prodataAddForm.get('current').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'current')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定电压: </label>
-        <input type="text" formControlName="voltage" class="form-control" [class.hasError]="prodataAddForm.get('voltage').invalid && prodataAddForm.get('voltage').touched">
-        <div [hidden]="prodataAddForm.get('voltage').valid || prodataAddForm.get('voltage').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'voltage')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	使用状态: </label>
-        <input type="text" formControlName="usestatus" class="form-control">
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	设备类型: </label>
-        <input type="text" formControlName="dtype" class="form-control" [class.hasError]="prodataAddForm.get('dtype').invalid && prodataAddForm.get('dtype').touched">
-        <div [hidden]="prodataAddForm.get('dtype').valid || prodataAddForm.get('dtype').untouched">
-          <span [hidden]="!prodataAddForm.hasError('required', 'dtype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	设备运行状态: </label>
-        <input type="text" formControlName="dstatus" class="form-control">
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择所属模块id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
@@ -206,103 +114,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="prodataModifyForm">
-      <br>
-      <div class="form-group">
-        <label>名称: </label>
-        <input type="text" formControlName="name" class="form-control" [class.hasError]="prodataModifyForm.get('name').invalid && prodataModifyForm.get('name').touched">
-        <div [hidden]="prodataModifyForm.get('name').valid || prodataModifyForm.get('name').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'name')">必填</span>
+    <form class="form-horizontal" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}:</label>
+        <input type="text" formControlName="{{modifymodify.field}}" class="form-control" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
+          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>	厂家编号: </label>
-        <input type="text" formControlName="fnum" class="form-control" [class.hasError]="prodataModifyForm.get('fnum').invalid && prodataModifyForm.get('fnum').touched">
-        <div [hidden]="prodataModifyForm.get('fnum').valid || prodataAddForm.get('fnum').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'fnum')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	生产厂家: </label>
-        <input type="text" formControlName="dvender" class="form-control" [class.hasError]="prodataModifyForm.get('dvender').invalid && prodataModifyForm.get('dvender').touched">
-        <div [hidden]="prodataModifyForm.get('dvender').valid || prodataModifyForm.get('dvender').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'dvender')">必填</span>
-        </div>
-      </div>
-      <br>
-
-      <div class="form-group">
-        <label>	设备型号: </label>
-        <input type="text" formControlName="dmodule" class="form-control" [class.hasError]="prodataModifyForm.get('dmodule').invalid && prodataModifyForm.get('dmodule').touched">
-        <div [hidden]="prodataModifyForm.get('dmodule').valid || prodataModifyForm.get('dmodule').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'dmodule')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	生产日期: </label>
-        <input type="date" formControlName="dprodate" class="form-control" [class.hasError]="prodataModifyForm.get('dprodate').invalid && prodataModifyForm.get('dprodate').touched">
-        <div [hidden]="prodataModifyForm.get('dprodate').valid || prodataModifyForm.get('dprodate').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'dprodate')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	安装日期: </label>
-        <input type="date" formControlName="dinstalldate" class="form-control" [class.hasError]="prodataModifyForm.get('dinstalldate').invalid && prodataModifyForm.get('dinstalldate').touched">
-        <div [hidden]="prodataModifyForm.get('dinstalldate').valid || prodataModifyForm.get('dinstalldate').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'dinstalldate')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定功率: </label>
-        <input type="text" formControlName="power" class="form-control" [class.hasError]="prodataModifyForm.get('power').invalid && prodataModifyForm.get('power').touched">
-        <div [hidden]="prodataModifyForm.get('power').valid || prodataModifyForm.get('power').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'power')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定电流: </label>
-        <input type="text" formControlName="current" class="form-control" [class.hasError]="prodataModifyForm.get('current').invalid && prodataModifyForm.get('current').touched">
-        <div [hidden]="prodataModifyForm.get('current').valid || prodataModifyForm.get('current').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'current')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	额定电压: </label>
-        <input type="text" formControlName="voltage" class="form-control" [class.hasError]="prodataModifyForm.get('voltage').invalid && prodataModifyForm.get('voltage').touched">
-        <div [hidden]="prodataModifyForm.get('voltage').valid || prodataModifyForm.get('voltage').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'voltage')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	使用状态: </label>
-        <input type="text" formControlName="usestatus" class="form-control">
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	设备类型: </label>
-        <input type="text" formControlName="dtype" class="form-control" [class.hasError]="prodataModifyForm.get('dtype').invalid && prodataModifyForm.get('dtype').touched">
-        <div [hidden]="prodataModifyForm.get('dtype').valid || prodataModifyForm.get('dtype').untouched">
-          <span [hidden]="!prodataModifyForm.hasError('required', 'dtype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	设备运行状态: </label>
-        <input type="text" formControlName="dstatus" class="form-control">
-      </div>
-      <br>
       <div class="form-group">
         <label>所属模块id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.mid === prodataDetail.mid" [value]="modal.mid">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.mid === detail.mid" [value]="modal.mid">{{modal.name}}</option>
         </select>
       </div>
     </form>
@@ -329,25 +152,25 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>设备id号: {{prodataDetail['did']}}</p>
-    <p>名称: {{prodataDetail['name']}}</p>
-    <p>厂家编号: {{prodataDetail['fnum']}}</p>
-    <p>生产厂家: {{prodataDetail['dvender']}}</p>
-    <p>设备型号: {{prodataDetail['dmodule']}}</p>
-    <p>生产日期: {{prodataDetail['dprodate']}}</p>
-    <p>安装日期: {{prodataDetail['dinstalldate']}}</p>
-    <p>额定功率: {{prodataDetail['power']}}</p>
-    <p>额定电流: {{prodataDetail['current']}}</p>
-    <p>额定电压: {{prodataDetail['voltage']}}</p>
-    <p>使用状态: {{prodataDetail['usestatus']}}</p>
-    <p>设备类型: {{prodataDetail['dtype']}}</p>
-    <p>设备运行状态: {{prodataDetail['dstatus']}}</p>
-    <p>模块id: {{prodataDetail['mid']}}</p>
-    <p>插入时间 :{{prodataDetail['idt']}}</p>
-    <p>更新时间 :{{prodataDetail['udt']}}</p>
+    <p>设备id号: {{detail['did']}}</p>
+    <p>名称: {{detail['name']}}</p>
+    <p>厂家编号: {{detail['fnum']}}</p>
+    <p>生产厂家: {{detail['dvender']}}</p>
+    <p>设备型号: {{detail['dmodule']}}</p>
+    <p>生产日期: {{detail['dprodate']}}</p>
+    <p>安装日期: {{detail['dinstalldate']}}</p>
+    <p>额定功率: {{detail['power']}}</p>
+    <p>额定电流: {{detail['current']}}</p>
+    <p>额定电压: {{detail['voltage']}}</p>
+    <p>使用状态: {{detail['usestatus']}}</p>
+    <p>设备类型: {{detail['dtype']}}</p>
+    <p>设备运行状态: {{detail['dstatus']}}</p>
+    <p>模块id: {{detail['mid']}}</p>
+    <p>插入时间 :{{detail['idt']}}</p>
+    <p>更新时间 :{{detail['udt']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openProDataModal(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn  btn-danger" aria-label="Close" (click)="modalRef.hide()">

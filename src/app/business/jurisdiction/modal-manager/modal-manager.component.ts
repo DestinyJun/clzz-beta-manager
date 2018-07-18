@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import { JurisdictionModalList, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionModalList, PageBody} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -11,13 +11,16 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./modal-manager.component.css']
 })
 export class ModalManagerComponent implements OnInit {
-  public ModalList: Array<JurisdictionModalList>;
+  public datas: Array<JurisdictionModalList>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
+  public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public Detail: any;
-  public modalAddForm: FormGroup;
-  public modalModifyForm: FormGroup;
+  public detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public Fmodalid: any;
@@ -33,16 +36,41 @@ export class ModalManagerComponent implements OnInit {
     private req: ReqService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {
+  ) {}
+  ngOnInit() {
+    this.status = 0;
+    this.openstatus = true;
+    this.inputvalid = false;
+    this.mustone = false;
+    this.gtone = false;
+    this.listenDescModal = false;
+    // 对表格的初始化
+    this.pageBody = new PageBody(1, 10);
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('名称',	'name'),
+      // new Field('父id',	'pid'),
+      new Field('描述',	'description'),
+      new Field('模块代号',	'mcode')
+      // new Field('组织id',	'oid'),
+    ];
+    this.fieldsModify = [
+      new Field('模块数据Id',	'id'),
+      new Field('名称',	'name'),
+      // new Field('父id',	'pid'),
+      new Field('描述',	'description'),
+      new Field('模块代号',	'mcode')
+      // new Field('组织id',	'oid')
+    ];
     //     增加模态框表单
-    this.modalAddForm = fb.group({
+    this.addForm = this.fb.group({
       name: ['', Validators.required],
       pid: ['-1', Validators.required],
       description: ['', Validators.required],
       mcode: ['', Validators.required],
       oid: ['', Validators.required]
     });
-    this.modalModifyForm = fb.group({
+    this.modifyForm = this.fb.group({
       id: ['', Validators.required],
       name: ['', Validators.required],
       pid: ['', Validators.required],
@@ -50,15 +78,6 @@ export class ModalManagerComponent implements OnInit {
       mcode: ['', Validators.required],
       oid: ['', Validators.required]
     });
-  }
-  ngOnInit() {
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values.organizations;
@@ -73,18 +92,51 @@ export class ModalManagerComponent implements OnInit {
       }
     });
   }
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
+    this.inputvalid = false;
+    this.gtone = false;
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
+  }
+  // 增加时，选择组织ID
   public SelectAddModalOid(value): void {
-    this.modalAddForm.patchValue({'oid': value});
+    this.addForm.patchValue({'oid': value});
   }
+  // 修改时，选择组织ID
   public SelectModifyModalOid(value): void {
-    this.modalModifyForm.patchValue({'oid': value});
+    this.modifyForm.patchValue({'oid': value});
   }
+  // 新增时，选择父ID
   public SelectAddModalPid(value): void {
     console.log(value);
-    this.modalAddForm.patchValue({'pid': value});
+    this.addForm.patchValue({'pid': value});
   }
+  // 修改时，选择父ID
   public SelectModifyModalPid(value): void {
-    this.modalModifyForm.patchValue({'pid': value});
+    this.modifyForm.patchValue({'pid': value});
   }
   // 控制模态框
   public openModal(template: TemplateRef<any>): void {
@@ -94,8 +146,8 @@ export class ModalManagerComponent implements OnInit {
       this.mustone = true;
     } else {
       this.mustone = false;
-      this.Detail.oid = String(this.Detail.oid);
-      this.modalModifyForm.reset(this.Detail);
+      this.detail.oid = String(this.detail.oid);
+      this.modifyForm.reset(this.detail);
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -114,7 +166,7 @@ export class ModalManagerComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.ModalList.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -134,9 +186,9 @@ export class ModalManagerComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.ModalList[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
 //  删除表格 并且 重新请求数据
@@ -150,7 +202,7 @@ export class ModalManagerComponent implements OnInit {
       const confirm = window.confirm('删除为:' + this.hasChecked.toString());
       if (confirm) {
         for (let j = 0; j < haschecklen; j++) {
-          this.req.JurisdictionModalManagerDelete('id=' + this.ModalList[this.hasChecked[j]].id)
+          this.req.JurisdictionModalManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
               this.resMessage = res.message;
               this.status = Number(res.status);
@@ -164,12 +216,12 @@ export class ModalManagerComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public modalAdd(): void {
-    console.log(this.modalAddForm.value);
-    if (this.modalAddForm.valid) {
+    console.log(this.addForm.value);
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionModalManagerAdd(this.commonfun.parameterSerialization(this.modalAddForm.value))
+      this.req.JurisdictionModalManagerAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -181,11 +233,11 @@ export class ModalManagerComponent implements OnInit {
   }
 //  修改表格内容
   public modalModify(): void {
-    if (this.modalModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionModalManagerModify(this.commonfun.parameterSerialization(this.modalModifyForm.value))
+      this.req.JurisdictionModalManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -202,7 +254,20 @@ export class ModalManagerComponent implements OnInit {
     this.req.getJurisdictionModalManagerQuery(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
-        this.ModalList = value.values.datas;
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openUserPowerAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteUserPower()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openUserPower(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openUserPower(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -27,7 +26,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of UserPowers; let i = index">
+          <tr *ngFor="let user of datas; let i = index" (click)="openModal(modify, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['realname']}}</td>
@@ -55,7 +54,7 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="userPowerAddForm">
+    <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group">
         <label>用户ID: &nbsp;</label>
         <select #user_id (change)="SelectAdduserid(user_id.value)" class="form-control">
@@ -91,18 +90,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="userPowerModifyForm">
+    <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group">
         <label>用户ID: &nbsp;</label>
         <select #user_id (change)="SelectModifyuserid(user_id.value)" class="form-control">
-          <option *ngFor="let modal of userid" [selected]="modal.id === Detail.userid" [value]="modal.id">{{modal.realName}}</option>
+          <option *ngFor="let modal of userid" [selected]="modal.id === detail.userid" [value]="modal.id">{{modal.realName}}</option>
         </select>
       </div>
       <br />
       <div class="form-group">
         <label>模块id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === userPowerModifyForm.get('moduleid').value"  [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modifyForm.get('moduleid').value"  [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
     </form>
@@ -125,13 +124,13 @@
       </button>
     </div>
   <div class="modal-body">
-    <p>Id(唯一标识): {{Detail['id']}}</p>
-    <p>用户id:{{Detail['userid']}}</p>
-    <p>模块id :{{Detail['moduleid']}}</p>
-    <p>level :{{Detail['level']}}</p>
+    <p>Id(唯一标识): {{detail['id']}}</p>
+    <p>用户id:{{detail['userid']}}</p>
+    <p>模块id :{{detail['moduleid']}}</p>
+    <p>level :{{detail['level']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openUserPower(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

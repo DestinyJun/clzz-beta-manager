@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openProSensorAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteProSensor()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openProSensor(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openProSensor(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -33,7 +32,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let prosensor of ProductionSensors; let i = index">
+          <tr *ngFor="let prosensor of datas; let i = index" (click)="openModal(modify, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{prosensor.sid}}</td>
             <td>{{prosensor.sname}}</td>
@@ -66,71 +65,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="proSensorAddForm">
-      <div class="form-group">
-        <label>Sid&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="sid"  [class.hasError]="proSensorAddForm.get('sid').invalid && proSensorAddForm.get('sid').touched">
-        <div [hidden]="proSensorAddForm.get('sid').valid || proSensorAddForm.get('sid').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'sid')">必填</span>
+    <form class="form-horizontal" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
+          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="sname"  [class.hasError]="proSensorAddForm.get('sname').invalid && proSensorAddForm.get('sname').touched">
-        <div [hidden]="proSensorAddForm.get('sname').valid || proSensorAddForm.get('sname').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'sname')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	类型: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="stype" [class.hasError]="proSensorAddForm.get('stype').invalid && proSensorAddForm.get('stype').touched">
-        <div [hidden]="proSensorAddForm.get('stype').valid || proSensorAddForm.get('stype').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'stype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	数据类型: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="sdatatype" [class.hasError]="proSensorAddForm.get('sdatatype').invalid && proSensorAddForm.get('sdatatype').touched">
-        <div [hidden]="proSensorAddForm.get('sdatatype').valid || proSensorAddForm.get('sdatatype').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'sdatatype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	变量地址: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="saddress" [class.hasError]="proSensorAddForm.get('saddress').invalid && proSensorAddForm.get('saddress').touched">
-        <div [hidden]="proSensorAddForm.get('saddress').valid || proSensorAddForm.get('saddress').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'saddress')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	状态: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="sstatus" [class.hasError]="proSensorAddForm.get('sstatus').invalid && proSensorAddForm.get('sstatus').touched">
-        <div [hidden]="proSensorAddForm.get('sstatus').valid || proSensorAddForm.get('sstatus').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'sstatus')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	数值最大值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="smax" [class.hasError]="proSensorAddForm.get('smax').invalid && proSensorAddForm.get('smax').touched">
-        <div [hidden]="proSensorAddForm.get('smax').valid || proSensorAddForm.get('smax').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'smax')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	初始值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="initialvalue" [class.hasError]="proSensorAddForm.get('initialvalue').invalid && proSensorAddForm.get('initialvalue').touched">
-        <div [hidden]="proSensorAddForm.get('initialvalue').valid || proSensorAddForm.get('initialvalue').untouched">
-          <span [hidden]="!proSensorAddForm.hasError('required', 'initialvalue')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
@@ -163,67 +105,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="proSensorModifyForm">
-      <div class="form-group">
-        <label>名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="sname"  [class.hasError]="proSensorModifyForm.get('sname').invalid && proSensorModifyForm.get('sname').touched">
-        <div [hidden]="proSensorModifyForm.get('sname').valid || proSensorModifyForm.get('sname').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'sname')">必填</span>
+    <form class="form-horizontal" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}:</label>
+        <input type="text" formControlName="{{modify.field}}" class="form-control" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
+          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>	类型: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="stype" [class.hasError]="proSensorModifyForm.get('stype').invalid && proSensorModifyForm.get('stype').touched">
-        <div [hidden]="proSensorModifyForm.get('stype').valid || proSensorModifyForm.get('stype').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'stype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	数据类型: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="sdatatype" [class.hasError]="proSensorModifyForm.get('sdatatype').invalid && proSensorModifyForm.get('sdatatype').touched">
-        <div [hidden]="proSensorModifyForm.get('sdatatype').valid || proSensorModifyForm.get('sdatatype').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'sdatatype')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	变量地址: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="saddress" [class.hasError]="proSensorModifyForm.get('saddress').invalid && proSensorModifyForm.get('saddress').touched">
-        <div [hidden]="proSensorModifyForm.get('saddress').valid || proSensorModifyForm.get('saddress').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'saddress')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	状态: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="sstatus" [class.hasError]="proSensorModifyForm.get('sstatus').invalid && proSensorModifyForm.get('sstatus').touched">
-        <div [hidden]="proSensorModifyForm.get('sstatus').valid || proSensorModifyForm.get('sstatus').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'sstatus')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	数值最大值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="smax" [class.hasError]="proSensorModifyForm.get('smax').invalid && proSensorModifyForm.get('smax').touched">
-        <div [hidden]="proSensorModifyForm.get('smax').valid || proSensorModifyForm.get('smax').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'smax')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	初始值: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="initialvalue" [class.hasError]="proSensorModifyForm.get('initialvalue').invalid && proSensorModifyForm.get('initialvalue').touched">
-        <div [hidden]="proSensorModifyForm.get('initialvalue').valid || proSensorModifyForm.get('initialvalue').untouched">
-          <span [hidden]="!proSensorModifyForm.hasError('required', 'initialvalue')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>设备id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.did === Detail.did" [value]="modal.did">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.did === detail.did" [value]="modal.did">{{modal.name}}</option>
         </select>
       </div>
       <br>

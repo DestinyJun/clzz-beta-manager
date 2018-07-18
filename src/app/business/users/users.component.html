@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openuserAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteuser()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openuser(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openuser(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -34,7 +33,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of Users; let i = index">
+          <tr *ngFor="let user of datas; let i = index" (click)="openModal(modify, -1)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['userCode']}}</td>
@@ -71,53 +70,53 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="userAddForm">
+    <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group">
         <label>用户编码&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="userAddForm.get('userCode').invalid && userAddForm.get('userCode').touched">
-        <div [hidden]="userAddForm.get('userCode').valid || userAddForm.get('userCode').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'userCode')">必填</span>
+        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="modifyForm.get('userCode').invalid && modifyForm.get('userCode').touched">
+        <div [hidden]="modifyForm.get('userCode').valid || modifyForm.get('userCode').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'userCode')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>身份证: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="userAddForm.get('idCode').invalid && userAddForm.get('idCode').touched">
-        <div [hidden]="userAddForm.get('idCode').valid || userAddForm.get('idCode').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'idCode')">必填</span>
-          <span [hidden]="userAddForm.hasError('minLength', 'idCode') && userAddForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
+        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="modifyForm.get('idCode').invalid && modifyForm.get('idCode').touched">
+        <div [hidden]="modifyForm.get('idCode').valid || modifyForm.get('idCode').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'idCode')">必填</span>
+          <span [hidden]="modifyForm.hasError('minLength', 'idCode') && modifyForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>真实姓名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="userAddForm.get('realName').invalid && userAddForm.get('realName').touched">
-        <div [hidden]="userAddForm.get('realName').valid || userAddForm.get('realName').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'realName')">必填</span>
+        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="modifyForm.get('realName').invalid && modifyForm.get('realName').touched">
+        <div [hidden]="modifyForm.get('realName').valid || modifyForm.get('realName').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'realName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>用户名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="userAddForm.get('userName').invalid && userAddForm.get('userName').touched">
-        <div [hidden]="userAddForm.get('userName').valid || userAddForm.get('userName').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'userName')">必填</span>
+        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="modifyForm.get('userName').invalid && modifyForm.get('userName').touched">
+        <div [hidden]="modifyForm.get('userName').valid || modifyForm.get('userName').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'userName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭住址: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="userAddForm.get('homeAddress').invalid && userAddForm.get('homeAddress').touched">
-        <div [hidden]="userAddForm.get('homeAddress').valid || userAddForm.get('homeAddress').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'homeAddress')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="modifyForm.get('homeAddress').invalid && modifyForm.get('homeAddress').touched">
+        <div [hidden]="modifyForm.get('homeAddress').valid || modifyForm.get('homeAddress').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'homeAddress')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭联系电话: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="userAddForm.get('homeTelephone').invalid && userAddForm.get('homeTelephone').touched">
-        <div [hidden]="userAddForm.get('homeTelephone').valid || userAddForm.get('homeTelephone').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'homeTelephone')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="modifyForm.get('homeTelephone').invalid && modifyForm.get('homeTelephone').touched">
+        <div [hidden]="modifyForm.get('homeTelephone').valid || modifyForm.get('homeTelephone').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'homeTelephone')">必填</span>
         </div>
       </div>
       <br>
@@ -131,37 +130,37 @@
       <br>
       <div class="form-group">
         <label>密码: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="password" [class.hasError]="userAddForm.get('password').invalid && userAddForm.get('password').touched">
-        <div [hidden]="userAddForm.get('password').valid || userAddForm.get('password').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'password')">必填</span>
-          <span [hidden]="userAddForm.hasError('minLength', 'password')">密码至少6位</span>
-          <span [hidden]="userAddForm.hasError('maxLength', 'password')">密码最多16位</span>
+        <input type="text"  class="form-control" formControlName="password" [class.hasError]="modifyForm.get('password').invalid && modifyForm.get('password').touched">
+        <div [hidden]="modifyForm.get('password').valid || modifyForm.get('password').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'password')">必填</span>
+          <span [hidden]="modifyForm.hasError('minLength', 'password')">密码至少6位</span>
+          <span [hidden]="modifyForm.hasError('maxLength', 'password')">密码最多16位</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>联系电话: &nbsp;</label>
-        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="userAddForm.get('phone').invalid && userAddForm.get('phone').touched">
-        <div [hidden]="userAddForm.get('phone').valid || userAddForm.get('phone').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'phone')">必填</span>
-          <span [hidden]="!userAddForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
+        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="modifyForm.get('phone').invalid && modifyForm.get('phone').touched">
+        <div [hidden]="modifyForm.get('phone').valid || modifyForm.get('phone').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'phone')">必填</span>
+          <span [hidden]="!modifyForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>邮箱: &nbsp;</label>
-        <input type="email"  class="form-control" formControlName="email" [class.hasError]="userAddForm.get('email').invalid && userAddForm.get('email').touched">
-        <div [hidden]="userAddForm.get('email').valid || userAddForm.get('email').untouched">
-          <span [hidden]="!userAddForm.hasError('email', 'email')">电子邮箱</span>
-          <span [hidden]="!userAddForm.hasError('required', 'email')">必填</span>
+        <input type="email"  class="form-control" formControlName="email" [class.hasError]="modifyForm.get('email').invalid && modifyForm.get('email').touched">
+        <div [hidden]="modifyForm.get('email').valid || modifyForm.get('email').untouched">
+          <span [hidden]="!modifyForm.hasError('email', 'email')">电子邮箱</span>
+          <span [hidden]="!modifyForm.hasError('required', 'email')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>生日: &nbsp;</label>
-        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="userAddForm.get('birthday').invalid && userAddForm.get('birthday').touched">
-        <div [hidden]="userAddForm.get('birthday').valid || userAddForm.get('birthday').untouched">
-          <span [hidden]="!userAddForm.hasError('required', 'birthday')">必填</span>
+        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="modifyForm.get('birthday').invalid && modifyForm.get('birthday').touched">
+        <div [hidden]="modifyForm.get('birthday').valid || modifyForm.get('birthday').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'birthday')">必填</span>
         </div>
       </div>
       <br>
@@ -197,53 +196,53 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="userModifyForm">
+    <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group">
         <label>用户编码&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="userModifyForm.get('userCode').invalid && userModifyForm.get('userCode').touched">
-        <div [hidden]="userModifyForm.get('userCode').valid || userModifyForm.get('userCode').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'userCode')">必填</span>
+        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="modifyForm.get('userCode').invalid && modifyForm.get('userCode').touched">
+        <div [hidden]="modifyForm.get('userCode').valid || modifyForm.get('userCode').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'userCode')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>身份证: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="userModifyForm.get('idCode').invalid && userModifyForm.get('idCode').touched">
-        <div [hidden]="userModifyForm.get('idCode').valid || userModifyForm.get('idCode').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'idCode')">必填</span>
-          <span [hidden]="userAddForm.hasError('minLength', 'idCode') && userAddForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
+        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="modifyForm.get('idCode').invalid && modifyForm.get('idCode').touched">
+        <div [hidden]="modifyForm.get('idCode').valid || modifyForm.get('idCode').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'idCode')">必填</span>
+          <span [hidden]="modifyForm.hasError('minLength', 'idCode') && modifyForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>真实姓名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="userModifyForm.get('realName').invalid && userModifyForm.get('realName').touched">
-        <div [hidden]="userModifyForm.get('realName').valid || userModifyForm.get('realName').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'realName')">必填</span>
+        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="modifyForm.get('realName').invalid && modifyForm.get('realName').touched">
+        <div [hidden]="modifyForm.get('realName').valid || modifyForm.get('realName').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'realName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>用户名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="userModifyForm.get('userName').invalid && userModifyForm.get('userName').touched">
-        <div [hidden]="userModifyForm.get('userName').valid || userModifyForm.get('userName').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'userName')">必填</span>
+        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="modifyForm.get('userName').invalid && modifyForm.get('userName').touched">
+        <div [hidden]="modifyForm.get('userName').valid || modifyForm.get('userName').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'userName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭住址: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="userModifyForm.get('homeAddress').invalid && userModifyForm.get('homeAddress').touched">
-        <div [hidden]="userModifyForm.get('homeAddress').valid || userModifyForm.get('homeAddress').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'homeAddress')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="modifyForm.get('homeAddress').invalid && modifyForm.get('homeAddress').touched">
+        <div [hidden]="modifyForm.get('homeAddress').valid || modifyForm.get('homeAddress').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'homeAddress')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭联系电话: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="userModifyForm.get('homeTelephone').invalid && userModifyForm.get('homeTelephone').touched">
-        <div [hidden]="userModifyForm.get('homeTelephone').valid || userModifyForm.get('homeTelephone').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'homeTelephone')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="modifyForm.get('homeTelephone').invalid && modifyForm.get('homeTelephone').touched">
+        <div [hidden]="modifyForm.get('homeTelephone').valid || modifyForm.get('homeTelephone').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'homeTelephone')">必填</span>
         </div>
       </div>
       <br>
@@ -256,37 +255,37 @@
       <br>
       <div class="form-group">
         <label>密码: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="password" [class.hasError]="userModifyForm.get('password').invalid && userModifyForm.get('password').touched">
-        <div [hidden]="userModifyForm.get('password').valid || userModifyForm.get('password').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'password')">必填</span>
-          <span [hidden]="userModifyForm.hasError('minLength', 'password')">密码至少6位</span>
-          <span [hidden]="userModifyForm.hasError('maxLength', 'password')">密码最多16位</span>
+        <input type="text"  class="form-control" formControlName="password" [class.hasError]="modifyForm.get('password').invalid && modifyForm.get('password').touched">
+        <div [hidden]="modifyForm.get('password').valid || modifyForm.get('password').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'password')">必填</span>
+          <span [hidden]="modifyForm.hasError('minLength', 'password')">密码至少6位</span>
+          <span [hidden]="modifyForm.hasError('maxLength', 'password')">密码最多16位</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>联系电话: &nbsp;</label>
-        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="userModifyForm.get('phone').invalid && userModifyForm.get('phone').touched">
-        <div [hidden]="userModifyForm.get('phone').valid || userModifyForm.get('phone').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'phone')">必填</span>
-          <span [hidden]="!userModifyForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
+        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="modifyForm.get('phone').invalid && modifyForm.get('phone').touched">
+        <div [hidden]="modifyForm.get('phone').valid || modifyForm.get('phone').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'phone')">必填</span>
+          <span [hidden]="!modifyForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>邮箱: &nbsp;</label>
-        <input type="email"  class="form-control" formControlName="email" [class.hasError]="userModifyForm.get('email').invalid && userModifyForm.get('email').touched">
-        <div [hidden]="userModifyForm.get('email').valid || userModifyForm.get('email').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'email')">必填</span>
-          <span [hidden]="!userModifyForm.hasError('email', 'email')">电子邮箱</span>
+        <input type="email"  class="form-control" formControlName="email" [class.hasError]="modifyForm.get('email').invalid && modifyForm.get('email').touched">
+        <div [hidden]="modifyForm.get('email').valid || modifyForm.get('email').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'email')">必填</span>
+          <span [hidden]="!modifyForm.hasError('email', 'email')">电子邮箱</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>生日: &nbsp;</label>
-        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="userModifyForm.get('birthday').invalid && userModifyForm.get('birthday').touched">
-        <div [hidden]="userModifyForm.get('birthday').valid || userModifyForm.get('birthday').untouched">
-          <span [hidden]="!userModifyForm.hasError('required', 'birthday')">必填</span>
+        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="modifyForm.get('birthday').invalid && modifyForm.get('birthday').touched">
+        <div [hidden]="modifyForm.get('birthday').valid || modifyForm.get('birthday').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'birthday')">必填</span>
         </div>
       </div>
       <br>
@@ -322,24 +321,24 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>数据库id	: &nbsp;{{userDetail.id}}</p>
-    <p>用户编码	: &nbsp;{{userDetail.userCode}}</p>
-    <p>身份证	: &nbsp;{{userDetail.idCode}}</p>
-    <p>真实姓名	: &nbsp;{{userDetail.realName}}</p>
-    <p>用户名	: &nbsp;{{userDetail.userName}}</p>
-    <p>家庭住址	: &nbsp;{{userDetail.homeAddress}}</p>
-    <p>家庭联系电话	: &nbsp;{{userDetail.homeTelephone}}</p>
-    <p>所属组织id	: &nbsp;{{userDetail.organizationId}}</p>
-    <p>密码	: &nbsp;{{userDetail.password}}</p>
-    <p>联系电话	: &nbsp;{{userDetail.phone}}</p>
-    <p>邮箱	: &nbsp;{{userDetail.email}}</p>
-    <p>生日	: &nbsp;{{userDetail.birthday}}</p>
-    <p>性别	: &nbsp;{{userDetail.gender}}</p>
-    <p>插入时间	: &nbsp;{{userDetail.idt}}</p>
-    <p>更新时间	: &nbsp;{{userDetail.udt}}</p>
+    <p>数据库id	: &nbsp;{{detail.id}}</p>
+    <p>用户编码	: &nbsp;{{detail.userCode}}</p>
+    <p>身份证	: &nbsp;{{detail.idCode}}</p>
+    <p>真实姓名	: &nbsp;{{detail.realName}}</p>
+    <p>用户名	: &nbsp;{{detail.userName}}</p>
+    <p>家庭住址	: &nbsp;{{detail.homeAddress}}</p>
+    <p>家庭联系电话	: &nbsp;{{detail.homeTelephone}}</p>
+    <p>所属组织id	: &nbsp;{{detail.organizationId}}</p>
+    <p>密码	: &nbsp;{{detail.password}}</p>
+    <p>联系电话	: &nbsp;{{detail.phone}}</p>
+    <p>邮箱	: &nbsp;{{detail.email}}</p>
+    <p>生日	: &nbsp;{{detail.birthday}}</p>
+    <p>性别	: &nbsp;{{detail.gender}}</p>
+    <p>插入时间	: &nbsp;{{detail.idt}}</p>
+    <p>更新时间	: &nbsp;{{detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openuser(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

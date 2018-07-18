@@ -4,7 +4,6 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CameraGroup, Cameras, PageBody} from '../../../shared/global.service';
 import 'rxjs/Rx';
-import {tryCatch} from 'rxjs/util/tryCatch';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -331,9 +330,6 @@ export class VideoManagerComponent implements OnInit {
             this.status1 = Number(res.status);
             this.resMessage = res.message;
             this.RequestCamera(this.G_id);
-          // }catch (e) {
-          //   console.log('服务器故障！');
-          // }
         });
     } else {
       this.inputvalid = true;

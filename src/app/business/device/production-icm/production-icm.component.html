@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openProIcmAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteProIcm()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openProIcm(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openProIcm(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -29,7 +28,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let proicm of ProductionIcms; let i = index">
+          <tr *ngFor="let proicm of ProductionIcms; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{proicm.mid}}</td>
             <td>{{proicm.name}}</td>
@@ -58,23 +57,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="proIcmAddForm">
-      <div class="form-group">
-        <label>模块id(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="mid">
-        <div [hidden]="proIcmAddForm.get('mid').valid || proIcmAddForm.get('mid').untouched" [class.hasError]="proIcmAddForm.get('mid').invalid && proIcmAddForm.get('mid').touched">
-          <span [hidden]="!proIcmAddForm.hasError('required', 'mid')">必填</span>
+    <form class="form-horizontal" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
+          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>模块名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="name">
-        <div [hidden]="proIcmAddForm.get('name').valid || proIcmAddForm.get('name').untouched" [class.hasError]="proIcmAddForm.get('mid').invalid && proIcmAddForm.get('name').touched">
-          <span [hidden]="!proIcmAddForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择生产线id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
@@ -107,20 +97,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="proIcmModifyForm">
-      <br>
-      <div class="form-group">
-        <label>模块名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="name">
-        <div [hidden]="proIcmModifyForm.get('name').valid || proIcmModifyForm.get('name').untouched" [class.hasError]="proIcmModifyForm.get('mid').invalid && proIcmModifyForm.get('name').touched">
-          <span [hidden]="!proIcmModifyForm.hasError('required', 'name')">必填</span>
+    <form class="form-horizontal" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="modifyForm.get(add.field).invalid && modifyForm.get(add.field).touched">
+        <div [hidden]="modifyForm.get(add.field).valid || modifyForm.get(add.field).untouched">
+          <span [hidden]="!modifyForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
       <div class="form-group">
         <label>生产线系统id: &nbsp;</label>
         <select #device_modal_id (change)="SelectModifyModalId(device_modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.sid === proicmDetail.sid" [value]="modal.sid">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.sid === detail.sid" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
       <br>
@@ -150,11 +138,11 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>模块id(唯一标识): {{proicmDetail['mid']}}</p>
-    <p>名称:{{proicmDetail['name']}}</p>
-    <p>父id :{{proicmDetail['sid']}}</p>
-    <p>插入时间 :{{proicmDetail['idt']}}</p>
-    <p>更新时间 :{{proicmDetail['udt']}}</p>
+    <p>模块id(唯一标识): {{detail['mid']}}</p>
+    <p>名称:{{detail['name']}}</p>
+    <p>父id :{{detail['sid']}}</p>
+    <p>插入时间 :{{detail['idt']}}</p>
+    <p>更新时间 :{{detail['udt']}}</p>
     <div class="text-center">
       <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProIcm(modify)">
         跳转到修改

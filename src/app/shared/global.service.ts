@@ -220,11 +220,21 @@ export class UserPowerInfo {
 // 用户管理
 export class UsersManager {
   constructor(
-    public id:	String,
-    public userCode:	String,
-    public idCode:	String,
-    public realName:	String,
-    public userName:	String
+   public id: string,
+  public userCode: string,
+  public idCode: string,
+  public realName: string,
+  public userName: string,
+  public homeAddress: string,
+  public homeTelephone: string,
+  public organizationId: string,
+  public password: string,
+  public phone: string,
+  public email: string,
+  public birthday: string,
+  public gender: string,
+  public idt: string,
+  public udt: string,
 ) {}
 }
 
@@ -392,7 +402,7 @@ export class TechnologyTemperatureQueryList {
 
 
 // 项目数据增加和修改 字段构造器
-export class ItemField {
+export class Field {
   constructor(
     public name: string,
     public field: string

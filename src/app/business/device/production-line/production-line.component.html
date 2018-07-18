@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openProLineAdd(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteProLine()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openProLine(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openProLine(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -29,7 +28,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let proline of ProductionLines; let i = index">
+          <tr *ngFor="let proline of datas; let i = index" (click)="openModal(modify, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{proline['sid']}}</td>
             <td>{{proline['name']}}</td>
@@ -58,23 +57,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="prolineAddForm">
-      <div class="form-group">
-        <label>id号(唯一标识)&nbsp;&nbsp;:&nbsp;</label>
-        <input type="text" class="form-control" formControlName="sid" [class.hasError]="prolineAddForm.get('sid').invalid && prolineAddForm.get('sid').touched">
-        <div [hidden]="prolineAddForm.get('sid').valid || prolineAddForm.get('sid').untouched">
-          <span [hidden]="!prolineAddForm.hasError('required', 'sid')">必填</span>
+    <form class="form-horizontal" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
+          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
-      <br>
-      <div class="form-group">
-        <label>生产线系统名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="prolineAddForm.get('name').invalid && prolineAddForm.get('name').touched">
-        <div [hidden]="prolineAddForm.get('name').valid || prolineAddForm.get('name').untouched">
-          <span [hidden]="!prolineAddForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <br>
       <div class="form-group">
         <label>请选择部门id: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
@@ -107,27 +97,18 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="prolineModifyForm">
-      <br>
-      <div class="form-group">
-        <label>生产线系统名称&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="prolineModifyForm.get('name').invalid && prolineModifyForm.get('name').touched">
-        <div [hidden]="prolineModifyForm.get('name').valid || prolineModifyForm.get('name').untouched">
-          <span [hidden]="!prolineModifyForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <br>
-      <div class="form-group">
-        <label>	部门id: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="did" [class.hasError]="prolineModifyForm.get('did').invalid && prolineModifyForm.get('did').touched">
-        <div [hidden]="prolineModifyForm.get('did').valid || prolineModifyForm.get('did').untouched">
-          <span [hidden]="!prolineModifyForm.hasError('required', 'did')">必填</span>
+    <form class="form-horizontal" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}:</label>
+        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="modifyForm.get(add.field).invalid && modifyForm.get(add.field).touched">
+        <div [hidden]="modifyForm.get(add.field).valid || modifyForm.get(add.field).untouched">
+          <span [hidden]="!modifyForm.hasError('required', add.field)">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>请选择部门id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.did" [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === detail.did" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <br>
@@ -155,14 +136,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>id号(唯一标识): {{Detail['sid']}}</p>
-    <p>生产线系统名称:{{Detail['name']}}</p>
-    <p>父id :{{Detail['did']}}</p>
-    <p>插入时间 :{{Detail['idt']}}</p>
-    <p>更新时间 :{{Detail['udt']}}</p>
+    <p>id号(唯一标识): {{detail['sid']}}</p>
+    <p>生产线系统名称:{{detail['name']}}</p>
+    <p>父id :{{detail['did']}}</p>
+    <p>插入时间 :{{detail['idt']}}</p>
+    <p>更新时间 :{{detail['udt']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProLine(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

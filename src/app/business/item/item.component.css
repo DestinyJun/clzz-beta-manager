@@ -27,7 +27,8 @@
   background-color: #048992;
   color: #ffffff;
 }
-.table > tbody > tr > td {
+.table > tbody > tr {
+  cursor: pointer;
   background-color: rgba(37,165,255,.1);
   color: #333333;
   border-bottom: 2px solid #b8b8b8;
@@ -69,6 +70,8 @@
 .remind{
   color: red;
 }
+
+/*---------------------------------------------- 与其他组件不相同的样式*/
 .year, .mouth, .day, .hour, .minutes {
    text-decoration: black;
    border-bottom: #484a55 solid 1px;
@@ -80,7 +83,36 @@
 .mouth:focus,
 .day:focus,
 .hour:focus,
-.minutes:focus{
+.minutes:focus
+input:focus,
+input{
   /*border: none;*/
   outline: none;
 }
+
+.fa-search{
+  cursor: pointer;
+}
+.fa-search:hover{
+  transform: scale(2);
+}
+.numSearchDiv{
+  display: inline-block;
+  z-index: 1;
+}
+.numSearch{
+  position: relative;
+  background-color: rgba(0,0,0,0.5);
+}
+.numSearchText{
+  position: relative;
+  top: 30%;
+  border: none;
+  background-color: rgba(255,255,255,0.5);
+}
+.numSearchBtn{
+  text-align: center;
+  position: relative;
+  right: 5px;
+}
+

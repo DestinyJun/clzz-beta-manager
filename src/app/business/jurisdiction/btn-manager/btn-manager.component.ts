@@ -1,6 +1,6 @@
 import {Component, OnChanges, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import { JurisdictionBtnManager, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionBtnManager, PageBody} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -11,13 +11,16 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./btn-manager.component.css']
 })
 export class BtnManagerComponent implements OnInit {
-  public Btnmanagers: Array<JurisdictionBtnManager>;
+  public datas: Array<JurisdictionBtnManager>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
+  public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public Detail: any;
-  public btnmanagerAddForm: FormGroup;
-  public btnmanagerModifyForm: FormGroup;
+  public detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public Fmodalid: any;
@@ -32,28 +35,40 @@ export class BtnManagerComponent implements OnInit {
     private req: ReqService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {
-    //     增加模态框表单
-    this.btnmanagerAddForm = fb.group({
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
-    });
-    this.btnmanagerModifyForm = fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
-    });
-  }
+  ) {}
   ngOnInit() {
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('名称',	'name'),
+      new Field('描述',	'decription'),
+      // new Field('模块id',	'midnew Field')
+    ];
+    this.fieldsModify = [
+      new Field('按钮id', 'id'),
+      new Field('名称', 'name'),
+      new Field('描述', 'decription')
+      // new Field('模块id', 'mid'),
+    ];
+    // 增加模态框表单
+    this.addForm = this.fb.group({
+      name: ['', Validators.required],
+      decription: ['', Validators.required],
+      mid: ['', Validators.required]
+    });
+    this.modifyForm = this.fb.group({
+      id: ['', Validators.required],
+      name: ['', Validators.required],
+      decription: ['', Validators.required],
+      mid: ['', Validators.required]
+    });
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
@@ -62,43 +77,52 @@ export class BtnManagerComponent implements OnInit {
       }
     });
   }
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
+    this.inputvalid = false;
+    this.gtone = false;
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
+  }
 // 选择增加设备id
   public SelectAddModalId(value): void {
-    this.btnmanagerAddForm.patchValue({'mid': value});
+    this.addForm.patchValue({'mid': value});
   }
 // 选择修改设备id
   public SelectModifyModalId(value): void {
-    this.btnmanagerModifyForm.patchValue({'mid': value});
+    this.modifyForm.patchValue({'mid': value});
   }
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
   }
-  // 控制模态框
-  public openBtnmanager(template: TemplateRef<any>): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      this.mustone = false;
-      this.Detail.mid = String(this.Detail.mid);
-      this.btnmanagerModifyForm.reset(this.Detail);
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-  // 控制模态框增加
-  public openBtnmanagerAdd(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.gtone = false;
-    this.inputvalid = false;
-    this.modalRef = this.modalService.show(template);
-  }
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.Btnmanagers.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -118,9 +142,9 @@ export class BtnManagerComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.Btnmanagers[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
 
@@ -133,7 +157,7 @@ export class BtnManagerComponent implements OnInit {
     } else {
       this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          this.req.JurisdictionBtnManagerDelete('id=' + this.Btnmanagers[this.hasChecked[j]].id)
+          this.req.JurisdictionBtnManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
@@ -147,11 +171,11 @@ export class BtnManagerComponent implements OnInit {
   }
 // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public btnmanagerAdd(): void {
-    if (this.btnmanagerAddForm.value) {
+    if (this.addForm.value) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerAdd(this.commonfun.parameterSerialization(this.btnmanagerAddForm.value))
+      this.req.JurisdictionBtnManagerAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -163,11 +187,11 @@ export class BtnManagerComponent implements OnInit {
   }
 //  修改表格内容
   public btnmanagerModify(): void {
-    if (this.btnmanagerModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.btnmanagerModifyForm.value))
+      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -184,7 +208,20 @@ export class BtnManagerComponent implements OnInit {
     this.req.getJurisdictionBtnManager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
-        this.Btnmanagers = value.values.datas;
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {PageBody, DeviceProductionLineList} from '../../../shared/global.service';
+import {PageBody, DeviceProductionLineList, Field} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -12,13 +12,16 @@ import {CommonfunService} from '../../../shared/commonfun.service';
 })
 
 export class ProductionLineComponent implements OnInit {
-  public ProductionLines: Array<DeviceProductionLineList>;
+  public datas: Array<DeviceProductionLineList>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
+  public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public Detail: any;
-  public prolineAddForm: FormGroup;
-  public prolineModifyForm: FormGroup;
+  public detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -41,14 +44,26 @@ export class ProductionLineComponent implements OnInit {
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
+    // 只要是需要选择的下拉框，另放在后面
+    this.fieldsAdd = [
+      new Field('生产线id',	'sid'),
+      new Field('名称',	'name')
+      // new Field('父id',	'did')
+    ];
+    this.fieldsModify = [
+      new Field('生产线id',	'sid'),
+      new Field('名称',	'name')
+      // new Field('父id',	'did')
+    ];
     // 增加模态框表单
-    this.prolineAddForm = this.fb.group({
+    this.addForm = this.fb.group({
       sid: ['', Validators.required],
       name: ['', Validators.required],
       did: ['', Validators.required]
     });
-    this.prolineModifyForm = this.fb.group({
+    this.modifyForm = this.fb.group({
       sid: ['', Validators.required],
       name: ['', Validators.required],
       did: ['', Validators.required]
@@ -58,31 +73,40 @@ export class ProductionLineComponent implements OnInit {
       this.Fmodalid = value.values['departments'];
     });
   }
-  public SelectAddModalId(value): void {
-    this.prolineAddForm.patchValue({'did': value});
-  }
-  public SelectModifyModalId(value): void {
-    this.prolineModifyForm.patchValue({'did': value});
-  }
-  // 控制模态框
-  public openProLine(template: TemplateRef<any>): void {
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      this.inputvalid = false;
-      this.Detail.did = String(this.Detail.did);
-      this.prolineModifyForm.reset(this.Detail);
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
-  // 控制模态框增加
-  public openProLineAdd(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.inputvalid = false;
-    this.gtone = false;
-    this.modalRef = this.modalService.show(template);
+  public SelectAddModalId(value): void {
+    this.addForm.patchValue({'did': value});
+  }
+  public SelectModifyModalId(value): void {
+    this.modifyForm.patchValue({'did': value});
   }
   // 监控翻页事件
   public getPageBody(event): void {
@@ -93,7 +117,7 @@ export class ProductionLineComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.ProductionLines.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -113,9 +137,9 @@ export class ProductionLineComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.ProductionLines[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
@@ -128,7 +152,7 @@ export class ProductionLineComponent implements OnInit {
         this.mustone = false;
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-            this.req.DeviceProductionLineDelete('sid=' +  this.ProductionLines[this.hasChecked[j]].sid)
+            this.req.DeviceProductionLineDelete('sid=' +  this.datas[this.hasChecked[j]].sid)
               .subscribe(res => {
                 if (j === haschecklen - 1) {
                   this.resMessage = res.message;
@@ -141,11 +165,11 @@ export class ProductionLineComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public prolineAdd(): void {
-    if (this.prolineAddForm.valid) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.prolineAddForm.value))
+      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           console.log(res);
           this.resMessage = res.message;
@@ -158,11 +182,11 @@ export class ProductionLineComponent implements OnInit {
   }
 //  修改表格内容
   public prolineModify(): void {
-    if (this.prolineModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.prolineModifyForm.value))
+      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -179,7 +203,20 @@ export class ProductionLineComponent implements OnInit {
     this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
-        this.ProductionLines = value.values.datas;
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

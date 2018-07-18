@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {PageBody, DeviceProductionIcmList} from '../../../shared/global.service';
+import {PageBody, DeviceProductionIcmList, Field} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -11,13 +11,16 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./production-icm.component.css']
 })
 export class ProductionIcmComponent implements OnInit {
-  public ProductionIcms: Array<DeviceProductionIcmList>;
+  public datas: Array<DeviceProductionIcmList>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
+  public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public proicmDetail: any;
-  public proIcmAddForm: FormGroup;
-  public proIcmModifyForm: FormGroup;
+  public detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -32,9 +35,7 @@ export class ProductionIcmComponent implements OnInit {
     private req: ReqService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {
-
-  }
+  ) {}
 
   ngOnInit(): void {
     this.status = 0;
@@ -42,13 +43,25 @@ export class ProductionIcmComponent implements OnInit {
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
-    this.proIcmAddForm = this.fb.group({
+    // 只要是需要选择的下拉框，另放在后面
+    this.fieldsAdd = [
+      new Field('模块id',	'mid'),
+      new Field('名称',	'name'),
+      // new Field('父id',	'sid')
+    ];
+    this.fieldsModify = [
+      new Field('模块id',	'mid'),
+      new Field('名称',	'name')
+      // new Field('父id',	'sid'),
+    ];
+    this.addForm = this.fb.group({
       mid: ['', Validators.required],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
-    this.proIcmModifyForm = this.fb.group({
+    this.modifyForm = this.fb.group({
       mid: ['', Validators.required],
       name: ['', Validators.required],
       sid: ['', Validators.required]
@@ -59,14 +72,42 @@ export class ProductionIcmComponent implements OnInit {
       this.Fmodalid = value.values;
     });
   }
-
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
+    this.inputvalid = false;
+    this.gtone = false;
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
+        this.mustone = true;
+      } else {
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
+  }
 // 选择增加设备id
   public SelectAddModalId(value): void {
-    this.proIcmAddForm.patchValue({'sid': value});
+    this.addForm.patchValue({'sid': value});
   }
 // 选择修改设备id
   public SelectModifyModalId(value): void {
-    this.proIcmModifyForm.patchValue({'sid': value});
+    this.modifyForm.patchValue({'sid': value});
   }
   // 控制模态框
   public openProIcm(template: TemplateRef<any>): void {
@@ -76,8 +117,8 @@ export class ProductionIcmComponent implements OnInit {
       this.mustone = true;
     } else {
       this.mustone = false;
-      this.proicmDetail.sid = String(this.proicmDetail.sid);
-      this.proIcmModifyForm.reset(this.proicmDetail);
+      this.detail.sid = String(this.detail.sid);
+      this.modifyForm.reset(this.detail);
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -97,7 +138,7 @@ export class ProductionIcmComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.ProductionIcms.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -117,9 +158,9 @@ export class ProductionIcmComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.proicmDetail = this.ProductionIcms[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.proicmDetail = null;
+      this.detail = null;
     }
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
@@ -131,7 +172,7 @@ export class ProductionIcmComponent implements OnInit {
     } else {
       this.mustone = false;
         for (let j = 0; j < haschecklen; j++) {
-          this.req.DeviceProductionIcmDelete('mid=' +  this.ProductionIcms[this.hasChecked[j]].mid)
+          this.req.DeviceProductionIcmDelete('mid=' +  this.datas[this.hasChecked[j]].mid)
             .subscribe(res => {
               this.status = Number(res.status);
               this.resMessage = res.message;
@@ -144,11 +185,11 @@ export class ProductionIcmComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proIcmAdd(): void {
-    if (this.proIcmAddForm.valid) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionIcmAdd(this.commonfun.parameterSerialization(this.proIcmAddForm.value))
+      this.req.DeviceProductionIcmAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -163,8 +204,8 @@ export class ProductionIcmComponent implements OnInit {
     this.openstatus = false;
     this.inputvalid = false;
     this.modalRef.hide();
-    if (this.proIcmModifyForm.valid) {
-      this.req.DeviceProductionIcmModify(this.commonfun.parameterSerialization(this.proIcmModifyForm.value))
+    if (this.modifyForm.valid) {
+      this.req.DeviceProductionIcmModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -181,7 +222,20 @@ export class ProductionIcmComponent implements OnInit {
     this.req.getDeviceProductionIcm(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
-        this.ProductionIcms = value.values.datas;
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;
