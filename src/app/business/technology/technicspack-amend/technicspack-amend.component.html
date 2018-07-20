@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openAddModal(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
-        <button type="button" class="btn btn-default" (click)="Delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -31,7 +30,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let param of Paramdatas; let i = index">
+          <tr *ngFor="let param of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)" title="点击查看详情"></td>
             <td>{{param.name}}</td>
             <td>{{param.finishtype}}</td>
@@ -62,15 +61,15 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-inline" [formGroup]="paramAddForm">
+    <form class="form-inline" [formGroup]="addForm">
       <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
         <label>{{pa.chinese_variable_name}} <span *ngIf="pa.unit !== ''">({{pa.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
-        <input type="text" class="form-control" formControlName="{{pa?.word_variable_name}}">
+        <input type="text" class="form-control" formControlName="{{pa.word_variable_name}}">
       </div>
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="inputvalid" class="remind">每一个项都为必填项,请检查你的输入</span>
     </div>
     <div class="text-center">
       <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsAdd()">
@@ -91,15 +90,15 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-inline" [formGroup]="paramModifyForm">
+    <form class="form-inline" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
-        <label>{{pa.chinese_variable_name}}<span *ngIf="pa.unit !== ''">({{pa.unit}})</span>&nbsp;&nbsp;:&nbsp;&nbsp;</label>
-        <input type="text" class="form-control" formControlName="{{pa.word_variable_name}}">
+        <label>{{pa.chinese_variable_name}} <span *ngIf="pa.unit !== ''">({{pa.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" formControlName="{{pa?.word_variable_name}}">
       </div>
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="inputvalid" class="remind">每一个项都为必填项,请检查你的输入</span>
     </div>
     <div class="text-center">
       <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsModify()">
@@ -121,36 +120,36 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>方 案 名 称&nbsp; :&nbsp;	{{Detail.name}}</p>
-    <p>面 漆 颜 色&nbsp;: &nbsp;	{{Detail.finishtype}}</p>
-    <p>底漆干膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness}}&nbsp;	微米</p>
-    <p>底漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness_d}}&nbsp;	微米</p>
-    <p>底漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.bottom_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>底漆干膜厚度修正右&nbsp;: &nbsp;	{{Detail.amenddata.bottom_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.bottom_wet_thickness}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度误差&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度修正左&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度修正右&nbsp;: &nbsp;	{{Detail.amenddata.bottom_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>背漆干膜厚度&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness}}&nbsp;	微米</p>
-    <p>背漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d}}&nbsp;	微米</p>
-    <p>背漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>背漆干膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.back_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.back_wet_thickness}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.back_wet_thickness_d}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度修正左&nbsp;:&nbsp;	{{Detail.amenddata.back_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度修正右&nbsp;:&nbsp;	{{Detail.amenddata.back_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>面漆干膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.surface_dry_thickness}}&nbsp;	微米</p>
-    <p>面漆干膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d}}&nbsp;	微米</p>
-    <p>面漆干膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>面漆干膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.surface_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度&nbsp;: &nbsp;	{{Detail.amenddata.surface_wet_thickness}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度误差&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度修正左&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度修正右&nbsp; :&nbsp;	{{Detail.amenddata.surface_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>一涂排气风量&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_1}}&nbsp;	CMH</p>
-    <p>一涂排气风量差值&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_1_d}}&nbsp;	CMH</p>
-    <p>二涂排气风量&nbsp;: &nbsp;	{{Detail.amenddata.exhaust_air_volume_2}}&nbsp;	CMH</p>
-    <p>二涂排气风量差值&nbsp; :&nbsp;	{{Detail.amenddata.exhaust_air_volume_2_d}}&nbsp;	CMH</p>
+    <p>方 案 名 称&nbsp; :&nbsp;	{{detail.name}}</p>
+    <p>面 漆 颜 色&nbsp;: &nbsp;	{{detail.finishtype}}</p>
+    <p>底漆干膜厚度&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness}}&nbsp;	微米</p>
+    <p>底漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness_d}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正右&nbsp;: &nbsp;	{{detail.amenddata.bottom_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度&nbsp; :&nbsp;	{{detail.amenddata.bottom_wet_thickness}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度误差&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正左&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正右&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆干膜厚度&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness}}&nbsp;	微米</p>
+    <p>背漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度&nbsp;: &nbsp;	{{detail.amenddata.back_wet_thickness}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.back_wet_thickness_d}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正左&nbsp;:&nbsp;	{{detail.amenddata.back_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正右&nbsp;:&nbsp;	{{detail.amenddata.back_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆干膜厚度&nbsp;: &nbsp;	{{detail.amenddata.surface_dry_thickness}}&nbsp;	微米</p>
+    <p>面漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度&nbsp;: &nbsp;	{{detail.amenddata.surface_wet_thickness}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>一涂排气风量&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_1}}&nbsp;	CMH</p>
+    <p>一涂排气风量差值&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_1_d}}&nbsp;	CMH</p>
+    <p>二涂排气风量&nbsp;: &nbsp;	{{detail.amenddata.exhaust_air_volume_2}}&nbsp;	CMH</p>
+    <p>二涂排气风量差值&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_2_d}}&nbsp;	CMH</p>
     <div class="text-center">
       <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
         跳转到修改

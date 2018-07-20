@@ -235,6 +235,7 @@ export class UsersManager {
   public gender: string,
   public idt: string,
   public udt: string,
+   public Sysids: string
 ) {}
 }
 
@@ -263,7 +264,7 @@ export class CameraGroup {
   ) {}
 }
 // 摄像机管理
-export class Cameras {
+export class Camera {
   constructor(
     public creator: string,
     public g_id: string,

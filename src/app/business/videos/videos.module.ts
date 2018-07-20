@@ -7,6 +7,8 @@ import {VideoManagerComponent} from './video-manager/video-manager.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { TreeModule } from 'ng2-tree';
 import {BasedModule} from '../../based/based.module';
+import {CameraComponent} from './video-manager/camera/camera.component';
+import {CameraGroupComponent} from './video-manager/camera-group/camera-group.component';
 
 @NgModule({
   imports: [
@@ -20,7 +22,9 @@ import {BasedModule} from '../../based/based.module';
   declarations: [
     VideosComponent,
     VideoWindowComponent,
-    VideoManagerComponent
+    VideoManagerComponent,
+    CameraComponent,
+    CameraGroupComponent
   ],
   exports: [],
   providers: [],

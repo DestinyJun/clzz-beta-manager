@@ -6,10 +6,9 @@
     <div class="row" style="background-color: #efefef;margin: 0 1px;">
       <div class="button">
         <div class="col-xs-12">
-          <button type="button" class="btn btn-default" (click)="openModal(plus)"><span class="fa fa-plus"></span>增加</button>
-          <button type="button" class="btn btn-default"  (click)="Delete()"><span class="fa fa-trash-o" ></span>删除</button>
-          <button type="button" class="btn btn-default" (click)="openModal2(update)"><span class="fa fa-edit"></span>修改</button>
-          <button type="button" class="btn btn-default" (click)="openModal2(find)"><span class="fa fa-search"></span>查看</button>
+          <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="fa fa-add"></span>增加</button>
+          <button type="button" class="btn btn-default"  (click)="delete()"><span class="fa fa-trash-o" ></span>删除</button>
+          <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
           <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
           <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
         </div>
@@ -20,7 +19,7 @@
         <table class="table table-responsive">
           <thead>
           <tr>
-            <th class="checkboxoption"><input type="checkbox" [checked]="boo" (click)="All2()" >全选/全不选</th>
+            <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
             <th>id</th>
             <th>组织名称</th>
             <th>机构编码</th>
@@ -32,8 +31,8 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let list of organizations;let i=index;">
-            <td ><input type="checkbox" [checked]="status[i]" (click)="Obtain(i)"></td>
+          <tr *ngFor="let list of datas;let i=index;" (click)="openModal(lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{list['id']}}</td>
             <td>{{list['name']}}</td>
             <td>{{list['code']}}</td>
@@ -56,7 +55,7 @@
 </div>
 
 <!--增加的模态框-->
-<ng-template #plus>
+<ng-template #add>
   <div class="modal-header">
     <h4 class="modal-title pull-left">组织增加</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
@@ -64,85 +63,85 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="forms" [formGroup]="formModel">
+    <form class="forms" [formGroup]="addForm">
       <div class="form-group">
         <label for="name1">组织名称</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="formModel.get('name').invalid && formModel.get('name').touched">
-        <div [hidden]="formModel.get('name').valid || formModel.get('name').untouched">
-          <span [hidden]="!formModel.hasError('required', 'name')">必填</span>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="addForm.get('name').invalid && addForm.get('name').touched">
+        <div [hidden]="addForm.get('name').valid || addForm.get('name').untouched">
+          <span [hidden]="!addForm.hasError('required', 'name')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="number1">机构编码</label>
-        <input type="text" class="form-control" formControlName="code" [class.hasError]="formModel.get('code').invalid && formModel.get('code').touched">
-        <div [hidden]="formModel.get('code').valid || formModel.get('code').untouched">
-          <span [hidden]="!formModel.hasError('required', 'code')">必填</span>
+        <input type="text" class="form-control" formControlName="code" [class.hasError]="addForm.get('code').invalid && addForm.get('code').touched">
+        <div [hidden]="addForm.get('code').valid || addForm.get('code').untouched">
+          <span [hidden]="!addForm.hasError('required', 'code')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="otype1">机构类型</label>
-        <input type="text" class="form-control" formControlName="otype" [class.hasError]="formModel.get('otype').invalid && formModel.get('otype').touched">
-        <div [hidden]="formModel.get('otype').valid || formModel.get('otype').untouched">
-          <span [hidden]="!formModel.hasError('required', 'otype')">必填</span>
+        <input type="text" class="form-control" formControlName="otype" [class.hasError]="addForm.get('otype').invalid && addForm.get('otype').touched">
+        <div [hidden]="addForm.get('otype').valid || addForm.get('otype').untouched">
+          <span [hidden]="!addForm.hasError('required', 'otype')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="tel1">联系电话</label>
-        <input type="tel" class="form-control" formControlName="tel" [class.hasError]="formModel.get('tel').invalid && formModel.get('tel').touched">
-        <div [hidden]="formModel.get('tel').valid || formModel.get('tel').untouched">
-          <span [hidden]="!formModel.hasError('required', 'tel')">必填</span>
-          <span [hidden]="!formModel.hasError('mobile', 'tel')">请输入正确的手机号码</span>
+        <input type="tel" class="form-control" formControlName="tel" [class.hasError]="addForm.get('tel').invalid && addForm.get('tel').touched">
+        <div [hidden]="addForm.get('tel').valid || addForm.get('tel').untouched">
+          <span [hidden]="!addForm.hasError('required', 'tel')">必填</span>
+          <span [hidden]="!addForm.hasError('mobile', 'tel')">请输入正确的手机号码</span>
         </div>
       </div>
       <div class="form-group">
         <label for="fax1">传真号码</label>
-        <input type="text" class="form-control" formControlName="fax" [class.hasError]="formModel.get('fax').invalid && formModel.get('fax').touched">
-        <div [hidden]="formModel.get('fax').valid || formModel.get('fax').untouched">
-          <span [hidden]="!formModel.hasError('required', 'fax')">必填</span>
+        <input type="text" class="form-control" formControlName="fax" [class.hasError]="addForm.get('fax').invalid && addForm.get('fax').touched">
+        <div [hidden]="addForm.get('fax').valid || addForm.get('fax').untouched">
+          <span [hidden]="!addForm.hasError('required', 'fax')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="address1">机构地址</label>
-        <input type="text" class="form-control" formControlName="address" [class.hasError]="formModel.get('address').invalid && formModel.get('address').touched">
-        <div [hidden]="formModel.get('address').valid || formModel.get('address').untouched">
-          <span [hidden]="!formModel.hasError('required', 'address')">必填</span>
+        <input type="text" class="form-control" formControlName="address" [class.hasError]="addForm.get('address').invalid && addForm.get('address').touched">
+        <div [hidden]="addForm.get('address').valid || addForm.get('address').untouched">
+          <span [hidden]="!addForm.hasError('required', 'address')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="email1">单位邮箱</label>
-        <input type="email" class="form-control" formControlName="email" [class.hasError]="formModel.get('email').invalid && formModel.get('email').touched">
-        <div [hidden]="formModel.get('email').valid || formModel.get('email').untouched">
-          <span [hidden]="!formModel.hasError('required', 'email')">必填</span>
-          <span [hidden]="!formModel.hasError('email', 'email')">电子邮箱</span>
+        <input type="email" class="form-control" formControlName="email" [class.hasError]="addForm.get('email').invalid && addForm.get('email').touched">
+        <div [hidden]="addForm.get('email').valid || addForm.get('email').untouched">
+          <span [hidden]="!addForm.hasError('required', 'email')">必填</span>
+          <span [hidden]="!addForm.hasError('email', 'email')">电子邮箱</span>
         </div>
       </div>
       <div class="form-group">
         <label for="corpphone1">法人电话</label>
-        <input type="tel" class="form-control" formControlName="corpphone" [class.hasError]="formModel.get('corpphone').invalid && formModel.get('corpphone').touched">
-        <div [hidden]="formModel.get('corpphone').valid || formModel.get('corpphone').untouched">
-          <span [hidden]="!formModel.hasError('required', 'corpphone')">必填</span>
-          <span [hidden]="!formModel.hasError('mobile', 'corpphone')">请输入正确的手机号码</span>
+        <input type="tel" class="form-control" formControlName="corpphone" [class.hasError]="addForm.get('corpphone').invalid && addForm.get('corpphone').touched">
+        <div [hidden]="addForm.get('corpphone').valid || addForm.get('corpphone').untouched">
+          <span [hidden]="!addForm.hasError('required', 'corpphone')">必填</span>
+          <span [hidden]="!addForm.hasError('mobile', 'corpphone')">请输入正确的手机号码</span>
         </div>
       </div>
       <div class="form-group">
         <label for="corpname1">法人代表</label>
-        <input type="text" class="form-control" formControlName="corpname" [class.hasError]="formModel.get('corpname').invalid && formModel.get('corpname').touched">
-        <div [hidden]="formModel.get('corpname').valid || formModel.get('corpname').untouched">
-          <span [hidden]="!formModel.hasError('required', 'corpname')">必填</span>
+        <input type="text" class="form-control" formControlName="corpname" [class.hasError]="addForm.get('corpname').invalid && addForm.get('corpname').touched">
+        <div [hidden]="addForm.get('corpname').valid || addForm.get('corpname').untouched">
+          <span [hidden]="!addForm.hasError('required', 'corpname')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="registerdate1">成立日期</label>
-        <input type="date" class="form-control" formControlName="registerdate" [class.hasError]="formModel.get('registerdate').invalid && formModel.get('registerdate').touched">
-        <div [hidden]="formModel.get('registerdate').valid || formModel.get('registerdate').untouched">
-          <span [hidden]="!formModel.hasError('required', 'registerdate')">必填</span>
+        <input type="date" class="form-control" formControlName="registerdate" [class.hasError]="addForm.get('registerdate').invalid && addForm.get('registerdate').touched">
+        <div [hidden]="addForm.get('registerdate').valid || addForm.get('registerdate').untouched">
+          <span [hidden]="!addForm.hasError('required', 'registerdate')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="zipcode1">邮编</label>
-        <input type="text" class="form-control" formControlName="zipcode" [class.hasError]="formModel.get('zipcode').invalid && formModel.get('zipcode').touched">
-        <div [hidden]="formModel.get('zipcode').valid || formModel.get('zipcode').untouched">
-          <span [hidden]="!formModel.hasError('required', 'zipcode')">必填</span>
+        <input type="text" class="form-control" formControlName="zipcode" [class.hasError]="addForm.get('zipcode').invalid && addForm.get('zipcode').touched">
+        <div [hidden]="addForm.get('zipcode').valid || addForm.get('zipcode').untouched">
+          <span [hidden]="!addForm.hasError('required', 'zipcode')">必填</span>
         </div>
       </div>
       <div class="form-group">
@@ -158,14 +157,14 @@
       <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="btn-box text-center">
-      <button type="submit" class="btn btn-info" (click)="insert()">确定增加</button>
+      <button type="submit" class="btn btn-info" (click)="con_add()">确定增加</button>
       <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
     </div>
   </div>
 </ng-template>
 
 <!--修改的模态框-->
-<ng-template #update>
+<ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left">部门修改</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
@@ -173,92 +172,92 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="forms" [formGroup]="formModel3">
+    <form class="forms" [formGroup]="modifyForm">
       <div class="form-group">
         <label for="name1">组织名称</label>
-        <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="formModel3.get('name').invalid && formModel3.get('name').touched">
-        <div [hidden]="formModel3.get('name').valid || formModel3.get('name').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'name')">必填</span>
+        <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
+        <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="number1">机构编码</label>
-        <input id="number1" type="text" class="form-control" formControlName="code" [class.hasError]="formModel3.get('code').invalid && formModel3.get('code').touched">
-        <div [hidden]="formModel3.get('code').valid || formModel3.get('code').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'code')">必填</span>
+        <input id="number1" type="text" class="form-control" formControlName="code" [class.hasError]="modifyForm.get('code').invalid && modifyForm.get('code').touched">
+        <div [hidden]="modifyForm.get('code').valid || modifyForm.get('code').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'code')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="otype1">机构类型</label>
-        <input id="otype1" type="text" class="form-control" formControlName="otype" [class.hasError]="formModel3.get('otype').invalid && formModel3.get('otype').touched">
-        <div [hidden]="formModel3.get('otype').valid || formModel3.get('otype').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'otype')">必填</span>
+        <input id="otype1" type="text" class="form-control" formControlName="otype" [class.hasError]="modifyForm.get('otype').invalid && modifyForm.get('otype').touched">
+        <div [hidden]="modifyForm.get('otype').valid || modifyForm.get('otype').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'otype')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="tel1">联系电话</label>
-        <input id="tel1" type="tel" class="form-control" formControlName="tel" [class.hasError]="formModel3.get('tel').invalid && formModel3.get('tel').touched">
-        <div [hidden]="formModel3.get('tel').valid || formModel3.get('tel').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'tel')">必填</span>
-          <span [hidden]="!formModel3.hasError('mobile', 'tel')">请输入正确的手机号码</span>
+        <input id="tel1" type="tel" class="form-control" formControlName="tel" [class.hasError]="modifyForm.get('tel').invalid && modifyForm.get('tel').touched">
+        <div [hidden]="modifyForm.get('tel').valid || modifyForm.get('tel').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'tel')">必填</span>
+          <span [hidden]="!modifyForm.hasError('mobile', 'tel')">请输入正确的手机号码</span>
         </div>
       </div>
       <div class="form-group">
         <label for="fax1">传真号码</label>
-        <input id="fax1" type="text" class="form-control" formControlName="fax" [class.hasError]="formModel3.get('fax').invalid && formModel3.get('fax').touched">
-        <div [hidden]="formModel3.get('fax').valid || formModel3.get('fax').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'fax')">必填</span>
+        <input id="fax1" type="text" class="form-control" formControlName="fax" [class.hasError]="modifyForm.get('fax').invalid && modifyForm.get('fax').touched">
+        <div [hidden]="modifyForm.get('fax').valid || modifyForm.get('fax').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'fax')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="address1">机构地址</label>
-        <input id="address1" type="text" class="form-control" formControlName="address" [class.hasError]="formModel3.get('address').invalid && formModel3.get('address').touched">
-        <div [hidden]="formModel3.get('address').valid || formModel3.get('address').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'address')">必填</span>
+        <input id="address1" type="text" class="form-control" formControlName="address" [class.hasError]="modifyForm.get('address').invalid && modifyForm.get('address').touched">
+        <div [hidden]="modifyForm.get('address').valid || modifyForm.get('address').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'address')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="email1">单位邮箱</label>
-        <input id="email1" type="email" class="form-control" formControlName="email" [class.hasError]="formModel3.get('email').invalid && formModel3.get('email').touched">
-        <div [hidden]="formModel3.get('email').valid || formModel3.get('email').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'email')">必填</span>
-          <span [hidden]="!formModel3.hasError('email', 'email')">电子邮箱</span>
+        <input id="email1" type="email" class="form-control" formControlName="email" [class.hasError]="modifyForm.get('email').invalid && modifyForm.get('email').touched">
+        <div [hidden]="modifyForm.get('email').valid || modifyForm.get('email').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'email')">必填</span>
+          <span [hidden]="!modifyForm.hasError('email', 'email')">电子邮箱</span>
         </div>
       </div>
       <div class="form-group">
         <label for="corpphone1">法人电话</label>
-        <input id="corpphone1" type="tel" class="form-control" formControlName="corpphone" [class.hasError]="formModel3.get('corpphone').invalid && formModel3.get('corpphone').touched">
-        <div [hidden]="formModel3.get('corpphone').valid || formModel3.get('corpphone').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'corpphone')">必填</span>
-          <span [hidden]="!formModel3.hasError('mobile', 'corpphone')">请输入正确的手机号码</span>
+        <input id="corpphone1" type="tel" class="form-control" formControlName="corpphone" [class.hasError]="modifyForm.get('corpphone').invalid && modifyForm.get('corpphone').touched">
+        <div [hidden]="modifyForm.get('corpphone').valid || modifyForm.get('corpphone').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'corpphone')">必填</span>
+          <span [hidden]="!modifyForm.hasError('mobile', 'corpphone')">请输入正确的手机号码</span>
         </div>
       </div>
       <div class="form-group">
         <label for="corpname1">法人代表</label>
-        <input id="corpname1" type="text" class="form-control" formControlName="corpname" [class.hasError]="formModel3.get('corpname').invalid && formModel3.get('corpname').touched">
-        <div [hidden]="formModel3.get('corpname').valid || formModel3.get('corpname').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'corpname')">必填</span>
+        <input id="corpname1" type="text" class="form-control" formControlName="corpname" [class.hasError]="modifyForm.get('corpname').invalid && modifyForm.get('corpname').touched">
+        <div [hidden]="modifyForm.get('corpname').valid || modifyForm.get('corpname').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'corpname')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="registerdate1">成立日期</label>
-        <input id="registerdate1" type="date" class="form-control" formControlName="registerdate" [class.hasError]="formModel3.get('registerdate').invalid && formModel3.get('registerdate').touched">
-        <div [hidden]="formModel3.get('registerdate').valid || formModel3.get('registerdate').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'registerdate')">必填</span>
+        <input id="registerdate1" type="date" class="form-control" formControlName="registerdate" [class.hasError]="modifyForm.get('registerdate').invalid && modifyForm.get('registerdate').touched">
+        <div [hidden]="modifyForm.get('registerdate').valid || modifyForm.get('registerdate').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'registerdate')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="zipcode1">邮编</label>
-        <input id="zipcode1" type="text" class="form-control" formControlName="zipcode" [class.hasError]="formModel3.get('zipcode').invalid && formModel3.get('zipcode').touched">
-        <div [hidden]="formModel3.get('zipcode').valid || formModel3.get('zipcode').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'zipcode')">必填</span>
+        <input id="zipcode1" type="text" class="form-control" formControlName="zipcode" [class.hasError]="modifyForm.get('zipcode').invalid && modifyForm.get('zipcode').touched">
+        <div [hidden]="modifyForm.get('zipcode').valid || modifyForm.get('zipcode').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'zipcode')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>父机构: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
           <option value="-1">最高层</option>
-          <option *ngFor="let organization of Fmodalid" [selected]="organization.id === formModel3.get('pid').value" [value]="organization.id">{{organization.name}}</option>
+          <option *ngFor="let organization of Fmodalid" [selected]="organization.id === modifyForm.get('pid').value" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
     </form>
@@ -267,14 +266,14 @@
       <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="btn-box text-center">
-      <button type="submit" class="btn btn-info" (click)="Update()">确定</button>
+      <button type="submit" class="btn btn-info" (click)="con_modify()">确定</button>
       <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
     </div>
   </div>
 </ng-template>
 
 <!--查看的模态框-->
-<ng-template #find>
+<ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left">部门查看</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
@@ -282,31 +281,31 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>Id&nbsp; : &nbsp;	{{Detail.id}}</p>
-    <p>名称&nbsp; : &nbsp;	{{Detail.name}}</p>
-    <p>机构编码&nbsp; : &nbsp;	{{Detail.code}}</p>
-    <p>机构类型&nbsp; : &nbsp;	{{Detail.otype}}</p>
-    <p>联系电话&nbsp; : &nbsp;	{{Detail.tel}}</p>
-    <p>传真号码&nbsp; : &nbsp;	{{Detail.fax}}</p>
-    <p>机构地址&nbsp; : &nbsp;	{{Detail.address}}</p>
-    <p>单位邮箱&nbsp; : &nbsp;	{{Detail.email}}</p>
-    <p>法人电话&nbsp; : &nbsp;	{{Detail.corpphone}}</p>
-    <p>法人代表&nbsp; : &nbsp;	{{Detail.corpname}}</p>
-    <p>成立日期&nbsp; : &nbsp;	{{Detail.registerdate}}</p>
-    <p>邮编&nbsp; : &nbsp;	{{Detail.zipcode}}</p>
-    <p>父机构&nbsp; : &nbsp;	{{Detail.pid}}</p>
-    <p>插入时间&nbsp; : &nbsp;	{{Detail.idt}}</p>
-    <p>更新时间&nbsp; : &nbsp;	{{Detail.udt}}</p>
+    <p>Id&nbsp; : &nbsp;	{{detail.id}}</p>
+    <p>名称&nbsp; : &nbsp;	{{detail.name}}</p>
+    <p>机构编码&nbsp; : &nbsp;	{{detail.code}}</p>
+    <p>机构类型&nbsp; : &nbsp;	{{detail.otype}}</p>
+    <p>联系电话&nbsp; : &nbsp;	{{detail.tel}}</p>
+    <p>传真号码&nbsp; : &nbsp;	{{detail.fax}}</p>
+    <p>机构地址&nbsp; : &nbsp;	{{detail.address}}</p>
+    <p>单位邮箱&nbsp; : &nbsp;	{{detail.email}}</p>
+    <p>法人电话&nbsp; : &nbsp;	{{detail.corpphone}}</p>
+    <p>法人代表&nbsp; : &nbsp;	{{detail.corpname}}</p>
+    <p>成立日期&nbsp; : &nbsp;	{{detail.registerdate}}</p>
+    <p>邮编&nbsp; : &nbsp;	{{detail.zipcode}}</p>
+    <p>父机构&nbsp; : &nbsp;	{{detail.pid}}</p>
+    <p>插入时间&nbsp; : &nbsp;	{{detail.idt}}</p>
+    <p>更新时间&nbsp; : &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="btn-box text-center">
-      <button type="submit" class="btn btn-info" (click)="modalRef.hide(); openModal2(update)">跳转到修改</button>
+      <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>
       <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
     </div>
   </div>
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status1 !== 0 && status1 === 10" [class.fail]="status1 === 11 || status1 === 13 || status1 === 12">
+  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
     <span>{{resMessage}}</span>
   </div>
 </div>

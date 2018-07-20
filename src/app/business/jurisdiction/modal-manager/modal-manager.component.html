@@ -29,7 +29,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let list of datas; let i = index" (click)="openModal(add, i)">
+          <tr *ngFor="let list of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{list['id']}}</td>
             <td>{{list['name']}}</td>
@@ -117,13 +117,13 @@
       <div class="form-group">
         <label>对应id的父id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalPid(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of FmodalFid" [selected]="modal.id === modalModifyForm.get('pid').value" [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of FmodalFid" [selected]="modal.id === modifyForm.get('pid').value" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
         <label>所属组织id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalOid(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modalModifyForm.get('oid').value" [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modifyForm.get('oid').value" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <br>

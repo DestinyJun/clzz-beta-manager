@@ -28,7 +28,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let interface of datas; let i = index" (click)="openModal(modify, i)">
+          <tr *ngFor="let interface of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{interface['id']}}</td>
             <td>{{interface['iname']}}</td>
@@ -108,7 +108,7 @@
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.mid" [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === detail.mid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <br>
@@ -143,7 +143,7 @@
     <p>模块id :{{detail['mid']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(add, -1)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

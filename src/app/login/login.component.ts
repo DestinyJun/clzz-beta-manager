@@ -27,6 +27,7 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   public OnSubmitInfo(): void {
+    this.router.navigate(['/home']);
       if (this.userLoginInfoForm.valid) {
         this.req.Login(this.userLoginInfoForm.value)
           .subscribe(res => {

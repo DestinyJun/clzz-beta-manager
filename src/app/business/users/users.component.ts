@@ -18,7 +18,7 @@ export class UsersComponent implements OnInit {
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public detail: any;
+  public detail: UsersManager;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
@@ -58,6 +58,7 @@ export class UsersComponent implements OnInit {
       new Field('联系电话',	'phone'),
       new Field('邮箱',	'email'),
       new Field('生日',	'birthday'),
+      new Field('生产线列表',	'Sysids'),
       new Field('性别',	'gendernew')
     ];
     const id = new Field('用户数据id', 'id');
@@ -76,6 +77,7 @@ export class UsersComponent implements OnInit {
       phone: ['', [Validators.required, mobileValidators]],
       email: ['', [Validators.required, Validators.email]],
       birthday: ['', Validators.required],
+      Sysids: ['', Validators.required],
       gender: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
@@ -91,6 +93,7 @@ export class UsersComponent implements OnInit {
       phone: ['', [Validators.required, mobileValidators]],
       email: ['', [Validators.required, Validators.email]],
       birthday: ['', Validators.required],
+      Sysids: ['', Validators.required],
       gender: ['', Validators.required]
     });
     this.Update();
@@ -99,8 +102,10 @@ export class UsersComponent implements OnInit {
       // this.userAddForm.patchValue({'organizationId': this.Fmodalid.organizations[0].id});
     });
   }
-  // 控制模态框, 增，修，查
+// 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
+    console.log(i);
+    console.log(this.datas[i]);
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
@@ -110,24 +115,37 @@ export class UsersComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
+      console.log(this.detail);
       this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
+
   // 增加时，选择部门id
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'organizationId': value});
@@ -232,6 +250,7 @@ export class UsersComponent implements OnInit {
     this.mustone = false;
     this.req.getUsersManager(this.pageBody)
       .subscribe(res => {
+        console.log(res);
         this.datas = res.data;
         this.resMessage = res.message;
         const setinter = setInterval(() => {

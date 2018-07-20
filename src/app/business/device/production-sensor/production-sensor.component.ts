@@ -90,7 +90,7 @@ export class ProductionSensorComponent implements OnInit {
       // this.proSensorAddForm.patchValue({'did': this.Fmodalid[0].did});
     });
   }
-  // 控制模态框, 增，修，查
+// 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
@@ -103,22 +103,36 @@ export class ProductionSensorComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
+    console.log(this.hasChecked.length);
+    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
+
 // 选择增加设备id
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'did': value});
@@ -189,7 +203,6 @@ export class ProductionSensorComponent implements OnInit {
 
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proSensorAdd(): void {
-    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -248,7 +261,6 @@ export class ProductionSensorComponent implements OnInit {
     this.mustone = false;
     this.req.getDeviceProductionSensor(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
-        console.log(value);
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;
         // 阻止用户点击 复选框时，会弹出查看模态框

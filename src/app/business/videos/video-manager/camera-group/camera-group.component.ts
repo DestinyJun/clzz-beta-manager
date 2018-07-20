@@ -1,43 +1,46 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {PageBody, DeviceProductionLineList, Field} from '../../../shared/global.service';
-import {ReqService} from '../../../shared/req.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonfunService} from '../../../../shared/commonfun.service';
+import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {ReqService} from '../../../../shared/req.service';
+import 'rxjs/Rx';
+import {CameraGroup, Field, PageBody} from '../../../../shared/global.service';
 
 @Component({
-  selector: 'app-production-line',
-  templateUrl: './production-line.component.html',
-  styleUrls: ['./production-line.component.css']
+  selector: 'app-camera-group',
+  templateUrl: './camera-group.component.html',
+  styleUrls: ['./camera-group.component.css']
 })
-
-export class ProductionLineComponent implements OnInit {
-  public datas: Array<DeviceProductionLineList>;
+export class CameraGroupComponent implements OnInit {
+  public datas: Array<CameraGroup>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
   public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public detail: any;
+  public detail: CameraGroup;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
+  public Fmodalid: any;
   public openstatus: boolean;
   public status: number;
-  public Fmodalid: any;
   public inputvalid: boolean;
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  // 控制摄像组 的状态值，只能为 0 和 1.
+  public cameraGroupStatus: FormControl;
+  // cameraGroupStatusPrompt 用来检测到 cameraGroupStatus 的 控件值不是为 0 ， 1，则提示用户。true 表示合法， false 则相反。
+  public cameraGroupStatusPrompt: boolean;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {
-  }
+  ) {}
   ngOnInit() {
     this.status = 0;
     this.openstatus = true;
@@ -45,35 +48,49 @@ export class ProductionLineComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
+    // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
-    // 只要是需要选择的下拉框，另放在后面
-    this.fieldsAdd = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
-      // new Field('父id',	'did')
-    ];
-    this.fieldsModify = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
-      // new Field('父id',	'did')
-    ];
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [];
+    this.fieldsModify = [];
     // 增加模态框表单
     this.addForm = this.fb.group({
-      sid: ['', Validators.required],
+      id: ['', Validators.required],
       name: ['', Validators.required],
-      did: ['', Validators.required]
+      creator: ['', Validators.required],
+      status: ['0', Validators.required],
+      p_id: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      status: [''],
+      p_id: ['']
     });
+    console.log('hello');
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
-      this.Fmodalid = value.values['departments'];
+      // this.Fmodalid = value.values.departments;  // 这有问题，id 为undefined， 只有下面才不会出现问题
+      this.Fmodalid = value.values;
+      for (let i = 0; i < this.Fmodalid.departments.length; i++) {
+        this.Fmodalid.departments[i].id = String(this.Fmodalid.departments[i].id);
+      }
     });
+    // 监视摄像机组的状态，每一 500ms 读取用户输入的摄像机组值
+    this.cameraGroupStatus = new FormControl();
+    this.cameraGroupStatus.valueChanges
+      .debounceTime(500)
+      .subscribe(changeValue => {
+        if (changeValue === '1' || changeValue === '0') {
+          this.cameraGroupStatusPrompt = true;
+        }else {
+          this.cameraGroupStatusPrompt = false;
+        }
+      });
   }
-// 控制模态框, 增，修，查
+  // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
@@ -115,14 +132,6 @@ export class ProductionLineComponent implements OnInit {
       this.modalRef = this.modalService.show(template);
     }
   }
-
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'did': value});
-  }
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'did': value});
-  }
-  // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
@@ -140,7 +149,7 @@ export class ProductionLineComponent implements OnInit {
   }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
@@ -156,36 +165,37 @@ export class ProductionLineComponent implements OnInit {
       this.detail = null;
     }
   }
-//  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
-  public deleteProLine(): void {
-    let haschecklen = this.hasChecked.length;
-      if (haschecklen === 0) {
-        this.mustone = false;
-        this.gtone = true;
-      } else {
-        this.mustone = false;
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
-            this.req.DeviceProductionLineDelete('sid=' +  this.datas[this.hasChecked[j]].sid)
-              .subscribe(res => {
-                if (j === haschecklen - 1) {
-                  this.resMessage = res.message;
-                  this.status = Number(res.status);
-                  this.Update();
-                }
-              });
-        }
+
+//  删除表格 并且 重新请求数据
+  public delete(): void {
+    const haschecklen = this.hasChecked.length;
+    if (haschecklen === 0) {
+      this.gtone = true;
+      this.mustone = false;
+    } else {
+      this.openstatus = false;
+      for (let j = 0; j < haschecklen; j++) {
+        const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+        this.req.deleteVideomanager(body)
+          .subscribe((res) => {
+            if (j === haschecklen - 1) {
+              this.resMessage = res.message;
+              this.status = Number(res.status);
+              this.Update();
+            }
+          });
       }
+    }
+
   }
-  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
-  public prolineAdd(): void {
-    if (this.addForm.valid) {
+// 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
+  public con_add(): void {
+    if (this.addForm.value) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addVideomanager(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
-          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -195,12 +205,12 @@ export class ProductionLineComponent implements OnInit {
     }
   }
 //  修改表格内容
-  public prolineModify(): void {
+  public con_modify(): void {
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -210,12 +220,13 @@ export class ProductionLineComponent implements OnInit {
       this.inputvalid = true;
     }
   }
-  // 刷新
+  // 在增加， 删除，修改后即时刷新
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
-      (value) => {
+    this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
+      .subscribe(value => {
+        console.log(value);
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;
         // 阻止用户点击 复选框时，会弹出查看模态框
@@ -240,6 +251,3 @@ export class ProductionLineComponent implements OnInit {
       });
   }
 }
-
-
-

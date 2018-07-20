@@ -1,18 +1,19 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
-import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {PageBody, DeviceProductionLineList, Field} from '../../../shared/global.service';
-import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {BsModalRef, BsModalService} from 'ngx-bootstrap';
+import {CommonfunService} from '../../../../shared/commonfun.service';
+import {ReqService} from '../../../../shared/req.service';
+import {Camera, Field, PageBody} from '../../../../shared/global.service';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
-  selector: 'app-production-line',
-  templateUrl: './production-line.component.html',
-  styleUrls: ['./production-line.component.css']
+  selector: 'app-camera',
+  templateUrl: './camera.component.html',
+  styleUrls: ['./camera.component.css']
 })
 
-export class ProductionLineComponent implements OnInit {
-  public datas: Array<DeviceProductionLineList>;
+export class CameraComponent implements OnInit {
+  public datas: Array<Camera>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
   public listenDescModal: boolean;
@@ -24,56 +25,60 @@ export class ProductionLineComponent implements OnInit {
   public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
+  public Fmodalid: any;
+  public userid: any;
   public openstatus: boolean;
   public status: number;
-  public Fmodalid: any;
   public inputvalid: boolean;
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  // gid 用来保存要查询的摄像机组的id
+  public gid: string;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
-  ) {
-  }
+    private commonfun: CommonfunService,
+    private routerInfo: ActivatedRoute
+  ) {}
   ngOnInit() {
+    // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
+    this.routerInfo.params.subscribe((value) => {
+      // console.log(value);
+      this.gid = value.id;
+    });
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
+    // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
-    // 只要是需要选择的下拉框，另放在后面
-    this.fieldsAdd = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
-      // new Field('父id',	'did')
-    ];
-    this.fieldsModify = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
-      // new Field('父id',	'did')
-    ];
-    // 增加模态框表单
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [];
+    this.fieldsModify = [];
     this.addForm = this.fb.group({
-      sid: ['', Validators.required],
+      id: ['', Validators.required],
       name: ['', Validators.required],
-      did: ['', Validators.required]
+      creator: ['', Validators.required],
+      inner_url: [''],
+      outer_url: ['', Validators.required],
+      g_id: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
+      id: [''],
+      Update_id: ['', Validators.required],
+      value: [''],
+      creator: [''],
+      inner_url: [''],
+      outer_url: [''],
+      g_id: ['']
     });
     this.Update();
-    this.req.FindDepartOrgani().subscribe(value => {
-      this.Fmodalid = value.values['departments'];
-    });
   }
-// 控制模态框, 增，修，查
+  // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
@@ -115,14 +120,13 @@ export class ProductionLineComponent implements OnInit {
       this.modalRef = this.modalService.show(template);
     }
   }
-
   public SelectAddModalId(value): void {
-    this.addForm.patchValue({'did': value});
+    this.addForm.patchValue({'p_id': value});
   }
+
   public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'did': value});
+    this.modifyForm.patchValue({'p_id': value});
   }
-  // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
@@ -140,11 +144,11 @@ export class ProductionLineComponent implements OnInit {
   }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
-      for (let j = 0; j < haschecklen; j++ ) {
+      for (let j = 0; j < haschecklen; j++) {
         if (this.hasChecked[j] === i) {
           this.hasChecked.splice(j, 1);
         }
@@ -156,36 +160,35 @@ export class ProductionLineComponent implements OnInit {
       this.detail = null;
     }
   }
-//  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
-  public deleteProLine(): void {
-    let haschecklen = this.hasChecked.length;
-      if (haschecklen === 0) {
-        this.mustone = false;
-        this.gtone = true;
-      } else {
-        this.mustone = false;
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
-            this.req.DeviceProductionLineDelete('sid=' +  this.datas[this.hasChecked[j]].sid)
-              .subscribe(res => {
-                if (j === haschecklen - 1) {
-                  this.resMessage = res.message;
-                  this.status = Number(res.status);
-                  this.Update();
-                }
-              });
-        }
+//  删除表格 并且 重新请求数据
+  public delete(): void {
+    const haschecklen = this.hasChecked.length;
+    if (haschecklen === 0) {
+      this.mustone = false;
+      this.gtone = true;
+    } else {
+      this.openstatus = false;
+      for (let j = 0; j < haschecklen; j++) {
+        const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+        this.req.deleteVideo(body)
+          .subscribe(res => {
+            this.resMessage = res.message;
+            this.status = Number(res.status);
+            if (j === haschecklen - 1) {
+              this.Update();
+            }
+          });
       }
+    }
   }
-  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
-  public prolineAdd(): void {
+// 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
+  public con_add(): void {
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addVideo(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
-          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -195,27 +198,27 @@ export class ProductionLineComponent implements OnInit {
     }
   }
 //  修改表格内容
-  public prolineModify(): void {
+  public con_modify(): void {
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateVideo(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
         });
     } else {
-      this.inputvalid = true;
+      this.inputvalid = false;
     }
   }
-  // 刷新
+  // 在增加， 删除，修改后即时刷新
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
-      (value) => {
+    this.req.findVideos('gid=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
+      .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;
         // 阻止用户点击 复选框时，会弹出查看模态框
@@ -240,6 +243,3 @@ export class ProductionLineComponent implements OnInit {
       });
   }
 }
-
-
-

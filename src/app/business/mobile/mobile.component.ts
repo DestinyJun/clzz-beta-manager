@@ -44,7 +44,6 @@ export class MobileComponent implements OnInit {
 
     ];
     this.req.getAppInfo().subscribe(value => {
-      console.log(value);
       this.apps = value.data;
     });
   }
@@ -71,7 +70,6 @@ export class MobileComponent implements OnInit {
         this.req.AppUpload(this.formData)
               .subscribe(res => {
                 // console.log(event.type === HttpEventType.UploadProgress);
-                  console.log(res);
                   this.status = Number(res.status);
                     setTimeout(() => {
                       this.openstatus = true;

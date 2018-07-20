@@ -49,18 +49,6 @@ export class UserManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      // new Field('用户编码',	'userCode'),
-      // new Field('身份证',	'idCode'),
-      // new Field('真实姓名',	'realName'),
-      // new Field('用户名',	'userName'),
-      // new Field('家庭住址',	'homeAddress'),
-      // new Field('家庭联系电话',	'homeTelephone'),
-      // // new Field('所属组织id',	'organizationId'),
-      // new Field('密码',	'password'),
-      // new Field('联系电话',	'phone'),
-      // new Field('邮箱',	'email'),
-      // new Field('生日',	'birthday'),
-      // new Field('性别',	'gendernew'),
       // new Field('用户ID',	'userid'),
       // new Field('模块ID',	'dcode')
     ];
@@ -79,15 +67,9 @@ export class UserManagerComponent implements OnInit {
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
-      if (this.Fmodalid !== undefined) {
-        // this.userPowerAddForm.patchValue({'moduleid': this.Fmodalid[0].id});
-      }
     });
     this.req.FinduserIdname().subscribe(value => {
       this.userid = value.values;
-      if (this.userid !== undefined) {
-        // this.userPowerAddForm.patchValue({'userid': this.userid[0].id});
-      }
     });
   }
   // 控制模态框, 增，修，查
@@ -103,22 +85,36 @@ export class UserManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
+    console.log(this.hasChecked.length);
+    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
+
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'moduleid': value});
   }
@@ -130,27 +126,6 @@ export class UserManagerComponent implements OnInit {
   }
   public SelectModifyuserid(value): void {
     this.modifyForm.patchValue({'userid': value});
-  }
-  // 控制模态框
-  public openUserPower(template: TemplateRef<any>): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      this.mustone = false;
-      this.detail.userid = String(this.detail.userid);
-      this.Fmodalid.moduleid = String(this.Fmodalid.moduleid);
-      this.modifyForm.reset(this.detail);
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-  // 控制模态框增加打开
-  public openUserPowerAdd(template: TemplateRef<any>): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    this.mustone = false;
-    this.modalRef = this.modalService.show(template);
   }
   public getPageBody(event): void {
     this.pageBody = event;
@@ -266,5 +241,4 @@ public userPowerAdd(): void {
         this.checked = '';
       });
   }
-
 }

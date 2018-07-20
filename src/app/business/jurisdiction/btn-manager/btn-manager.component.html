@@ -29,7 +29,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let btnmanager of datas; let i = index" (click)="openModal(modify, i)">
+          <tr *ngFor="let btnmanager of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{btnmanager['id']}}</td>
             <td>{{btnmanager['name']}}</td>
@@ -110,7 +110,7 @@
       <div class="form-group">
         <label>请选择设备id: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === Detail.mid" [value]="modal.id">{{modal.name}}</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modal.id === detail.mid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <br>

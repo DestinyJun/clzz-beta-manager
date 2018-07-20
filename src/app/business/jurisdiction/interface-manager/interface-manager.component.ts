@@ -94,16 +94,29 @@ export class InterfaceManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
+    console.log(this.hasChecked.length);
+    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');

@@ -11,15 +11,15 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./technicspack-amend.component.css']
 })
 export class TechnicspackAmendComponent implements OnInit {
+  // technologyParamsPackWordList 用于显示增，修表单，不需要在模板上写太多 input 的 formControlName 控件
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
-  public Paramdatas: Array<TechnologyAmendQueryList>
+  public datas: Array<TechnologyAmendQueryList>
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public Detail: any;
-  public paramAddForm: FormGroup;
-  public paramModifyForm: FormGroup;
-  public paramLookDetailForm: FormGroup;
+  public detail: any;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -28,6 +28,7 @@ export class TechnicspackAmendComponent implements OnInit {
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  public listenDescModal: boolean;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
@@ -41,8 +42,9 @@ export class TechnicspackAmendComponent implements OnInit {
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
-    this.paramAddForm = this.fb.group({
+    this.addForm = this.fb.group({
       name: ['', Validators.required],
       finish_type: ['', Validators.required],
       bottom_dry_thickness: ['', Validators.required],
@@ -74,7 +76,7 @@ export class TechnicspackAmendComponent implements OnInit {
       exhaust_air_volume_2: ['', Validators.required],
       exhaust_air_volume_2_d: ['', Validators.required]
     });
-    this.paramModifyForm = this.fb.group({
+    this.modifyForm = this.fb.group({
       name: ['', Validators.required],
       finish_type: ['', Validators.required],
       bottom_dry_thickness: ['', Validators.required],
@@ -140,28 +142,52 @@ export class TechnicspackAmendComponent implements OnInit {
     ];
     this.Update();
   }
-  // 控制模态框
-  public openModal(template: TemplateRef<any>): void {
+
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      let detail1: any = {name: this.Detail.name, finish_type: this.Detail.finishtype};
-      this.inputvalid = false;
-      this.Detail.did = String(this.Detail.did);
-      this.paramModifyForm.reset();
-      this.paramModifyForm.patchValue(detail1);
-      this.paramModifyForm.patchValue(this.Detail.amenddata);
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-  }
-  // 控制模态框增加
-  public openAddModal(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.gtone = false;
-    this.inputvalid = false;
-    this.modalRef = this.modalService.show(template);
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
+          this.detail.amenddata['name'] = this.detail.name;
+          this.detail.amenddata['finish_type'] = this.detail.finishtype;
+          this.modifyForm.reset(this.detail.amenddata);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
+      } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
+        this.mustone = false;
+        // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
+        this.detail.amenddata['name'] = this.detail.name;
+        this.detail.amenddata['finish_type'] = this.detail.finishtype;
+        this.modifyForm.reset(this.detail.amenddata);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
   }
   // 监控翻页事件
   public getPageBody(event): void {
@@ -172,7 +198,7 @@ export class TechnicspackAmendComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.Paramdatas.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -192,13 +218,13 @@ export class TechnicspackAmendComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.Paramdatas[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
  // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
-  public Delete(): void {
+  public delete(): void {
     const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
@@ -207,7 +233,7 @@ export class TechnicspackAmendComponent implements OnInit {
       this.mustone = false;
       this.openstatus = false;
       for (let j = 0; j < haschecklen; j++) {
-        this.req.DeleteTechnicsPackAmend('finish_type=' +  this.Paramdatas[this.hasChecked[j]].finishtype)
+        this.req.DeleteTechnicsPackAmend('finish_type=' +  this.datas[this.hasChecked[j]].finishtype)
           .subscribe(res => {
             if (j === haschecklen - 1) {
               this.resMessage = res.message;
@@ -220,11 +246,11 @@ export class TechnicspackAmendComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public paramsAdd(): void {
-    if (this.paramAddForm.valid) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.AddTechnicsPackAmend(this.paramAddForm.value)
+      this.req.AddTechnicsPackAmend(this.addForm.value)
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -240,7 +266,7 @@ export class TechnicspackAmendComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.UpdateTechnicsPackAmend(this.paramModifyForm.value)
+      this.req.UpdateTechnicsPackAmend(this.modifyForm.value)
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -256,11 +282,25 @@ export class TechnicspackAmendComponent implements OnInit {
     this.mustone = false;
     this.req.FindTechnicsPackAmend(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
+        console.log(value);
         this.num = Math.ceil(value.values.num / 10);
-        this.Paramdatas = value.values.amenddata;
-        for (let i = 0; i < this.Paramdatas.length; i++) {
-          this.Paramdatas[i]['amenddata'] = JSON.parse(this.Paramdatas[i]['amenddata']);
+        this.datas = value.values.amenddata;
+        for (let i = 0; i < this.datas.length; i++) {
+          this.datas[i]['amenddata'] = JSON.parse(this.datas[i]['amenddata']);
         }
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

@@ -92,6 +92,9 @@ input{
 
 .fa-search{
   cursor: pointer;
+  width: 50px;
+  text-align: center;
+  padding: 6px 12px;
 }
 .fa-search:hover{
   transform: scale(2);
@@ -102,17 +105,14 @@ input{
 }
 .numSearch{
   position: relative;
-  background-color: rgba(0,0,0,0.5);
+  background-color: rgba(0,0,0,0.3);
 }
 .numSearchText{
   position: relative;
   top: 30%;
   border: none;
+  padding: 6px 12px;
   background-color: rgba(255,255,255,0.5);
-}
-.numSearchBtn{
-  text-align: center;
-  position: relative;
-  right: 5px;
+  border-radius: 5px;
 }
 

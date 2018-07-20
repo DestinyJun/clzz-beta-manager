@@ -7,10 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openAddModal(add)"><span class="glyphicon glyphicon-plus"></span>增加</button>
-        <button type="button" class="btn btn-default" (click)="Delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openModal(modify)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <button type="button" class="btn btn-default" (click)="openModal(lookdesc)"><span class="glyphicon glyphicon-search"></span>查看</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
@@ -31,7 +30,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let param of Paramdatas; let i = index">
+          <tr *ngFor="let param of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)" title="点击查看详情"></td>
             <td>{{param.name}}</td>
             <td>{{param.althickness}}</td>
@@ -121,31 +120,31 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>方案名称&nbsp; :&nbsp;	{{Detail.name}}</p>
-    <p>铝板厚度&nbsp; :&nbsp;	{{Detail.althickness}}&nbsp;毫米</p>
-    <p>铝板宽度&nbsp; :&nbsp;	{{Detail.alwidth}}&nbsp;毫米</p>
-    <p>一涂一区温度&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_1_1}}&nbsp;	摄氏度</p>
-    <p>一涂一区温度差值&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_1_1_d}}&nbsp;	摄氏度</p>
-    <p>一涂二区温度&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_1_2}}&nbsp;	摄氏度</p>
-    <p>一涂二区温度差值&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_1_2_d}}&nbsp;	摄氏度</p>
-    <p>一涂三区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_1_3}}&nbsp;	摄氏度</p>
-    <p>一涂三区温度差值&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_1_3_d}}&nbsp;	摄氏度</p>
-    <p>一涂四区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_1_4}}&nbsp;	摄氏度</p>
-    <p>一涂四区温度差值&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_1_4_d}}&nbsp;	摄氏度</p>
-    <p>一涂五区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_1_5}}&nbsp;	摄氏度</p>
-    <p>一涂五区温度差值&nbsp;:&nbsp;	{{Detail.temperaturedata.temperature_1_5_d}}&nbsp;	摄氏度</p>
-    <p>二涂一区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_1}}&nbsp;	摄氏度</p>
-    <p>二涂一区温度差值&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_2_1_d}}&nbsp;	摄氏度</p>
-    <p>二涂二区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_2}}&nbsp;	摄氏度</p>
-    <p>二涂二区温度差值&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_2_d}}&nbsp;	摄氏度</p>
-    <p>二涂三区温度&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_3}}&nbsp;	摄氏度</p>
-    <p>二涂三区温度差值&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_2_3_d}}&nbsp;	摄氏度</p>
-    <p>二涂四区温度&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_2_4}}&nbsp;	摄氏度</p>
-    <p>二涂四区温度差值&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_4_d}}&nbsp;	摄氏度</p>
-    <p>二涂五区温度&nbsp; :&nbsp;	{{Detail.temperaturedata.temperature_2_5}}&nbsp;	摄氏度</p>
-    <p>二涂五区温度差值&nbsp;: &nbsp;	{{Detail.temperaturedata.temperature_2_5_d}}&nbsp;	摄氏度</p>
+    <p>方案名称&nbsp; :&nbsp;	{{detail.name}}</p>
+    <p>铝板厚度&nbsp; :&nbsp;	{{detail.althickness}}&nbsp;毫米</p>
+    <p>铝板宽度&nbsp; :&nbsp;	{{detail.alwidth}}&nbsp;毫米</p>
+    <p>一涂一区温度&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_1_1}}&nbsp;	摄氏度</p>
+    <p>一涂一区温度差值&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_1_1_d}}&nbsp;	摄氏度</p>
+    <p>一涂二区温度&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_1_2}}&nbsp;	摄氏度</p>
+    <p>一涂二区温度差值&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_1_2_d}}&nbsp;	摄氏度</p>
+    <p>一涂三区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_1_3}}&nbsp;	摄氏度</p>
+    <p>一涂三区温度差值&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_1_3_d}}&nbsp;	摄氏度</p>
+    <p>一涂四区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_1_4}}&nbsp;	摄氏度</p>
+    <p>一涂四区温度差值&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_1_4_d}}&nbsp;	摄氏度</p>
+    <p>一涂五区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_1_5}}&nbsp;	摄氏度</p>
+    <p>一涂五区温度差值&nbsp;:&nbsp;	{{detail.temperaturedata.temperature_1_5_d}}&nbsp;	摄氏度</p>
+    <p>二涂一区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_1}}&nbsp;	摄氏度</p>
+    <p>二涂一区温度差值&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_2_1_d}}&nbsp;	摄氏度</p>
+    <p>二涂二区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_2}}&nbsp;	摄氏度</p>
+    <p>二涂二区温度差值&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_2_d}}&nbsp;	摄氏度</p>
+    <p>二涂三区温度&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_3}}&nbsp;	摄氏度</p>
+    <p>二涂三区温度差值&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_2_3_d}}&nbsp;	摄氏度</p>
+    <p>二涂四区温度&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_2_4}}&nbsp;	摄氏度</p>
+    <p>二涂四区温度差值&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_4_d}}&nbsp;	摄氏度</p>
+    <p>二涂五区温度&nbsp; :&nbsp;	{{detail.temperaturedata.temperature_2_5}}&nbsp;	摄氏度</p>
+    <p>二涂五区温度差值&nbsp;: &nbsp;	{{detail.temperaturedata.temperature_2_5_d}}&nbsp;	摄氏度</p>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

@@ -105,16 +105,29 @@ export class ModalManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
+    console.log(this.hasChecked.length);
+    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
@@ -137,30 +150,6 @@ export class ModalManagerComponent implements OnInit {
   // 修改时，选择父ID
   public SelectModifyModalPid(value): void {
     this.modifyForm.patchValue({'pid': value});
-  }
-  // 控制模态框
-  public openModal(template: TemplateRef<any>): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      this.mustone = false;
-      this.detail.oid = String(this.detail.oid);
-      this.modifyForm.reset(this.detail);
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-  // 控制模态框增加
-  public openModalAdd(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.gtone = false;
-    this.inputvalid = false;
-    this.modalRef = this.modalService.show(template);
-  }
-  public getPageBody(event): void {
-    this.pageBody = event;
-    this.Update();
   }
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {

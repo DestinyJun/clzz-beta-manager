@@ -12,14 +12,14 @@ import {Field, ItemList, PageBody} from '../../shared/global.service';
   styleUrls: ['./item.component.css']
 })
 export class ItemComponent implements OnInit {
-  public items: Array<ItemList>;
+  public datas: Array<ItemList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public itemAddForm: FormGroup;
-  public itemModifyForm: FormGroup;
+  public addform: FormGroup;
+  public modifyForm: FormGroup;
   public detail: ItemList;
   public hasChecked: Array<number> = [];
   public checked: string;
@@ -75,7 +75,7 @@ export class ItemComponent implements OnInit {
       new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
     //  增加表单
-    this.itemAddForm = this.fb.group({
+    this.addform = this.fb.group({
       itemname: ['', Validators.required],
       itemposition: ['', Validators.required],
       longitude: ['', Validators.required],
@@ -87,7 +87,7 @@ export class ItemComponent implements OnInit {
       starttime: ['', Validators.required]
       // starttime1: ['', Validators.required]
     });
-    this.itemModifyForm = this.fb.group({
+    this.modifyForm = this.fb.group({
       itemcode: ['', Validators.required],
       itemname: ['', Validators.required],
       itemposition: ['', Validators.required],
@@ -100,35 +100,49 @@ export class ItemComponent implements OnInit {
     });
     this.Update();
   }
-  // 控制模态框
-  public itemModal(template: TemplateRef<any>, i): void {
+// 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
       this.listenDescModal = true;
-      this.detail = this.items[i];
+      this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
+    console.log(this.hasChecked.length);
+    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
-      if ((this.hasChecked.length > 1 || this.hasChecked.length === 0) && !this.listenDescModal) {
-        this.mustone = true;
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
       } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
         this.mustone = false;
-        this.itemModifyForm.reset(this.detail);
+        this.modifyForm.reset(this.detail);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
+
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
+
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
@@ -138,7 +152,7 @@ export class ItemComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.items.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -176,7 +190,7 @@ export class ItemComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.detail = this.items[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
       this.detail = null;
     }
@@ -192,7 +206,7 @@ export class ItemComponent implements OnInit {
       this.mustone = false;
       this.openstatus = false;
       for (let j = 0; j < haschecklen; j++) {
-        this.req.ItemDelete('did=' +  this.items[this.hasChecked[j]].itemcode)
+        this.req.ItemDelete('did=' +  this.datas[this.hasChecked[j]].itemcode)
           .subscribe(res => {
             if (j === haschecklen - 1) {
               this.resMessage = res.message;
@@ -206,11 +220,11 @@ export class ItemComponent implements OnInit {
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public itemAdd(): void {
     this.getTime();
-    if (this.itemAddForm.valid) {
+    if (this.addform.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.ItemAdd(this.commonfun.parameterSerialization(this.itemAddForm.value))
+      this.req.ItemAdd(this.commonfun.parameterSerialization(this.addform.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -222,11 +236,11 @@ export class ItemComponent implements OnInit {
   }
 //  修改表格内容
   public itemModify(): void {
-    if (this.itemModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.ItemModify(this.commonfun.parameterSerialization(this.itemModifyForm.value))
+      this.req.ItemModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -245,7 +259,7 @@ export class ItemComponent implements OnInit {
         this.hasChecked = [];
         this.checked = '';
         this.num = Math.ceil(value.values.num / 10);
-        this.items = value.values.itemInfoDTOs;
+        this.datas = value.values.itemInfoDTOs;
         // event.stopPropagation();    阻止冒泡,即该方法不仅仅可以阻止冒泡，还可以阻止捕获和处于目标阶段。
         //     stopImmediatePropagation() 和 stopPropagation()的区别在哪儿呢？
         // 　　后者只会阻止冒泡或者是捕获。 但是前者除此之外还会阻止该元素的其他事件发生，但是后者就不会阻止其他事件的发生。
@@ -379,10 +393,10 @@ export class ItemComponent implements OnInit {
 
     if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
       this.validTimeFormat = false;
-      this.itemAddForm.patchValue({starttime: date.getTime()});
+      this.addform.patchValue({starttime: date.getTime()});
     }else {
       this.validTimeFormat = true;
-      this.itemAddForm.patchValue({starttime: ''});
+      this.addform.patchValue({starttime: ''});
     }
     return true;
   }

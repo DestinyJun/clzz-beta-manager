@@ -12,14 +12,13 @@ import {CommonfunService} from '../../../shared/commonfun.service';
 })
 export class TechnicspackTemperatureComponent implements OnInit {
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
-  public Paramdatas: Array<TechnologyTemperatureQueryList>
+  public datas: Array<TechnologyTemperatureQueryList>
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public Detail: any;
+  public detail: any;
   public paramAddForm: FormGroup;
   public paramModifyForm: FormGroup;
-  public paramLookDetailForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -28,6 +27,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  public listenDescModal: boolean;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
@@ -41,6 +41,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
+    this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
     this.paramAddForm = this.fb.group({
       name: ['', Validators.required],
@@ -92,31 +93,6 @@ export class TechnicspackTemperatureComponent implements OnInit {
       temperature_2_5: ['', Validators.required],
       temperature_2_5_d: ['', Validators.required]
     });
-    this.paramLookDetailForm = this.fb.group({
-      name: ['', Validators.required],
-      plate_thickness: ['', Validators.required],
-      plate_width: ['', Validators.required],
-      temperature_1_1: ['', Validators.required],
-      temperature_1_1_d: ['', Validators.required],
-      temperature_1_2: ['', Validators.required],
-      temperature_1_2_d: ['', Validators.required],
-      temperature_1_3: ['', Validators.required],
-      temperature_1_3_d: ['', Validators.required],
-      temperature_1_4: ['', Validators.required],
-      temperature_1_4_d: ['', Validators.required],
-      temperature_1_5: ['', Validators.required],
-      temperature_1_5_d: ['', Validators.required],
-      temperature_2_1: ['', Validators.required],
-      temperature_2_1_d: ['', Validators.required],
-      temperature_2_2: ['', Validators.required],
-      temperature_2_2_d: ['', Validators.required],
-      temperature_2_3: ['', Validators.required],
-      temperature_2_3_d: ['', Validators.required],
-      temperature_2_4: ['', Validators.required],
-      temperature_2_4_d: ['', Validators.required],
-      temperature_2_5: ['', Validators.required],
-      temperature_2_5_d: ['', Validators.required]
-    });
     this.technologyParamsPackWordList = [
       new TechnologyParamsPackWord('方 案 名 称', 'name', '', ''),
       new TechnologyParamsPackWord('铝板厚度',	'al_thickness',	'毫米', '将（在）生产铝板厚度'),
@@ -144,35 +120,54 @@ export class TechnicspackTemperatureComponent implements OnInit {
     ];
     this.Update();
   }
-  // 控制模态框
-  public openModal(template: TemplateRef<any>): void {
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      const detail1: any = {
-        name: this.Detail.name,
-        al_thickness: this.Detail.althickness,
-        al_width : this.Detail.alwidth
-      };
-      this.inputvalid = false;
-      this.Detail.did = String(this.Detail.did);
-      this.paramModifyForm.reset();
-      this.paramLookDetailForm.reset();
-      this.paramModifyForm.patchValue(detail1);
-      this.paramModifyForm.patchValue(this.Detail.temperaturedata);
-      this.paramLookDetailForm.patchValue(detail1);
-      this.paramLookDetailForm.patchValue(this.Detail.temperaturedata);
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-  }
-  // 控制模态框增加
-  public openAddModal(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.gtone = false;
-    this.inputvalid = false;
-    this.modalRef = this.modalService.show(template);
+    console.log(this.detail);
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
+          this.detail.temperaturedata['name'] = this.detail.name;
+          this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
+          this.detail.temperaturedata['al_width'] = this.detail.alwidth;
+          this.paramModifyForm.reset(this.detail.temperaturedata);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
+      } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
+        this.mustone = false;
+        // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
+        this.detail.temperaturedata['name'] = this.detail.name;
+        this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
+        this.detail.temperaturedata['al_width'] = this.detail.alwidth;
+        this.paramModifyForm.reset(this.detail.temperaturedata);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
   }
   // 监控翻页事件
   public getPageBody(event): void {
@@ -183,7 +178,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
       this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.Paramdatas.length, 10);
+      this.hasChecked.splice(this.datas.length, 10);
       this.checked = 'checked';
     } else {
       this.hasChecked = [];
@@ -203,13 +198,13 @@ export class TechnicspackTemperatureComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.Detail = this.Paramdatas[this.hasChecked[0]];
+      this.detail = this.datas[this.hasChecked[0]];
     } else {
-      this.Detail = null;
+      this.detail = null;
     }
   }
   // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
-  public Delete(): void {
+  public delete(): void {
     let haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
@@ -218,7 +213,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
       this.mustone = false;
       this.openstatus = false;
       for (let j = 0; j < haschecklen; j++) {
-        const body = 'al_thickness=' +  this.Paramdatas[this.hasChecked[j]]['althickness'] + '&&al_width=' + this.Paramdatas[this.hasChecked[j]]['alwidth'];
+        const body = 'al_thickness=' +  this.datas[this.hasChecked[j]]['althickness'] + '&&al_width=' + this.datas[this.hasChecked[j]]['alwidth'];
         console.log(body);
         this.req.DeleteTechnicsPackTemperature(body)
           .subscribe(res => {
@@ -250,7 +245,6 @@ export class TechnicspackTemperatureComponent implements OnInit {
   }
 //  修改表格内容
   public paramsModify(): void {
-    console.log(this.paramModifyForm.value);
     if (this.paramModifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -272,10 +266,23 @@ export class TechnicspackTemperatureComponent implements OnInit {
     this.req.FindTechnicsPackTemperature(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
-        this.Paramdatas = value.values.amenddata;
-        for (let i = 0; i < this.Paramdatas.length; i++) {
-          this.Paramdatas[i]['temperaturedata'] = JSON.parse(this.Paramdatas[i]['temperaturedata']);
+        this.datas = value.values.amenddata;
+        for (let i = 0; i < this.datas.length; i++) {
+          this.datas[i]['temperaturedata'] = JSON.parse(this.datas[i]['temperaturedata']);
         }
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
         setTimeout(() => {
           this.openstatus = true;
           this.status = 0;

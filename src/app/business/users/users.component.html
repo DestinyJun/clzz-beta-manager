@@ -30,10 +30,11 @@
             <th>联系电话</th>
             <th>生日</th>
             <th>性别</th>
+            <th>生产线列表</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of datas; let i = index" (click)="openModal(modify, -1)">
+          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i1)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['userCode']}}</td>
@@ -44,6 +45,7 @@
             <td>{{user['password']}}</td>
             <td>{{user['phone']}}</td>
             <td>{{user['birthday']}}</td>
+            <td>{{user['Sysids']}}</td>
             <td>
                 <span *ngIf="user['gender'] === 'm' || user['gender'] === '男'">男</span>
                 <span *ngIf="user['gender'] === 'w' || user['gender'] === '女'">女</span>
@@ -165,6 +167,14 @@
       </div>
       <br>
       <div class="form-group">
+        <label>生产线列表: &nbsp;</label>
+        <input type="date"  class="form-control" formControlName="Sysids" [class.hasError]="modifyForm.get('Sysids').invalid && modifyForm.get('Sysids').touched">
+        <div [hidden]="modifyForm.get('Sysids').valid || modifyForm.get('Sysids').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'Sysids')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
         <label>性别: &nbsp;</label>
         <div class="form-control">
           <input type="radio" #m name="add_gender" value="m" (click)="selectGender(m.value);">男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
@@ -249,7 +259,7 @@
       <div class="form-group">
         <label>所属组织ID: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === userDetail['organizationId']" [value]="organization.id">{{organization.name}}</option>
+          <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <br>
@@ -290,10 +300,18 @@
       </div>
       <br>
       <div class="form-group">
+        <label>生产线列表: &nbsp;</label>
+        <input type="date"  class="form-control" formControlName="Sysids" [class.hasError]="modifyForm.get('Sysids').invalid && modifyForm.get('Sysids').touched">
+        <div [hidden]="modifyForm.get('Sysids').valid || modifyForm.get('Sysids').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'Sysids')">必填</span>
+        </div>
+      </div>
+      <br>
+      <div class="form-group">
         <label>性别: &nbsp;</label>
         <div class="form-control">
-          <input type="radio" #m name="gender" value="m" (click)="selectGender(m.value)" [checked]="userDetail.gender === 'm' || userDetail.gender === '男'">男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <input type="radio" #w name="gender" value="w" (click)="selectGender(w.value)" [checked]="userDetail.gender === 'w' || userDetail.gender === '女'">女
+          <input type="radio" #m name="gender" value="m" (click)="selectGender(m.value)" [checked]="detail.gender === 'm' || detail.gender === '男'">男 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <input type="radio" #w name="gender" value="w" (click)="selectGender(w.value)" [checked]="detail.gender === 'w' || detail.gender === '女'">女
         </div>
       </div>
       <br>

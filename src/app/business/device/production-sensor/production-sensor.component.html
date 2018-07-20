@@ -32,7 +32,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let prosensor of datas; let i = index" (click)="openModal(modify, i)">
+          <tr *ngFor="let prosensor of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{prosensor.sid}}</td>
             <td>{{prosensor.sname}}</td>
@@ -144,20 +144,20 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>sid	:&nbsp;{{Detail.sid}}</p>
-    <p>名称:&nbsp;	{{Detail.sname}}</p>
-    <p>类型:&nbsp;	{{Detail.stype}}</p>
-    <p>数据类型:&nbsp;	{{Detail.sdatatype}}</p>
-    <p>变量地址:&nbsp;	{{Detail.saddress}}</p>
-    <p>状态:&nbsp;	{{Detail.sstatus}}</p>
-    <p>数值最大值:&nbsp;	{{Detail.smax}}</p>
-    <p>初始值:&nbsp;	{{Detail.initialvalue}}</p>
-    <p>设备id:&nbsp;	{{Detail.did}}</p>
-    <p>插入时间:&nbsp;	{{Detail.idt}}</p>
-    <p>更新时间:&nbsp;	{{Detail.udt}}</p>
+    <p>sid	:&nbsp;{{detail.sid}}</p>
+    <p>名称:&nbsp;	{{detail.sname}}</p>
+    <p>类型:&nbsp;	{{detail.stype}}</p>
+    <p>数据类型:&nbsp;	{{detail.sdatatype}}</p>
+    <p>变量地址:&nbsp;	{{detail.saddress}}</p>
+    <p>状态:&nbsp;	{{detail.sstatus}}</p>
+    <p>数值最大值:&nbsp;	{{detail.smax}}</p>
+    <p>初始值:&nbsp;	{{detail.initialvalue}}</p>
+    <p>设备id:&nbsp;	{{detail.did}}</p>
+    <p>插入时间:&nbsp;	{{detail.idt}}</p>
+    <p>更新时间:&nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>
    <div class="text-center">
-     <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openProSensor(modify)">
+     <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify)">
        跳转到修改
      </button>
      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">

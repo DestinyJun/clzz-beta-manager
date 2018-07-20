@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {DeparmentList, PageBody} from '../../../shared/global.service';
+import {DeparmentList, DeviceProductionDataList, Field, PageBody} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 
@@ -12,30 +12,41 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./organization.component.css']
 })
 export class OrganizationComponent implements OnInit {
-  public Departments: Array<DeparmentList>;
+  public datas: Array<DeparmentList>;
+  public fieldsAdd: Array<Field>;
+  public fieldsModify: Array<Field>;
   public modalRef: BsModalRef;
-  public formModel: FormGroup;
-  public formModel3: FormGroup;
-  public boo = false;
-  public status: Array<boolean>;
-  public num: number;
   public pageBody: PageBody;
-  public Detail: DeparmentList;
+  public num: number;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
+  public detail: DeparmentList;
+  public hasChecked: Array<number> = [];
+  public checked: string;
   public Fmodalid: any;
   public openstatus: boolean;
-  public status1: number;
+  public status: number;
   public inputvalid: boolean;
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  public listenDescModal: boolean;
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {
+  ) {}
+  ngOnInit() {
+    this.status = 0;
+    this.openstatus = true;
+    this.inputvalid = false;
+    this.mustone = false;
+    this.gtone = false;
+    this.listenDescModal = false;
+    this.pageBody = new PageBody(1, 10);
     // 增加表单信息
-    this.formModel = fb.group({
+    this.addForm = this.fb.group({
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
       tel: ['', [Validators.required]],
@@ -43,7 +54,7 @@ export class OrganizationComponent implements OnInit {
       pid: ['-1', [Validators.required]]
     });
     // 修改表单信息
-    this.formModel3 = fb.group({
+    this.modifyForm = this.fb.group({
       id: ['', [Validators.required]],
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
@@ -51,156 +62,178 @@ export class OrganizationComponent implements OnInit {
       oid: ['', [Validators.required]],
       pid: ['', [Validators.required]]
     });
-  }
-  ngOnInit() {
-    this.status1 = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    this.pageBody = new PageBody(1, 10);
     // 调用查看函数
-    this.Request();
+    this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values;
-      // this.formModel.patchValue({'oid': this.Fmodalid.organizations[0].id});
-      // this.formModel.patchValue({'pid': this.Fmodalid.departments[0].id});
     });
   }
+  // 控制模态框, 增，修，查
+  public openModal(template: TemplateRef<any>, i): void {
+    this.inputvalid = false;
+    this.gtone = false;
+    this.mustone = false;
+    // this.controlSearchText = false;
+    // 先判断要打开的是 哪个 模态框
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
+      // console.log('这是详情查看');
+      this.listenDescModal = true;
+      this.detail = this.datas[i];
+      this.modalRef = this.modalService.show(template);
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
+      // console.log('这是修改');
+      if (this.hasChecked.length !== 1) {
+        if (this.listenDescModal) {
+          this.mustone = false;
+          this.modifyForm.reset(this.detail);
+          this.modalRef = this.modalService.show(template);
+          this.listenDescModal = false;
+        }else {
+          this.mustone = true;
+        }
+      } else {
+        if (!this.listenDescModal) {
+          this.detail = this.datas[this.hasChecked[0]];
+        }
+        this.mustone = false;
+        this.modifyForm.reset(this.detail);
+        this.modalRef = this.modalService.show(template);
+        this.listenDescModal = false;
+      }
+
+    }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
+      // console.log('增加');
+      this.modalRef = this.modalService.show(template);
+    }
+  }
   public SelectAddModalOrgaId(value): void {
-    this.formModel.patchValue({'oid': value});
+    this.addForm.patchValue({'oid': value});
   }
   public SelectAddModalDeparId(value): void {
-    this.formModel.patchValue({'pid': value});
+    this.addForm.patchValue({'pid': value});
   }
   public SelectModifyModalOrgaId(value): void {
-    this.formModel3.patchValue({'oid': value});
+    this.modifyForm.patchValue({'oid': value});
   }
   public SelectModifyModalDeparId(value): void {
-    this.formModel3.patchValue({'pid': value});
+    this.modifyForm.patchValue({'pid': value});
   }
-  // 模态框
-  public openModal(template: TemplateRef<any>) {
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    this.modalRef = this.modalService.show(template);
-  }
-  // 模态框二
-  public openModal2(template: TemplateRef<any>) {
-    this.inputvalid = false;
-    this.gtone = false;
-    let i: number, j;
-    let n = 0;
-    for (i = 0; i < this.status.length; i++) {
-      if (this.status[i] === true) {
-        j = i;
-        n++;
-      }
-    }
-    if ( n === 1 && this.boo !== true) {
-      this.mustone = false;
-      this.Detail = this.Departments[j];
-      this.formModel3.reset();
-      this.formModel3.patchValue(this.Detail);
-      this.modalRef = this.modalService.show(template);
-    }else {
-      this.mustone = true;
-    }
-  }
-  // 复选框全选
-  All2() {
-    this.boo = !this.boo;
-    for (let i = 0; i < this.status.length; i++) {
-      this.status[i] = this.boo;
-    }
-  }
-  // 点击复选框获取需要删除的id
-  public Obtain(i) {
-    this.status[i] = !this.status[i];
-    for (let i = 0; i < this.status.length; i++) {
-      if (this.status[i] === false) {
-        this.boo = false;
-        break;
-      }
-    }
-  }
-// 监控翻页事件
+  // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
-    this.Request();
+    this.Update();
   }
-  // 查看
-  public Request(): void {
-    this.gtone = false;
-    this.mustone = false;
-    this.req.findDepartment(this.commonfun.parameterSerialization(this.pageBody))
-      .subscribe((value) => {
-        this.Departments = value.values.datas;
-        this.num = Math.ceil(value.values.num / 10);
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status1 = 0;
-        }, 2500);
-        const s: Array<boolean> = [];
-        const length = this.Departments.length;
-        this.formModel.patchValue({'pid': this.Departments[0].id});
-        for (let i = 0; i < length ; i++)
-          s.push(false);
-        this.status = s;
-      });
-    // 复选框状态数组与接收到的数组长度长度一致
-  }
-  // 增加
-  public insert() {
-    if (this.formModel.valid) {
-      console.log(this.formModel.value);
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.addDepartment(this.commonfun.parameterSerialization(this.formModel.value)).subscribe((res) => {
-        console.log(res);
-        this.resMessage = res.message;
-        this.status1 = Number(res.status);
-        this.Request();
-      });
+  // 全选 或 全不选
+  public getAllCheckBoxStatus(e): void {
+    if (e.srcElement.checked === true) {
+      this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
+      this.hasChecked.splice(this.datas.length, 10);
+      this.checked = 'checked';
     } else {
-      this.inputvalid = true;
+      this.hasChecked = [];
+      this.checked = '';
     }
   }
-  // 删除
-  public Delete() {
-    this.openstatus = false;
-    this.gtone = true;
-    this.mustone = false;
-    let i: number;
-    // 判断是否被选中，若选中，则执行删除
-    for (i = 0; i < this.status.length; i++) {
-      if (this.status[i] === true ) {
-        const body = 'id=' + this.Departments[i].id ;
-        this.req.deleteDepartment(body).subscribe((res) => {
-          this.resMessage = res.message;
-          this.status1 = Number(res.status);
-          this.Request();
-        });
+  // 得到已选择的checkBox
+  public getCheckBoxStatus(e, i): void {
+    const haschecklen = this.hasChecked.length;
+    if (e.srcElement.checked === true) {
+      this.hasChecked.push(i);
+    } else {
+      for (let j = 0; j < haschecklen; j++ ) {
+        if (this.hasChecked[j] === i) {
+          this.hasChecked.splice(j, 1);
+        }
+      }
+    }
+    if (this.hasChecked.length === 1) {
+      this.detail = this.datas[this.hasChecked[0]];
+    } else {
+      this.detail = null;
+    }
+  }
+//  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
+  public delete(): void {
+    const haschecklen = this.hasChecked.length;
+    if (haschecklen === 0) {
+      this.mustone = false;
+      this.gtone = true;
+    } else {
+      this.mustone = false;
+      this.openstatus = false;
+      for (let j = 0; j < haschecklen; j++) {
+        this.req.deleteDepartment('id=' +  this.datas[this.hasChecked[j]].id)
+          .subscribe(res => {
+            if (j === haschecklen - 1) {
+              this.resMessage = res.message;
+              this.status = Number(res.status);
+              this.Update();
+            }
+          });
       }
     }
   }
-  // 修改
-  public Update() {
-    if (this.formModel3.valid) {
+  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
+  public con_add(): void {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateDepartment(this.commonfun.parameterSerialization(this.formModel3.value))
-        .subscribe((res) => {
+      this.req.addDepartment(this.commonfun.parameterSerialization(this.addForm.value))
+        .subscribe(res => {
           this.resMessage = res.message;
-          this.status1 = Number(res.status);
-          this.Request();
+          this.status = Number(res.status);
+          this.Update();
         });
-    } else {
+    }else {
       this.inputvalid = true;
     }
   }
-
+//  修改表格内容
+  public con_modify(): void {
+    if (this.modifyForm.valid) {
+      this.openstatus = false;
+      this.inputvalid = false;
+      this.modalRef.hide();
+      this.req.updateDepartment(this.commonfun.parameterSerialization(this.modifyForm.value))
+        .subscribe(res => {
+          this.resMessage = res.message;
+          this.status = Number(res.status);
+          this.Update();
+        });
+    }else {
+      this.inputvalid = true;
+    }
+  }
+  // 刷新
+  public Update(): void {
+    this.gtone = false;
+    this.mustone = false;
+    this.req.findDepartment(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+      (value) => {
+        this.hasChecked = [];
+        this.checked = '';
+        this.num = Math.ceil(value.values.num / 10);
+        this.datas = value.values.datas;
+        // 阻止用户点击 复选框时，会弹出查看模态框
+        const setinter = setInterval(() => {
+          const trs = document.getElementsByTagName('tr');
+          for (let i = 1; i < trs.length; ++i) {
+            trs[i].children[0].addEventListener('click', (e) => {
+              e.stopImmediatePropagation();
+            });
+          }
+          // trs 长度大于 1时， 取消setInterval
+          if (trs.length > 1) {
+            clearInterval(setinter);
+          }
+        });
+        setTimeout(() => {
+          this.openstatus = true;
+          this.status = 0;
+        }, 2500);
+      });
+  }
 }
