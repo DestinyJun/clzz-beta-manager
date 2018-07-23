@@ -58,3 +58,6 @@ select:focus {
 tr:hover{
 
 }
+.selectProLineId{
+  padding: 6px 8px;
+}

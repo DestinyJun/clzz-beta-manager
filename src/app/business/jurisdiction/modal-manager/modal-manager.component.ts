@@ -62,10 +62,10 @@ export class ModalManagerComponent implements OnInit {
       new Field('模块代号',	'mcode')
       // new Field('组织id',	'oid')
     ];
-    //     增加模态框表单
+    // 增加模态框表单
     this.addForm = this.fb.group({
       name: ['', Validators.required],
-      pid: ['-1', Validators.required],
+      pid: ['', Validators.required],
       description: ['', Validators.required],
       mcode: ['', Validators.required],
       oid: ['', Validators.required]
@@ -97,7 +97,6 @@ export class ModalManagerComponent implements OnInit {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
@@ -105,8 +104,6 @@ export class ModalManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -135,21 +132,25 @@ export class ModalManagerComponent implements OnInit {
     }
   }
   // 增加时，选择组织ID
-  public SelectAddModalOid(value): void {
+  public selectAddModalOid(value): void {
     this.addForm.patchValue({'oid': value});
   }
   // 修改时，选择组织ID
-  public SelectModifyModalOid(value): void {
+  public selectModifyModalOid(value): void {
     this.modifyForm.patchValue({'oid': value});
   }
   // 新增时，选择父ID
-  public SelectAddModalPid(value): void {
-    console.log(value);
+  public selectAddModalPid(value): void {
     this.addForm.patchValue({'pid': value});
   }
   // 修改时，选择父ID
-  public SelectModifyModalPid(value): void {
+  public selectModifyModalPid(value): void {
     this.modifyForm.patchValue({'pid': value});
+  }
+  // 翻页
+  public getPageBody(event): void {
+    this.pageBody = event;
+    this.Update();
   }
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
@@ -188,8 +189,8 @@ export class ModalManagerComponent implements OnInit {
       this.gtone = true;
     } else {
       this.openstatus = false;
-      const confirm = window.confirm('删除为:' + this.hasChecked.toString());
-      if (confirm) {
+      this.gtone = false;
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked)) {
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionModalManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
@@ -205,7 +206,6 @@ export class ModalManagerComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public modalAdd(): void {
-    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -222,6 +222,7 @@ export class ModalManagerComponent implements OnInit {
   }
 //  修改表格内容
   public modalModify(): void {
+    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -238,6 +239,8 @@ export class ModalManagerComponent implements OnInit {
   }
   // 在增加， 删除，修改后即时刷新
   public Update(): void {
+    // 在每一次的打开增加模态框之前初始化一下addForm
+    this.addForm.reset({pid: '-1'});
     this.gtone = false;
     this.mustone = false;
     this.req.getJurisdictionModalManagerQuery(this.commonfun.parameterSerialization(this.pageBody))

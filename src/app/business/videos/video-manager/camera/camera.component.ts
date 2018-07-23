@@ -45,7 +45,6 @@ export class CameraComponent implements OnInit {
   ngOnInit() {
     // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
     this.routerInfo.params.subscribe((value) => {
-      // console.log(value);
       this.gid = value.id;
     });
     this.status = 0;
@@ -70,7 +69,7 @@ export class CameraComponent implements OnInit {
     this.modifyForm = this.fb.group({
       id: [''],
       Update_id: ['', Validators.required],
-      value: [''],
+      name: [''],
       creator: [''],
       inner_url: [''],
       outer_url: [''],
@@ -91,8 +90,6 @@ export class CameraComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -199,12 +196,14 @@ export class CameraComponent implements OnInit {
   }
 //  修改表格内容
   public con_modify(): void {
+    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.updateVideo(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
+          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -219,7 +218,7 @@ export class CameraComponent implements OnInit {
     this.mustone = false;
     this.req.findVideos('gid=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
-        this.num = Math.ceil(value.values.num / 10);
+        this.num = Math.ceil(value.values.number / 10);
         this.datas = value.values.datas;
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {

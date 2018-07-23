@@ -11,7 +11,6 @@ export class LoginGuard implements CanActivate {
     public router: Router
   ) {}
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
-    return true;
     if (Number(this.localSessionStorage.get('logstatus')) === 10) {
       return true;
     }

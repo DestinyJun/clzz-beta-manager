@@ -71,3 +71,14 @@
 .remind{
   color: red;
 }
+.selectLineId {
+  display: block;
+  padding: 6px;
+  cursor: pointer;
+  border: 1px solid #002d32;
+  background-color: rgba(0,0,0,0.5);
+  color: #FFFFFF;
+}
+.lineIdSelected {
+
+}

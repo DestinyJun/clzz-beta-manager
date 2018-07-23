@@ -14,37 +14,27 @@ export class CommonfunService {
   // public checked: string;
   constructor(
     private req: ReqService
-  ) { }
+  ) {}
 
   // 参数序列化
   public parameterSerialization(form: Object): string {
     let result: string;
     for (const f in form) {
       if (result) {
-        result = result + f + '=' + form[f] + '&';
+        result = result + '&' + f + '=' + form[f];
       } else {
-        result = f + '=' + form[f] + '&';
+        result = f + '=' + form[f];
       }
     }
     return result;
   }
 
 
-  //   // 刷新
-  // public Update(pageBody: PageBody): any {
-  //   this.mustone = false;
-  //   this.req.getDeviceProductionData(this.parameterSerialization(pageBody)).subscribe(
-  //     (value) => {
-  //       this.hasChecked = [];
-  //       this.checked = '';
-  //       this.num = Math.ceil(value.values.num / 10);
-  //       this.datas = value.values.datas;
-  //       return this.datas;
-  //       setTimeout(() => {
-  //         this.openstatus = true;
-  //         this.status = 0;
-  //       }, 2500);
-  //     });
-  // }
-
+  public deleteChecked(datas: Array<any>, indexs: Array<number>): boolean {
+    let str = '';
+    for (let i = 0; i < indexs.length; ++i) {
+        str += datas[indexs[i]].name + '\n';
+    }
+    return confirm('确定删除项：\n\n' + str);
+  }
 }

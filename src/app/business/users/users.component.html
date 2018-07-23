@@ -30,11 +30,10 @@
             <th>联系电话</th>
             <th>生日</th>
             <th>性别</th>
-            <th>生产线列表</th>
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i1)">
+          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['userCode']}}</td>
@@ -45,10 +44,10 @@
             <td>{{user['password']}}</td>
             <td>{{user['phone']}}</td>
             <td>{{user['birthday']}}</td>
-            <td>{{user['Sysids']}}</td>
             <td>
                 <span *ngIf="user['gender'] === 'm' || user['gender'] === '男'">男</span>
                 <span *ngIf="user['gender'] === 'w' || user['gender'] === '女'">女</span>
+                <span *ngIf="user['gender'] !== 'w' && user['gender'] !== '女' && user['gender'] !== 'm' && user['gender'] !== '男'">无</span>
             </td>
           </tr>
           </tbody>
@@ -72,53 +71,53 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="modifyForm">
+    <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group">
         <label>用户编码&nbsp;&nbsp;: &nbsp;</label>
-        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="modifyForm.get('userCode').invalid && modifyForm.get('userCode').touched">
-        <div [hidden]="modifyForm.get('userCode').valid || modifyForm.get('userCode').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'userCode')">必填</span>
+        <input type="text" class="form-control" formControlName="userCode" [class.hasError]="addForm.get('userCode').invalid && addForm.get('userCode').touched">
+        <div [hidden]="addForm.get('userCode').valid || addForm.get('userCode').untouched">
+          <span [hidden]="!addForm.hasError('required', 'userCode')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>身份证: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="modifyForm.get('idCode').invalid && modifyForm.get('idCode').touched">
-        <div [hidden]="modifyForm.get('idCode').valid || modifyForm.get('idCode').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'idCode')">必填</span>
-          <span [hidden]="modifyForm.hasError('minLength', 'idCode') && modifyForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
+        <input type="text"  class="form-control" formControlName="idCode" [class.hasError]="addForm.get('idCode').invalid && addForm.get('idCode').touched">
+        <div [hidden]="addForm.get('idCode').valid || addForm.get('idCode').untouched">
+          <span [hidden]="!addForm.hasError('required', 'idCode')">必填</span>
+          <span [hidden]="addForm.hasError('minLength', 'idCode') && addForm.hasError('maxLength', 'idCode')">请输入正确的18位身份证号</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>真实姓名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="modifyForm.get('realName').invalid && modifyForm.get('realName').touched">
-        <div [hidden]="modifyForm.get('realName').valid || modifyForm.get('realName').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'realName')">必填</span>
+        <input type="text"  class="form-control" formControlName="realName" [class.hasError]="addForm.get('realName').invalid && addForm.get('realName').touched">
+        <div [hidden]="addForm.get('realName').valid || addForm.get('realName').untouched">
+          <span [hidden]="!addForm.hasError('required', 'realName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>用户名: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="modifyForm.get('userName').invalid && modifyForm.get('userName').touched">
-        <div [hidden]="modifyForm.get('userName').valid || modifyForm.get('userName').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'userName')">必填</span>
+        <input type="text"  class="form-control" formControlName="userName" [class.hasError]="addForm.get('userName').invalid && addForm.get('userName').touched">
+        <div [hidden]="addForm.get('userName').valid || addForm.get('userName').untouched">
+          <span [hidden]="!addForm.hasError('required', 'userName')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭住址: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="modifyForm.get('homeAddress').invalid && modifyForm.get('homeAddress').touched">
-        <div [hidden]="modifyForm.get('homeAddress').valid || modifyForm.get('homeAddress').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'homeAddress')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeAddress" [class.hasError]="addForm.get('homeAddress').invalid && addForm.get('homeAddress').touched">
+        <div [hidden]="addForm.get('homeAddress').valid || addForm.get('homeAddress').untouched">
+          <span [hidden]="!addForm.hasError('required', 'homeAddress')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>家庭联系电话: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="modifyForm.get('homeTelephone').invalid && modifyForm.get('homeTelephone').touched">
-        <div [hidden]="modifyForm.get('homeTelephone').valid || modifyForm.get('homeTelephone').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'homeTelephone')">必填</span>
+        <input type="text"  class="form-control" formControlName="homeTelephone" [class.hasError]="addForm.get('homeTelephone').invalid && addForm.get('homeTelephone').touched">
+        <div [hidden]="addForm.get('homeTelephone').valid || addForm.get('homeTelephone').untouched">
+          <span [hidden]="!addForm.hasError('required', 'homeTelephone')">必填</span>
         </div>
       </div>
       <br>
@@ -126,51 +125,61 @@
         <label>所属组织ID: &nbsp;</label>
         <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
-          <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.name}}</option>
+          <option *ngFor="let organization of organizationId.organizations" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <br>
       <div class="form-group">
         <label>密码: &nbsp;</label>
-        <input type="text"  class="form-control" formControlName="password" [class.hasError]="modifyForm.get('password').invalid && modifyForm.get('password').touched">
-        <div [hidden]="modifyForm.get('password').valid || modifyForm.get('password').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'password')">必填</span>
-          <span [hidden]="modifyForm.hasError('minLength', 'password')">密码至少6位</span>
-          <span [hidden]="modifyForm.hasError('maxLength', 'password')">密码最多16位</span>
+        <input type="text"  class="form-control" formControlName="password" [class.hasError]="addForm.get('password').invalid && addForm.get('password').touched">
+        <div [hidden]="addForm.get('password').valid || addForm.get('password').untouched">
+          <span [hidden]="!addForm.hasError('required', 'password')">必填</span>
+          <span [hidden]="addForm.hasError('minLength', 'password')">密码至少6位</span>
+          <span [hidden]="addForm.hasError('maxLength', 'password')">密码最多16位</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>联系电话: &nbsp;</label>
-        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="modifyForm.get('phone').invalid && modifyForm.get('phone').touched">
-        <div [hidden]="modifyForm.get('phone').valid || modifyForm.get('phone').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'phone')">必填</span>
-          <span [hidden]="!modifyForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
+        <input type="tel"  class="form-control" formControlName="phone" [class.hasError]="addForm.get('phone').invalid && addForm.get('phone').touched">
+        <div [hidden]="addForm.get('phone').valid || addForm.get('phone').untouched">
+          <span [hidden]="!addForm.hasError('required', 'phone')">必填</span>
+          <span [hidden]="!addForm.hasError('mobile', 'phone')">请输入正确的手机号码</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>邮箱: &nbsp;</label>
-        <input type="email"  class="form-control" formControlName="email" [class.hasError]="modifyForm.get('email').invalid && modifyForm.get('email').touched">
-        <div [hidden]="modifyForm.get('email').valid || modifyForm.get('email').untouched">
-          <span [hidden]="!modifyForm.hasError('email', 'email')">电子邮箱</span>
-          <span [hidden]="!modifyForm.hasError('required', 'email')">必填</span>
+        <input type="email"  class="form-control" formControlName="email" [class.hasError]="addForm.get('email').invalid && addForm.get('email').touched">
+        <div [hidden]="addForm.get('email').valid || addForm.get('email').untouched">
+          <span [hidden]="!addForm.hasError('email', 'email')">电子邮箱</span>
+          <span [hidden]="!addForm.hasError('required', 'email')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>生日: &nbsp;</label>
-        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="modifyForm.get('birthday').invalid && modifyForm.get('birthday').touched">
-        <div [hidden]="modifyForm.get('birthday').valid || modifyForm.get('birthday').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'birthday')">必填</span>
+        <input type="date"  class="form-control" formControlName="birthday" [class.hasError]="addForm.get('birthday').invalid && addForm.get('birthday').touched">
+        <div [hidden]="addForm.get('birthday').valid || addForm.get('birthday').untouched">
+          <span [hidden]="!addForm.hasError('required', 'birthday')">必填</span>
         </div>
       </div>
       <br>
       <div class="form-group">
         <label>生产线列表: &nbsp;</label>
-        <input type="date"  class="form-control" formControlName="Sysids" [class.hasError]="modifyForm.get('Sysids').invalid && modifyForm.get('Sysids').touched">
-        <div [hidden]="modifyForm.get('Sysids').valid || modifyForm.get('Sysids').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'Sysids')">必填</span>
+        <!--<span (click)="openSelectAddProLineId = !openSelectAddProLineId" class="selectLineId">请点击选择生产线模块ID</span>-->
+        <div class="container-fluid">
+          <div class="row">
+            <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+              <!--
+                  参数介绍：
+                      lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                      $event: 用来判断当前被点击生产线的checkbox 是否被选中
+              -->
+              <input type="checkbox" #addCheckboxAdd [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxAdd.checked)">
+              <span [ngStyle]="{'color': (addCheckboxAdd.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+            </div>
+          </div>
         </div>
       </div>
       <br>
@@ -198,6 +207,7 @@
     <br>
   </div>
 </ng-template>
+
 <ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left">用户信息修改</h4>
@@ -259,7 +269,7 @@
       <div class="form-group">
         <label>所属组织ID: &nbsp;</label>
         <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
+          <option *ngFor="let organization of organizationId.organizations" [selected]="organization.id === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <br>
@@ -301,9 +311,19 @@
       <br>
       <div class="form-group">
         <label>生产线列表: &nbsp;</label>
-        <input type="date"  class="form-control" formControlName="Sysids" [class.hasError]="modifyForm.get('Sysids').invalid && modifyForm.get('Sysids').touched">
-        <div [hidden]="modifyForm.get('Sysids').valid || modifyForm.get('Sysids').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'Sysids')">必填</span>
+        <!--<span (click)="openSelectAddProLineId = !openSelectAddProLineId" class="selectLineId">点击查看和修改生产线模块ID</span>-->
+        <div class="container-fluid">
+          <div class="row">
+            <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+              <!--
+                  参数介绍：
+                      lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                      $event: 用来判断当前被点击生产线的checkbox 是否被选中
+              -->
+              <input type="checkbox" #addCheckboxModify [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxModify.checked)">
+              <span [ngStyle]="{'color': (addCheckboxModify.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+            </div>
+          </div>
         </div>
       </div>
       <br>
@@ -331,6 +351,7 @@
     <br>
   </div>
 </ng-template>
+
 <ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left">用户信息详情</h4>
@@ -351,6 +372,22 @@
     <p>联系电话	: &nbsp;{{detail.phone}}</p>
     <p>邮箱	: &nbsp;{{detail.email}}</p>
     <p>生日	: &nbsp;{{detail.birthday}}</p>
+    <div class="form-group">
+      <label>生产线列表: &nbsp;</label>
+      <div class="container-fluid">
+        <div class="row">
+          <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+            <!--
+                参数介绍：
+                    lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                    $event: 用来判断当前被点击生产线的checkbox 是否被选中
+            -->
+            <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
+            <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
     <p>性别	: &nbsp;{{detail.gender}}</p>
     <p>插入时间	: &nbsp;{{detail.idt}}</p>
     <p>更新时间	: &nbsp;{{detail.udt}}</p>
@@ -367,8 +404,11 @@
   </div>
 </ng-template>
 
+
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
     <span>{{resMessage}}</span>
   </div>
 </div>
+
+

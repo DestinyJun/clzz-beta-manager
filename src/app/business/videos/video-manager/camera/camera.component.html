@@ -40,7 +40,7 @@
           </tr>
           </tbody>
         </table>
-        <div *ngIf="videos === undefined" class="text-center">
+        <div *ngIf="datas === undefined" class="text-center">
           <h3>此摄像机组没有摄像头</h3>
         </div>
       </div>
@@ -129,17 +129,24 @@
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
       <div class="form-group">
-        <label>修改摄像机id</label>
+        <label>正在被修改摄像机id</label>
         <input type="text" class="form-control" formControlName="Update_id" [class.hasError]="modifyForm.get('Update_id').invalid && modifyForm.get('Update_id').touched">
         <div [hidden]="modifyForm.get('Update_id').valid || modifyForm.get('Update_id').untouched">
           <span [hidden]="!modifyForm.hasError('required', 'Update_id')">必填</span>
         </div>
       </div>
       <div class="form-group">
+        <label>修改摄像机后的id</label>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="modifyForm.get('id').invalid && modifyForm.get('id').touched">
+        <div [hidden]="modifyForm.get('id').valid || modifyForm.get('id').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'id')">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
         <label>摄像机名称</label>
-        <input type="text" class="form-control" formControlName="value" [class.hasError]="modifyForm.get('value').invalid && modifyForm.get('value').touched">
-        <div [hidden]="modifyForm.get('value').valid || modifyForm.get('value').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'value')">必填</span>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
+        <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
         </div>
       </div>
       <div class="form-group">
@@ -192,9 +199,9 @@
       <p>摄像机id&nbsp;:&nbsp;	{{detail?.id}}</p>
       <p>摄像机名称&nbsp;:&nbsp;	{{detail?.value}}</p>
       <p>摄像机创建人&nbsp;:&nbsp;	{{detail?.creator}}</p>
+      <p>组id&nbsp;:&nbsp;	{{detail?.g_id}}</p>
       <p>内网url&nbsp;:&nbsp;	{{detail?.inner_url}}</p>
       <p>外网url&nbsp;:&nbsp;	{{detail?.outer_url}}</p>
-      <p>组id&nbsp;:&nbsp;	{{detail?.g_id}}</p>
       <div class="clearfix"></div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>
@@ -205,7 +212,7 @@
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 14">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 14 || status === 12">
     <span>{{resMessage}}</span>
   </div>
 </div>

@@ -75,10 +75,7 @@ export class InterfaceManagerComponent implements OnInit {
     });
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
-      this.Fmodalid = value.values;
-      if (this.Fmodalid !== undefined) {
-        // this.interfacemanagerAddForm.patchValue({'mid': this.Fmodalid[0].id});
-      }
+      this.Fmodalid = value.values
     });
   }
   // 控制模态框, 增，修，查
@@ -94,8 +91,6 @@ export class InterfaceManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -116,20 +111,22 @@ export class InterfaceManagerComponent implements OnInit {
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
-
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
 // 选择增加设备id
-  public SelectAddModalId(value): void {
+  public selectAddModalId(value): void {
     this.addForm.patchValue({'mid': value});
   }
 // 选择修改设备id
-  public SelectModifyModalId(value): void {
+  public selectModifyModalId(value): void {
     this.modifyForm.patchValue({'mid': value});
+  }
+  public getPageBody(event): void {
+    this.pageBody = event;
+    this.Update();
   }
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
@@ -183,7 +180,6 @@ export class InterfaceManagerComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public interfacemanagerAdd(): void {
-    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

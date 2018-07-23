@@ -90,8 +90,6 @@ export class BtnManagerComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -120,11 +118,11 @@ export class BtnManagerComponent implements OnInit {
     }
   }
 // 选择增加设备id
-  public SelectAddModalId(value): void {
+  public selectAddModalId(value): void {
     this.addForm.patchValue({'mid': value});
   }
 // 选择修改设备id
-  public SelectModifyModalId(value): void {
+  public selectModifyModalId(value): void {
     this.modifyForm.patchValue({'mid': value});
   }
   public getPageBody(event): void {

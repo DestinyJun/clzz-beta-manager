@@ -4,6 +4,7 @@ import {NodeEvent, NodeMenuItemAction, TreeModel} from 'ng2-tree';
 import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {PageBody} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
+import {CommonfunService} from '../../../shared/commonfun.service';
 
 
 @Component({
@@ -29,11 +30,12 @@ export class VideoWindowComponent implements OnInit {
   /**************  ng2-tree ************/
   public tree: TreeModel;
 
-  constructor(private http: HttpClient,
+  constructor(
+              private http: HttpClient,
               public html: DomSanitizer,
-              private req: ReqService) {
-  }
-
+              private req: ReqService,
+              private commonfun: CommonfunService
+  ) {}
   ngOnInit() {
     // 初始化四个监视窗口的数据，为空
     this.c1 = [];
@@ -88,7 +90,7 @@ export class VideoWindowComponent implements OnInit {
 
   public Request(): void {
     // 发送请求拿到 摄像机组的id, 用来获取该组的全部摄像机
-    this.req.findVideomanager(this.parameterSerialization(this.pageBody))
+    this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe((gvalue) => {
         for (let i = 0; i < gvalue.values.number; ++i) {
           // 发送请求拿到摄像机组的摄像机数量
@@ -172,21 +174,6 @@ export class VideoWindowComponent implements OnInit {
             });
         }
       });
-  }
-
-  // 翻页参数序列化
-  public parameterSerialization(obj: PageBody): string {
-    let result: string;
-    for (const prop in this.pageBody) {
-      if (this.pageBody.hasOwnProperty(prop)) {
-        if (result) {
-          result = result + prop + '=' + this.pageBody[prop] + '&';
-        } else {
-          result = prop + '=' + this.pageBody[prop] + '&';
-        }
-      }
-    }
-    return result;
   }
 }
 

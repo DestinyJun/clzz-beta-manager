@@ -7,9 +7,9 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="itemModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="itemModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <div class="numSearchDiv" [class.numSearch]="controlSearchText">
            <!--这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查-->
            <!--而hidden 仅仅只是掩藏 input ,但是要检查-->
@@ -36,7 +36,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let it of items; let i = index" (click)="itemModal(lookdesc, i)">
+          <tr *ngFor="let it of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{it.itemcode}}</td>
             <td>{{it.itemname}}</td>
@@ -159,7 +159,7 @@
     <p>更新时间: &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();itemModal(modify, -1)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn  btn-danger" aria-label="Close" (click)="modalRef.hide()">

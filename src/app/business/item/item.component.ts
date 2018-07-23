@@ -256,6 +256,7 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     this.req.ItemFind(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
+        console.log(value);
         this.hasChecked = [];
         this.checked = '';
         this.num = Math.ceil(value.values.num / 10);

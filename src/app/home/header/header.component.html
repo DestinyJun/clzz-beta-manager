@@ -1,8 +1,8 @@
-<nav class="navbar navbar-default navbar-fixed-top">
+<nav class="navbar navbar-default navbar-fixed-top" [ngStyle]="{marginLeft: !cisMenu?'180px':'0px'}">
   <div class="container-fluid">
     <div class="navbar-header">
       <div class="title">
-        <i class="fa fa-navicon"></i>
+        <i class="fa fa-navicon" (click)="controlMenu()"></i>
       </div>
       <div class="user pull-right">
         <div class="user-admin">欢迎您，管理员</div>
@@ -31,68 +31,6 @@
             <div class="scroll-box" #scrollBox>
               <div class="scroll-box-bar" #scrollBoxBar [ngStyle]="{height: '30px'}"></div>
             </div>
-          <!--  <ul class="list-group" #scrollListGroup>
-              <li class="list-group-item list-group-item-danger">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>故障！一号仓库电机组出现故障！</span>
-                <span class="text-timer">1分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-success">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>操作：生产订单添加成功</span>
-                <span class="text-timer">3分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-warning">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>警告！油漆数量不足！</span>
-                <span class="text-timer">5分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-danger">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>故障！一号仓库电机组出现故障！</span>
-                <span class="text-timer">1分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-success">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>操作：生产订单添加成功</span>
-                <span class="text-timer">3分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-warning">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>警告！油漆数量不足！</span>
-                <span class="text-timer">5分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-danger">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>故障！一号仓库电机组出现故障！</span>
-                <span class="text-timer">1分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-success">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>操作：生产订单添加成功</span>
-                <span class="text-timer">3分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-warning">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>警告！油漆数量不足！</span>
-                <span class="text-timer">5分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-danger">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>故障！一号仓库电机组出现故障！</span>
-                <span class="text-timer">1分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-success">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>操作：生产订单添加成功</span>
-                <span class="text-timer">3分钟前</span>
-              </li>
-              <li class="list-group-item list-group-item-warning">
-                <img class="rounded-circle-img" src="../../../assets/images/Nasta.png" alt="">
-                <span>警告！油漆数量不足！</span>
-                <span class="text-timer">5分钟前</span>
-              </li>
-            </ul>-->
           </div>
         </div>
       </div>
@@ -119,7 +57,27 @@
     <p><span>家庭电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeTelephone}}</p><br>
     <p><span>email&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>: &nbsp;{{personInfo.email}}</p><br>
     <p><span>生&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;日</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.birthday}}</p><br>
-    <p><span>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.gender}}</p><br>
+    <div class="form-group">
+      <label>生产线列表: &nbsp;</label>
+      <div class="container-fluid">
+        <div class="row">
+          <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+            <!--
+                参数介绍：
+                    lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                    $event: 用来判断当前被点击生产线的checkbox 是否被选中
+            -->
+            <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
+            <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <p>
+      <span>性&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;别</span>&nbsp;&nbsp;&nbsp;: &nbsp;
+      <span *ngIf="personInfo.gender === 'm' || personInfo.gender === '男'">男</span>
+      <span *ngIf="personInfo.gender === 'w' || personInfo.gender === '女'">女</span>
+    </p><br>
     <button class="btn btn-danger" (click)="modalRef.hide();openPersonInfo(modify)">修改</button>
   </div>
 </ng-template>
@@ -196,6 +154,22 @@
       <div class="form-group">
         <label>最新修改时间 &nbsp; : &nbsp;</label>
         <input type="text" formControlName="udt" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>生产线列表: &nbsp;</label>
+        <div class="container-fluid">
+          <div class="row">
+            <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+              <!--
+                  参数介绍：
+                      lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                      $event: 用来判断当前被点击生产线的checkbox 是否被选中
+              -->
+              <input type="checkbox" #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
+              <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+            </div>
+          </div>
+        </div>
       </div>
     </form>
     <button class="btn btn-danger" (click)="PersonInfoModify(); modalRef.hide()">确认修改</button>

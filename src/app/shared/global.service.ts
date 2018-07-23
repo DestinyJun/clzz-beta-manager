@@ -48,7 +48,7 @@ export class NavListChild {
   ) {}
 }
 
-
+// 不加生产线id 的
 export class PageBody {
   constructor(
     public page: number,
@@ -235,7 +235,7 @@ export class UsersManager {
   public gender: string,
   public idt: string,
   public udt: string,
-   public Sysids: string
+   public sysids: string
 ) {}
 }
 

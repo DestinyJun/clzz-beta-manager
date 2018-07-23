@@ -21,16 +21,17 @@ export class LoginComponent implements OnInit {
     this.userLoginInfoForm = fb.group({
       uname: ['', Validators.required],
       upwd: ['', Validators.required],
-      module: ['WEBN', Validators.required]
+      module: ['WEBS', Validators.required]
     });
   }
   ngOnInit() {
   }
   public OnSubmitInfo(): void {
-    this.router.navigate(['/home']);
+    // this.router.navigate(['/home']);
       if (this.userLoginInfoForm.valid) {
         this.req.Login(this.userLoginInfoForm.value)
           .subscribe(res => {
+            console.log(res);
             this.status = Number(res.status);
             if (Number(res.status) === 10) {
               this.localSessionStorage.set('realName', res.realName);

@@ -8,27 +8,20 @@ import {GlobalService} from '../shared/global.service';
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
-export class HomeComponent implements OnInit , OnDestroy, DoCheck {
-  @Output() InfoTg = new EventEmitter();
+export class HomeComponent implements OnInit {
+  public pisMenu: boolean;
   constructor(
     private localSessionStorage: GlobalService,
     private req: ReqService,
     public router: Router
   ) {
   }
-  ngDoCheck(): void {
-  }
-  infoTg() {
-    this.InfoTg.emit(true);
-  }
   ngOnInit() {
+    this.pisMenu = false;
   }
 
-  public ngOnDestroy(): void {
-    this.req.Logout(JSON.stringify({sid: this.localSessionStorage.get('sid')}))
-      .subscribe(res => {
-        alert('登出成功！');
-      });
+  public controlMenus(e): void {
+    this.pisMenu = !this.pisMenu;
   }
 
 }

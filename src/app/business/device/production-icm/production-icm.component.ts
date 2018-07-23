@@ -72,6 +72,7 @@ export class ProductionIcmComponent implements OnInit {
       this.Fmodalid = value.values;
     });
   }
+
 // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
@@ -184,9 +185,11 @@ export class ProductionIcmComponent implements OnInit {
       this.gtone = true;
     } else {
       this.mustone = false;
+      this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionIcmDelete('mid=' +  this.datas[this.hasChecked[j]].mid)
             .subscribe(res => {
+              console.log(res);
               this.status = Number(res.status);
               this.resMessage = res.message;
               if (j === haschecklen - 1) {
@@ -230,6 +233,7 @@ export class ProductionIcmComponent implements OnInit {
   }
   // 刷新
   public Update(): void {
+    this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
     this.req.getDeviceProductionIcm(this.commonfun.parameterSerialization(this.pageBody)).subscribe(

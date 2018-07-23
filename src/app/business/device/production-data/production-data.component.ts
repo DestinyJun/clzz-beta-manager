@@ -131,8 +131,6 @@ export class ProductionDataComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -258,6 +256,7 @@ export class ProductionDataComponent implements OnInit {
   }
   // 刷新
   public Update(): void {
+    this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
     this.req.getDeviceProductionData(this.commonfun.parameterSerialization(this.pageBody)).subscribe(

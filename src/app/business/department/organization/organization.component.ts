@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {DeparmentList, DeviceProductionDataList, Field, PageBody} from '../../../shared/global.service';
+import {DeparmentList, Field, PageBody} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 
@@ -50,7 +50,7 @@ export class OrganizationComponent implements OnInit {
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
       tel: ['', [Validators.required]],
-      oid: ['-1', [Validators.required]],
+      oid: ['', [Validators.required]],
       pid: ['-1', [Validators.required]]
     });
     // 修改表单信息
@@ -73,7 +73,6 @@ export class OrganizationComponent implements OnInit {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
@@ -101,23 +100,22 @@ export class OrganizationComponent implements OnInit {
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
-
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
-  public SelectAddModalOrgaId(value): void {
+  public selectAddModalOrgaId(value): void {
+    console.log(value);
     this.addForm.patchValue({'oid': value});
   }
-  public SelectAddModalDeparId(value): void {
+  public selectAddModalDeparId(value): void {
     this.addForm.patchValue({'pid': value});
   }
-  public SelectModifyModalOrgaId(value): void {
+  public selectModifyModalOrgaId(value): void {
     this.modifyForm.patchValue({'oid': value});
   }
-  public SelectModifyModalDeparId(value): void {
+  public selectModifyModalDeparId(value): void {
     this.modifyForm.patchValue({'pid': value});
   }
   // 监控翻页事件
@@ -177,6 +175,7 @@ export class OrganizationComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public con_add(): void {
+    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -211,6 +210,7 @@ export class OrganizationComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
+    this.addForm.reset({pid: '-1'});
     this.req.findDepartment(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];

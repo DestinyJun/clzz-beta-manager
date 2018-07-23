@@ -8,7 +8,6 @@ import {FooterComponent} from './footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ModalModule} from 'ngx-bootstrap';
 import {SlimLoadingBarModule} from './../../../node_modules/ng2-slim-loading-bar';
-import {PagingComponent} from '../based/paging/paging.component';
 
 @NgModule({
   imports: [

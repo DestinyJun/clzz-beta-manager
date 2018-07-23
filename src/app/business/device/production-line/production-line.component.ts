@@ -212,6 +212,7 @@ export class ProductionLineComponent implements OnInit {
   }
   // 刷新
   public Update(): void {
+    this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
     this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(

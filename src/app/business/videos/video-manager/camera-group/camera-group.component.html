@@ -11,6 +11,12 @@
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
         <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        <!--<div class="pull-right">-->
+          <!--<span>请选择生产线:</span>-->
+          <!--<select name="selectProLineId" #selectProLineId (change)="selectProLine(selectProLineId.value)" class="selectProLineId">-->
+            <!--<option *ngFor="let line of proLineids" [value]="line.sid">{{line.name}}</option>-->
+          <!--</select>-->
+        <!--</div>-->
       </div>
     </div>
     <div class="row">
@@ -28,15 +34,6 @@
           </tr>
           </thead>
           <tbody>
-          <tr>
-            <td><input type="checkbox"></td>
-            <td>如微软微软</td>
-            <td>如微软微软</td>
-            <td>如微软微软</td>
-            <td>如微软微软</td>
-            <td>如微软微软</td>
-            <td><a [routerLink]="['./camera', 1]">进入摄像机组</a></td>
-          </tr>
           <tr *ngFor="let list of datas; let i = index" (click)="openModal(lookdesc, i)">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{list['value']}}</td>
@@ -44,7 +41,7 @@
             <td>{{list['creator']}}</td>
             <td>{{list['status']}}</td>
             <td>{{list['p_id']}}</td>
-            <td><a [routerLink]="['/camera', list['id']]">进入摄像机组</a></td>
+            <td><a [routerLink]="['./camera', list['id']]">进入摄像机组</a></td>
           </tr>
           </tbody>
         </table>
@@ -68,31 +65,31 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="forms" [formGroup]="formModel1">
+    <form class="forms" [formGroup]="addForm">
       <div class="form-group">
         <label>摄像头组ID</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="formModel1.get('id').invalid && formModel1.get('id').touched">
-        <div [hidden]="formModel1.get('id').valid || formModel1.get('id').untouched">
-          <span [hidden]="!formModel1.hasError('required', 'id')">必填</span>
+        <input type="text" class="form-control" formControlName="id" [class.hasError]="addForm.get('id').invalid && addForm.get('id').touched">
+        <div [hidden]="addForm.get('id').valid || addForm.get('id').untouched">
+          <span [hidden]="!addForm.hasError('required', 'id')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>摄像头组名称</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="formModel1.get('name').invalid && formModel1.get('name').touched">
-        <div [hidden]="formModel1.get('name').valid || formModel1.get('name').untouched">
-          <span [hidden]="!formModel1.hasError('required', 'name')">必填</span>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="addForm.get('name').invalid && addForm.get('name').touched">
+        <div [hidden]="addForm.get('name').valid || addForm.get('name').untouched">
+          <span [hidden]="!addForm.hasError('required', 'name')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>组创建人</label>
-        <input type="text" class="form-control" formControlName="creator" [class.hasError]="formModel1.get('creator').invalid && formModel1.get('creator').touched">
-        <div [hidden]="formModel1.get('creator').valid || formModel1.get('creator').untouched">
-          <span [hidden]="!formModel1.hasError('required', 'creator')">必填</span>
+        <input type="text" class="form-control" formControlName="creator" [class.hasError]="addForm.get('creator').invalid && addForm.get('creator').touched">
+        <div [hidden]="addForm.get('creator').valid || addForm.get('creator').untouched">
+          <span [hidden]="!addForm.hasError('required', 'creator')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>摄像机组状态</label>
-        <input type="text" class="form-control" [formControl]="cameraGroupStatus" [class.hasError]="formModel3.get('status').invalid && formModel3.get('status').touched">
+        <input type="text" class="form-control" [formControl]="cameraGroupStatus" [class.hasError]="modifyForm.get('status').invalid && modifyForm.get('status').touched">
         <span *ngIf="!cameraGroupStatusPrompt">状态值输入格式不正确,只能为0，1</span>
       </div>
       <div class="form-group">
@@ -123,33 +120,33 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="forms" [formGroup]="formModel3">
+    <form class="forms" [formGroup]="modifyForm">
       <div class="form-group">
         <label>修改摄像机组ID</label>
         <input type="text" class="form-control" formControlName="Update_id" placeholder="请输入修改的摄像机ID">
       </div>
       <div class="form-group">
         <label>摄像机组名称</label>
-        <input type="text" class="form-control" formControlName="value" [class.hasError]="formModel3.get('value').invalid && formModel3.get('value').touched">
-        <div [hidden]="formModel3.get('value').valid || formModel3.get('value').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'value')">必填</span>
+        <input type="text" class="form-control" formControlName="value" [class.hasError]="modifyForm.get('value').invalid && modifyForm.get('value').touched">
+        <div [hidden]="modifyForm.get('value').valid || modifyForm.get('value').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'value')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>摄像机组创建人</label>
-        <input type="text" class="form-control" formControlName="creator" [class.hasError]="formModel3.get('creator').invalid && formModel3.get('creator').touched">
-        <div [hidden]="formModel3.get('creator').valid || formModel3.get('creator').untouched">
-          <span [hidden]="!formModel3.hasError('required', 'creator')">必填</span>
+        <input type="text" class="form-control" formControlName="creator" [class.hasError]="modifyForm.get('creator').invalid && modifyForm.get('creator').touched">
+        <div [hidden]="modifyForm.get('creator').valid || modifyForm.get('creator').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'creator')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label>摄像机组状态</label>
-        <input type="text" class="form-control" [formControl]="cameraGroupStatus" [class.hasError]="formModel3.get('status').invalid && formModel3.get('status').touched">
+        <input type="text" class="form-control" [formControl]="cameraGroupStatus" [class.hasError]="modifyForm.get('status').invalid && modifyForm.get('status').touched">
         <span *ngIf="!cameraGroupStatusPrompt">状态值输入格式不正确,只能为0，1</span>
       </div>
       <div class="form-group">
         <label>所属部门ID: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modal_id (change)="selectModalId(modal_id.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid.departments" [selected]="modal.id === DetailCameraGroup.p_id" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
@@ -168,7 +165,7 @@
 <!--查看的模态框-->
 <ng-template #lookdesc>
   <div class="modal-header">
-    <h4 class="modal-title pull-left" [hidden]="downWindow" >摄像机查看</h4>
+    <h4 class="modal-title pull-left" >摄像机查看</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
       <span aria-hidden="true">&times;</span>
     </button>

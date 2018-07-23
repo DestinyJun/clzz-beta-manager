@@ -1,16 +1,16 @@
 <div class="container-fluid">
   <div class="row">
     <div class="header">
-      <app-header ></app-header>
+      <app-header (controlLeftMenuChange)="controlMenus($event)" [cisMenu]="pisMenu"></app-header>
     </div>
   </div>
-  <div class="row">
+  <div class="row" [hidden]="pisMenu">
     <div class="sidebar">
       <app-sidebar></app-sidebar>
     </div>
   </div>
   <div class="row">
-    <div class="main" style="margin-left: 180px;margin-top: 66px">
+    <div class="main" style="margin-top: 66px" [ngStyle]="{'margin-left': !pisMenu?'180px':'0px'}">
         <router-outlet></router-outlet>
         <ng2-slim-loading-bar class="box" [color]="'green'" [height]="'4px'"></ng2-slim-loading-bar>
     </div>

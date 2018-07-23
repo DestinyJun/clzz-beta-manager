@@ -236,7 +236,7 @@ export class ReqService {
 
   // 视频管理组的查看
   public findVideomanager(body): Observable<any> {
-    return this.http.post('http://120.78.137.182/element/SelectCameraGroup', body, this.headers);
+    return this.http.post('http://120.78.137.182/element/SelectCameraGroupAll', body, this.headers);
   }
   // 视频管理组的增加
   public addVideomanager(body): Observable<any> {

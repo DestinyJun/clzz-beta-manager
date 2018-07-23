@@ -103,8 +103,6 @@ export class ProductionSensorComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -132,7 +130,6 @@ export class ProductionSensorComponent implements OnInit {
       this.modalRef = this.modalService.show(template);
     }
   }
-
 // 选择增加设备id
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'did': value});
@@ -141,31 +138,6 @@ export class ProductionSensorComponent implements OnInit {
   public SelectModifyModalId(value): void {
     this.modifyForm.patchValue({'did': value});
   }
-  // 控制模态框
-  public openProSensor(template: TemplateRef<any>): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    if (this.hasChecked.length > 1 || this.hasChecked.length === 0) {
-      this.mustone = true;
-    } else {
-      this.mustone = false;
-      this.detail.did = String(this.detail.did);
-      this.modifyForm.reset(this.detail);
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-  // 控制模态框增加
-  public openProSensorAdd(template: TemplateRef<any>): void {
-    this.mustone = false;
-    this.inputvalid = false;
-    this.gtone = false;
-    this.modalRef = this.modalService.show(template);
-  }
-
-  public getNum(event): void {
-    this.num = event;
-  }
-
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
@@ -225,6 +197,7 @@ export class ProductionSensorComponent implements OnInit {
       this.gtone = true;
     } else {
       this.mustone = false;
+      this.openstatus = false;
       for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionSensorDelete('sid=' + this.datas[this.hasChecked[j]].sid)
             .subscribe(res => {
@@ -257,6 +230,7 @@ export class ProductionSensorComponent implements OnInit {
 
   // 增，删，改的及时刷新
   public Update(): void {
+    this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
     this.req.getDeviceProductionSensor(this.commonfun.parameterSerialization(this.pageBody)).subscribe(

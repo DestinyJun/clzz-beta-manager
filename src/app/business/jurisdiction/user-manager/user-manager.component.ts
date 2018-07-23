@@ -77,16 +77,12 @@ export class UserManagerComponent implements OnInit {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -115,18 +111,19 @@ export class UserManagerComponent implements OnInit {
     }
   }
 
-  public SelectAddModalId(value): void {
+  public selectAddModalId(value): void {
     this.addForm.patchValue({'moduleid': value});
   }
-  public SelectModifyModalId(value): void {
+  public selectModifyModalId(value): void {
     this.modifyForm.patchValue({'moduleid': value});
   }
-  public SelectAdduserid(value): void {
+  public selectAdduserid(value): void {
     this.addForm.patchValue({'userid': value});
   }
-  public SelectModifyuserid(value): void {
+  public selectModifyuserid(value): void {
     this.modifyForm.patchValue({'userid': value});
   }
+  // 翻页
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();

@@ -57,7 +57,7 @@
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group">
         <label>用户ID: &nbsp;</label>
-        <select #user_id (change)="SelectAdduserid(user_id.value)" class="form-control">
+        <select #addUserId (change)="selectAdduserid(addUserId.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of userid" [value]="modal.id">{{modal.realName}}</option>
         </select>
@@ -65,7 +65,7 @@
       <br />
       <div class="form-group">
         <label>模块id: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+        <select #addModalId (change)="selectAddModalId(addModalId.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
         </select>
@@ -93,14 +93,14 @@
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group">
         <label>用户ID: &nbsp;</label>
-        <select #user_id (change)="SelectModifyuserid(user_id.value)" class="form-control">
+        <select #modifyUserId (change)="selectModifyuserid(modifyUserId.value)" class="form-control">
           <option *ngFor="let modal of userid" [selected]="modal.id === detail.userid" [value]="modal.id">{{modal.realName}}</option>
         </select>
       </div>
       <br />
       <div class="form-group">
         <label>模块id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #modifyModalId (change)="selectModifyModalId(modifyModalId.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modifyForm.get('moduleid').value"  [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>

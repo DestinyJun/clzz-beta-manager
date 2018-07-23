@@ -64,7 +64,7 @@ export class OrganizationManagementComponent implements OnInit {
     // 修改表单信息
     this.modifyForm = this.fb.group({
       id: ['', [Validators.required]],
-      name: ['', [Validators.required, Validators.minLength(3)]],
+      name: ['', [Validators.required]],
       code: ['', [Validators.required]],
       otype: ['', [Validators.required]],
       tel: ['', [Validators.required, mobileValidators]],
@@ -205,6 +205,7 @@ export class OrganizationManagementComponent implements OnInit {
   }
 //  修改表格内容
   public con_modify(): void {
+    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

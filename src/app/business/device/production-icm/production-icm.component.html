@@ -154,7 +154,7 @@
     <div class="clearfix"></div>
   </div>
 </ng-template>
-
+<span>{{openstatus}}</span>
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
     <span>{{resMessage}}</span>

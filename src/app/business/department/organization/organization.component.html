@@ -87,15 +87,15 @@
       </div>
       <div class="form-group">
         <label>所属组织机构ID: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalOrgaId(modal_id.value)" class="form-control">
+        <select #addOid (change)="selectAddModalOrgaId(addOid.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
-          <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.name}}</option>
+          <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.id}}, {{organization.name}}</option>
         </select>
       </div>
       <div class="form-group">
         <label>部门父ID: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalDeparId(modal_id.value)" class="form-control">
-          <option value="-1">最高层</option>
+        <select #addPid (change)="selectAddModalDeparId(addPid.value)" class="form-control">
+          <option [value]="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [value]="department.id">{{department.name}}</option>
         </select>
       </div>
@@ -145,14 +145,14 @@
       <div class="form-group">
         <label>所属组织机构ID: &nbsp;</label>
         <option [value]="null">默认值为空，请选择</option>
-        <select #modal_id (change)="SelectModifyModalOrgaId(modal_id.value)" class="form-control">
+        <select #modifyOid (change)="selectModifyModalOrgaId(modifyOid.value)" class="form-control">
           <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === modifyForm.get('oid').value" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <div class="form-group">
         <label>部门父ID: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalDeparId(modal_id.value)" class="form-control">
-          <option value="-1">最高层</option>
+        <select #modifyPid (change)="selectModifyModalDeparId(modifyPid.value)" class="form-control">
+          <option [value]="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [selected]="department.id === modifyForm.get('pid').value" [value]="department.id">{{department.name}}</option>
         </select>
       </div>

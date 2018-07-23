@@ -24,6 +24,7 @@ export class CameraGroupComponent implements OnInit {
   public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
+  public proLineids: any;
   public Fmodalid: any;
   public openstatus: boolean;
   public status: number;
@@ -48,7 +49,6 @@ export class CameraGroupComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [];
@@ -69,8 +69,7 @@ export class CameraGroupComponent implements OnInit {
       status: [''],
       p_id: ['']
     });
-    console.log('hello');
-    this.Update();
+    // 得到所有的组织id
     this.req.FindDepartOrgani().subscribe(value => {
       // this.Fmodalid = value.values.departments;  // 这有问题，id 为undefined， 只有下面才不会出现问题
       this.Fmodalid = value.values;
@@ -78,6 +77,15 @@ export class CameraGroupComponent implements OnInit {
         this.Fmodalid.departments[i].id = String(this.Fmodalid.departments[i].id);
       }
     });
+    // 得到所有的生产线id
+    // this.req.FindsystemSysid().subscribe(value => {
+    //   this.proLineids = value.values;
+    //   if (this.proLineids !== null && this.proLineids !== undefined) {
+    //     // 通过生产线来查找视频组，对表格的初始化。
+    //     this.pageBody = new pageBody(1, 10, this.proLineids[0].sid);
+    //     this.Update();
+    //   }
+    // });
     // 监视摄像机组的状态，每一 500ms 读取用户输入的摄像机组值
     this.cameraGroupStatus = new FormControl();
     this.cameraGroupStatus.valueChanges
@@ -89,13 +97,17 @@ export class CameraGroupComponent implements OnInit {
           this.cameraGroupStatusPrompt = false;
         }
       });
+    this.Update();
+  }
+  // 增，修。选择模块id
+  public selectModalId(modalId): void {
+
   }
   // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
@@ -103,8 +115,6 @@ export class CameraGroupComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -132,8 +142,9 @@ export class CameraGroupComponent implements OnInit {
       this.modalRef = this.modalService.show(template);
     }
   }
+  // 翻页
   public getPageBody(event): void {
-    this.pageBody = event;
+    this.pageBody.page = event.page;
     this.Update();
   }
   // 全选 或 全不选
@@ -210,7 +221,7 @@ export class CameraGroupComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateVideomanager(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -224,10 +235,11 @@ export class CameraGroupComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
+    console.log(this.pageBody);
     this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         console.log(value);
-        this.num = Math.ceil(value.values.num / 10);
+        this.num = Math.ceil(value.values.number / 10);
         this.datas = value.values.datas;
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {
