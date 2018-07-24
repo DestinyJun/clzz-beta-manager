@@ -103,14 +103,12 @@ export class UserManagerComponent implements OnInit {
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
-
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
-
   public selectAddModalId(value): void {
     this.addForm.patchValue({'moduleid': value});
   }
@@ -164,7 +162,8 @@ export class UserManagerComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.openstatus = false;
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'realname')) {
+        this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionuUserPowerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
@@ -174,6 +173,7 @@ export class UserManagerComponent implements OnInit {
                 this.Update();
               }
             });
+        }
       }
     }
   }

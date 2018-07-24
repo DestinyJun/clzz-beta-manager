@@ -196,9 +196,9 @@ export class ProductionSensorComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'sname')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionSensorDelete('sid=' + this.datas[this.hasChecked[j]].sid)
             .subscribe(res => {
               if (j === haschecklen - 1) {
@@ -206,7 +206,8 @@ export class ProductionSensorComponent implements OnInit {
                 this.resMessage = res.message;
                 this.Update();
               }
-            });
+           });
+        }
       }
     }
   }

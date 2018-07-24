@@ -166,7 +166,8 @@ export class BtnManagerComponent implements OnInit {
       this.gtone = true;
       this.mustone = false;
     } else {
-      this.openstatus = false;
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionBtnManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
@@ -176,9 +177,9 @@ export class BtnManagerComponent implements OnInit {
                 this.Update();
               }
             });
+        }
       }
     }
-
   }
 // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public btnmanagerAdd(): void {

@@ -100,7 +100,7 @@
       </div>
     </div>
     <div class="col-lg-3 col-md-3 col-sm-3">
-      <div style='border: 2px solid #EFF3F4;padding: 10px'>
+      <div style='border: 2px solid #EFF3F4;padding: 10px 0px' [ngStyle]="{height: innerHeight + 'px'}" class="catalog">
         <tree [tree]="tree" (nodeSelected)="logEvent($event)"></tree>
       </div>
     </div>

@@ -128,16 +128,16 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
-      <div class="form-group">
-        <label>正在被修改摄像机id</label>
-        <input type="text" class="form-control" formControlName="Update_id" [class.hasError]="modifyForm.get('Update_id').invalid && modifyForm.get('Update_id').touched">
-        <div [hidden]="modifyForm.get('Update_id').valid || modifyForm.get('Update_id').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'Update_id')">必填</span>
-        </div>
-      </div>
+      <!--<div class="form-group">-->
+        <!--<label>正在被修改摄像机id</label>-->
+        <!--<input type="text" class="form-control" formControlName="Update_id" [class.hasError]="modifyForm.get('Update_id').invalid && modifyForm.get('Update_id').touched">-->
+        <!--<div [hidden]="modifyForm.get('Update_id').valid || modifyForm.get('Update_id').untouched">-->
+          <!--<span [hidden]="!modifyForm.hasError('required', 'Update_id')">必填</span>-->
+        <!--</div>-->
+      <!--</div>-->
       <div class="form-group">
         <label>修改摄像机后的id</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="modifyForm.get('id').invalid && modifyForm.get('id').touched">
+        <input type="text" class="form-control" placeholder="选填" formControlName="id" [class.hasError]="modifyForm.get('id').invalid && modifyForm.get('id').touched">
         <div [hidden]="modifyForm.get('id').valid || modifyForm.get('id').untouched">
           <span [hidden]="!modifyForm.hasError('required', 'id')">必填</span>
         </div>

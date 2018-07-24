@@ -373,21 +373,21 @@
     <p>邮箱	: &nbsp;{{detail.email}}</p>
     <p>生日	: &nbsp;{{detail.birthday}}</p>
     <div class="form-group">
-      <label>生产线列表: &nbsp;</label>
-      <div class="container-fluid">
-        <div class="row">
-          <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
-            <!--
-                参数介绍：
-                    lineId['sys_id']) 用来记录当前点击的是哪个生产线的
-                    $event: 用来判断当前被点击生产线的checkbox 是否被选中
-            -->
-            <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
-            <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
-          </div>
+    <label>生产线列表: &nbsp;</label>
+    <div class="container-fluid">
+      <div class="row">
+        <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+          <!--
+              参数介绍：
+                  lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                  $event: 用来判断当前被点击生产线的checkbox 是否被选中
+          -->
+          <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1">
+          <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
         </div>
       </div>
     </div>
+  </div>
     <p>性别	: &nbsp;{{detail.gender}}</p>
     <p>插入时间	: &nbsp;{{detail.idt}}</p>
     <p>更新时间	: &nbsp;{{detail.udt}}</p>

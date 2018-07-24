@@ -4,6 +4,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
 import { mobileValidators} from '../../validator/Validators';
+import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
   selector: 'app-users',
@@ -37,7 +38,8 @@ export class UsersComponent implements OnInit {
   constructor(
               private modalService: BsModalService,
               private req: ReqService,
-              private fb: FormBuilder
+              private fb: FormBuilder,
+              private commonfun: CommonfunService
   ) {}
   ngOnInit() {
     this.status = 0;
@@ -219,16 +221,18 @@ export class UsersComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        this.req.UsersManagerDelete({id: this.datas[this.hasChecked[j]].id})
-          .subscribe(res => {
-            this.status = Number(res.status);
-            this.resMessage = res.message;
-            if (j === haschecklen - 1) {
-              this.Update();
-            }
-          });
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'realName')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          this.req.UsersManagerDelete({id: this.datas[this.hasChecked[j]].id})
+            .subscribe(res => {
+              this.status = Number(res.status);
+              this.resMessage = res.message;
+              if (j === haschecklen - 1) {
+                this.Update();
+              }
+            });
+        }
       }
     }
 
@@ -242,16 +246,13 @@ export class UsersComponent implements OnInit {
         sysidsStr.push(this.userLineIds[i].sys_id);
       }
     }
-    console.log(sysidsStr.toString());
     this.addForm.patchValue({sysids: sysidsStr.toString()});
-    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.UsersManagerAdd(this.addForm.value)
         .subscribe(res => {
-          console.log(res);
           this.status = Number(res.status);
           this.resMessage = res.message;
           this.Update();
@@ -262,14 +263,12 @@ export class UsersComponent implements OnInit {
   }
 //  修改表格内容
   public userModify(): void {
-    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
       this.req.UsersManagerModify(this.modifyForm.value)
         .subscribe(res => {
-          console.log(res);
           this.status = Number(res.status);
           this.resMessage = res.message;
           this.Update();

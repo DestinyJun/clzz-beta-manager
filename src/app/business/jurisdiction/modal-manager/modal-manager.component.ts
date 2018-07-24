@@ -188,9 +188,8 @@ export class ModalManagerComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.openstatus = false;
-      this.gtone = false;
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked)) {
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionModalManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {

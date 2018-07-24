@@ -76,7 +76,9 @@
    text-decoration: black;
    border-bottom: #484a55 solid 1px;
    display: inline-block;
-   min-width: 20px;
+   min-width: 30px;
+   padding-left: 5px;
+   padding-right: 5px;
    height: 100%;
  }
 .year:focus,

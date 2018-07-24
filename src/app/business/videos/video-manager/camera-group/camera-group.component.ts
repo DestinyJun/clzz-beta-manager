@@ -184,17 +184,19 @@ export class CameraGroupComponent implements OnInit {
       this.gtone = true;
       this.mustone = false;
     } else {
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
-        this.req.deleteVideomanager(body)
-          .subscribe((res) => {
-            if (j === haschecklen - 1) {
-              this.resMessage = res.message;
-              this.status = Number(res.status);
-              this.Update();
-            }
-          });
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+          this.req.deleteVideomanager(body)
+            .subscribe((res) => {
+              if (j === haschecklen - 1) {
+                this.resMessage = res.message;
+                this.status = Number(res.status);
+                this.Update();
+              }
+            });
+        }
       }
     }
 

@@ -26,7 +26,7 @@ export class HeaderComponent implements OnInit {
   public genderm: string;
   public genderw: string;
   @Output()
-  public controlLeftMenuChange: EventEmitter<string> = new EventEmitter;
+  public cisMenuChange: EventEmitter<boolean> = new EventEmitter;
   @Input()
   public cisMenu: boolean;
   public userLineIds: Array<SelectLineIdsStatus>;
@@ -141,8 +141,8 @@ export class HeaderComponent implements OnInit {
   }
   // 控制左边导航栏
   public controlMenu(): void {
-    console.log('helo');
-      this.controlLeftMenuChange.emit('hello');
+      this.cisMenuChange.emit(this.cisMenu);
+      this.cisMenu = !this.cisMenu;
   }
   // 退出请求
   public loginOut(): void {

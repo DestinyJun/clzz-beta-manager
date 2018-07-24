@@ -184,10 +184,10 @@ export class ProductionIcmComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          this.req.DeviceProductionIcmDelete('mid=' +  this.datas[this.hasChecked[j]].mid)
+          this.req.DeviceProductionIcmDelete('mid=' + this.datas[this.hasChecked[j]].mid)
             .subscribe(res => {
               console.log(res);
               this.status = Number(res.status);
@@ -196,8 +196,9 @@ export class ProductionIcmComponent implements OnInit {
                 this.Update();
               }
             });
-          }
         }
+      }
+    }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proIcmAdd(): void {

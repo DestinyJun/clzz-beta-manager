@@ -208,9 +208,9 @@ export class ProductionDataComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionDataDelete('did=' +  this.datas[this.hasChecked[j]].did)
             .subscribe(res => {
               if (j === haschecklen - 1) {
@@ -219,6 +219,7 @@ export class ProductionDataComponent implements OnInit {
                 this.Update();
               }
             });
+        }
       }
     }
   }

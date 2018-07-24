@@ -96,6 +96,7 @@ export class CameraComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
+          this.modifyForm.patchValue({Update_id: this.detail.id, id: '', name: this.detail.value});
           this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
@@ -107,6 +108,7 @@ export class CameraComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
+        this.modifyForm.patchValue({Update_id: this.detail.id, id: '', name: this.detail.value});
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
@@ -164,17 +166,19 @@ export class CameraComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
-        this.req.deleteVideo(body)
-          .subscribe(res => {
-            this.resMessage = res.message;
-            this.status = Number(res.status);
-            if (j === haschecklen - 1) {
-              this.Update();
-            }
-          });
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+          this.req.deleteVideo(body)
+            .subscribe(res => {
+              this.resMessage = res.message;
+              this.status = Number(res.status);
+              if (j === haschecklen - 1) {
+                this.Update();
+              }
+            });
+        }
       }
     }
   }

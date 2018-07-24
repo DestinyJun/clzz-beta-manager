@@ -18,7 +18,7 @@ export class ItemComponent implements OnInit {
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public addform: FormGroup;
+  public addForm: FormGroup;
   public modifyForm: FormGroup;
   public detail: ItemList;
   public hasChecked: Array<number> = [];
@@ -75,7 +75,7 @@ export class ItemComponent implements OnInit {
       new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
     //  增加表单
-    this.addform = this.fb.group({
+    this.addForm = this.fb.group({
       itemname: ['', Validators.required],
       itemposition: ['', Validators.required],
       longitude: ['', Validators.required],
@@ -111,10 +111,17 @@ export class ItemComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
+      // 因为拿到的数据是时间戳，所有要转换成时间格式。xxxx-xx-xx xx:xx
+      const dateTime = new Date();
+      // 结束时间
+      dateTime.setTime(Number(this.detail.endtime));
+      this.detail.endtime = dateTime.getFullYear() + '-' + (dateTime.getMonth() + 1) + '-' + dateTime.getDate() + ' ' + dateTime.getHours() + ':' + dateTime.getMinutes();
+      // 起始时间
+      dateTime.setTime(Number(this.detail.starttime));
+      this.detail.starttime = dateTime.getFullYear() + '-' + (dateTime.getMonth() + 1) + '-' + dateTime.getDate() + ' ' + dateTime.getHours() + ':' + dateTime.getMinutes();
+
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -164,7 +171,6 @@ export class ItemComponent implements OnInit {
     if (this.controlSearchText) {
       this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
         if (String(res.values) !== 'null') {
-          console.log(typeof res.values);
           this.detail = res.values;
           this.modalRef = this.modalService.show(template);
           this.controlSearchText = false;
@@ -203,28 +209,30 @@ export class ItemComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        this.req.ItemDelete('did=' +  this.datas[this.hasChecked[j]].itemcode)
-          .subscribe(res => {
-            if (j === haschecklen - 1) {
-              this.resMessage = res.message;
-              this.status = Number(res.status);
-              this.Update();
-            }
-          });
-      }
+        if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
+          this.mustone = false;
+          this.openstatus = false;
+          for (let j = 0; j < haschecklen; j++) {
+            this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
+              .subscribe(res => {
+                if (j === haschecklen - 1) {
+                  this.resMessage = res.message;
+                  this.status = Number(res.status);
+                  this.Update();
+                }
+              });
+          }
+        }
     }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public itemAdd(): void {
     this.getTime();
-    if (this.addform.valid) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.ItemAdd(this.commonfun.parameterSerialization(this.addform.value))
+      this.req.ItemAdd(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -256,7 +264,6 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     this.req.ItemFind(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
-        console.log(value);
         this.hasChecked = [];
         this.checked = '';
         this.num = Math.ceil(value.values.num / 10);
@@ -318,7 +325,7 @@ export class ItemComponent implements OnInit {
       }
     }
     if (isCorrectMouth && (Number(mouth) >= 0 && Number(mouth) <= 12 && mouth !== '')) {
-      date.setMonth(Number(mouth));
+      date.setMonth(Number(mouth) - 1);
       isCorrectMouth = true;
     }else {
       isCorrectMouth = false;
@@ -347,7 +354,7 @@ export class ItemComponent implements OnInit {
             isCorrectDay = false;
           }
         }
-      }else if (Number(isCorrectMouth) === 1 && Number(isCorrectMouth)  === 3 && Number(isCorrectMouth)  === 5 && Number(isCorrectMouth)  === 7 && Number(isCorrectMouth)  === 8 && Number(isCorrectMouth)  === 10 && Number(isCorrectMouth)  === 12) {
+      }else if (Number(isCorrectMouth) === 0 && Number(isCorrectMouth)  === 2 && Number(isCorrectMouth)  === 4 && Number(isCorrectMouth)  === 6 && Number(isCorrectMouth)  === 7 && Number(isCorrectMouth)  === 9 && Number(isCorrectMouth)  === 11) {
           if (Number(day) >= 0 && Number(day) <= 31) {
             date.setDate(Number(day));
             isCorrectDay = true;
@@ -394,10 +401,10 @@ export class ItemComponent implements OnInit {
 
     if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
       this.validTimeFormat = false;
-      this.addform.patchValue({starttime: date.getTime()});
+      this.addForm.patchValue({starttime: date.getTime()});
     }else {
       this.validTimeFormat = true;
-      this.addform.patchValue({starttime: ''});
+      this.addForm.patchValue({starttime: ''});
     }
     return true;
   }

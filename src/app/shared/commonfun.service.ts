@@ -30,10 +30,10 @@ export class CommonfunService {
   }
 
 
-  public deleteChecked(datas: Array<any>, indexs: Array<number>): boolean {
+  public deleteChecked(datas: Array<any>, indexs: Array<number>, keyName: string): boolean {
     let str = '';
     for (let i = 0; i < indexs.length; ++i) {
-        str += datas[indexs[i]].name + '\n';
+        str += datas[indexs[i]][keyName] + '\n';
     }
     return confirm('确定删除项：\n\n' + str);
   }

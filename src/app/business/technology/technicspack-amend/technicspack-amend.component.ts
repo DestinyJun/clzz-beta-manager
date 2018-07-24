@@ -230,17 +230,18 @@ export class TechnicspackAmendComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        this.req.DeleteTechnicsPackAmend('finish_type=' +  this.datas[this.hasChecked[j]].finishtype)
-          .subscribe(res => {
-            if (j === haschecklen - 1) {
-              this.resMessage = res.message;
-              this.status = Number(res.status);
-              this.Update();
-            }
-          });
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          this.req.DeleteTechnicsPackAmend('finish_type=' +  this.datas[this.hasChecked[j]].finishtype)
+            .subscribe(res => {
+              if (j === haschecklen - 1) {
+                this.resMessage = res.message;
+                this.status = Number(res.status);
+                this.Update();
+              }
+            });
+        }
       }
     }
   }

@@ -159,23 +159,23 @@ export class OrganizationComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.mustone = false;
-      this.openstatus = false;
-      for (let j = 0; j < haschecklen; j++) {
-        this.req.deleteDepartment('id=' +  this.datas[this.hasChecked[j]].id)
-          .subscribe(res => {
-            if (j === haschecklen - 1) {
-              this.resMessage = res.message;
-              this.status = Number(res.status);
-              this.Update();
-            }
-          });
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          this.req.deleteDepartment('id=' +  this.datas[this.hasChecked[j]].id)
+            .subscribe(res => {
+              if (j === haschecklen - 1) {
+                this.resMessage = res.message;
+                this.status = Number(res.status);
+                this.Update();
+              }
+            });
+        }
       }
     }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public con_add(): void {
-    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

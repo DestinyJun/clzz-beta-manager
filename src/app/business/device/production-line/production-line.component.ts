@@ -86,8 +86,6 @@ export class ProductionLineComponent implements OnInit {
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
-    console.log(this.hasChecked.length);
-    console.log(this.listenDescModal);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -163,9 +161,9 @@ export class ProductionLineComponent implements OnInit {
         this.mustone = false;
         this.gtone = true;
       } else {
-        this.mustone = false;
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
+        if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+          this.openstatus = false;
+          for (let j = 0; j < haschecklen; j++) {
             this.req.DeviceProductionLineDelete('sid=' +  this.datas[this.hasChecked[j]].sid)
               .subscribe(res => {
                 if (j === haschecklen - 1) {
@@ -174,6 +172,7 @@ export class ProductionLineComponent implements OnInit {
                   this.Update();
                 }
               });
+          }
         }
       }
   }

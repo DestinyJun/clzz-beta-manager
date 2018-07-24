@@ -165,7 +165,8 @@ export class InterfaceManagerComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      this.openstatus = false;
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'iname')) {
+        this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionInterfaceManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
             .subscribe(res => {
@@ -174,8 +175,9 @@ export class InterfaceManagerComponent implements OnInit {
               if (j === haschecklen - 1) {
                 this.Update();
               }
-            });
+           });
         }
+      }
     }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
