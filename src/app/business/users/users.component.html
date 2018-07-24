@@ -33,7 +33,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i)">
+          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['userCode']}}</td>
@@ -321,7 +321,7 @@
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
               <input type="checkbox" #addCheckboxModify [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxModify.checked)">
-              <span [ngStyle]="{'color': (addCheckboxModify.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+              <span [ngStyle]="{'color': addCheckboxModify.checked?'#646464':'red'}">{{lineId.sys_name}}</span>
             </div>
           </div>
         </div>
@@ -382,13 +382,16 @@
                   lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                   $event: 用来判断当前被点击生产线的checkbox 是否被选中
           -->
-          <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1">
-          <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+          <input #addCheckboxLook [checked]="lineId['sys_status'] === 1" type="checkbox" disabled>
+          <span [ngStyle]="{color: addCheckboxLook.checked?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
         </div>
       </div>
     </div>
   </div>
-    <p>性别	: &nbsp;{{detail.gender}}</p>
+    <p>性别	: &nbsp;
+      <span *ngIf="detail.gender === 'm' || detail.gender === '男'">男</span>
+      <span *ngIf="detail.gender === 'w' || detail.gender === '女'">女</span>
+    </p>
     <p>插入时间	: &nbsp;{{detail.idt}}</p>
     <p>更新时间	: &nbsp;{{detail.udt}}</p>
     <div class="clearfix"></div>

@@ -28,7 +28,7 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let interface of datas; let i = index" (click)="openModal(lookdesc, i)">
+          <tr *ngFor="let interface of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{interface['id']}}</td>
             <td>{{interface['iname']}}</td>

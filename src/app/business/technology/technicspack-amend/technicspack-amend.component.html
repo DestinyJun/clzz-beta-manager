@@ -30,8 +30,8 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let param of datas; let i = index" (click)="openModal(lookdesc, i)">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)" title="点击查看详情"></td>
+          <tr *ngFor="let param of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{param.name}}</td>
             <td>{{param.finishtype}}</td>
             <td>{{param['amenddata'].bottom_dry_thickness}}</td>
