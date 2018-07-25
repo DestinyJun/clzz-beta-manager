@@ -22,13 +22,10 @@
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/或全不选</th>
             <th>数据库id</th>
             <th>用户编码</th>
-            <th>身份证</th>
             <th>真实姓名</th>
             <th>用户名</th>
             <th>所属组织id</th>
             <th>密码</th>
-            <th>联系电话</th>
-            <th>生日</th>
             <th>性别</th>
           </tr>
           </thead>
@@ -37,13 +34,10 @@
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
             <td>{{user['id']}}</td>
             <td>{{user['userCode']}}</td>
-            <td>{{user['idCode']}}</td>
             <td>{{user['realName']}}</td>
             <td>{{user['userName']}}</td>
             <td>{{user['organizationId']}}</td>
             <td>{{user['password']}}</td>
-            <td>{{user['phone']}}</td>
-            <td>{{user['birthday']}}</td>
             <td>
                 <span *ngIf="user['gender'] === 'm' || user['gender'] === '男'">男</span>
                 <span *ngIf="user['gender'] === 'w' || user['gender'] === '女'">女</span>
@@ -382,7 +376,7 @@
                   lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                   $event: 用来判断当前被点击生产线的checkbox 是否被选中
           -->
-          <input #addCheckboxLook [checked]="lineId['sys_status'] === 1" type="checkbox" disabled>
+          <input #addCheckboxLook [checked]="lineId['sys_status']" type="checkbox" disabled>
           <span [ngStyle]="{color: addCheckboxLook.checked?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
         </div>
       </div>

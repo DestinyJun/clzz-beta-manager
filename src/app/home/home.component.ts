@@ -18,6 +18,24 @@ export class HomeComponent implements OnInit {
   }
   ngOnInit() {
     this.pisMenu = false;
+    setInterval(() => {
+      this.req.SidUpdate(JSON.stringify({sid: this.localSessionStorage.get('sid')}))
+        .subscribe(value => {
+          console.log(value);
+          if (Number(value.status) === 10) {
+            console.log('刷新成功!');
+            return true;
+          }
+          if (Number(value.status) === 13) {
+            alert('你的账号登录已经过期!');
+            this.router.navigate(['/login']);
+          }
+        });
+    }, 600000);
+  }
+  // 检查用户登录状态
+  public checkLoginStatus(): void {
+
   }
 
   public controlMenus(e): void {

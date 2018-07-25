@@ -154,7 +154,6 @@ export class UsersComponent implements OnInit {
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      console.log(this.userLineIds);
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -339,7 +338,6 @@ export class UsersComponent implements OnInit {
         }
       }
     }
-    console.log(userLineIds);
     return userLineIds;
   }
 }

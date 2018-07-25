@@ -13,13 +13,6 @@ import {SelectLineIdsStatus} from '../../business/users/users.component';
 })
 export class HeaderComponent implements OnInit {
   public infoToggle: boolean;
-  public scrollToggle: boolean;
-  public navListToggle: boolean;
-  public userReminds: UserRemind[];
-  public userRemindsChange: any;
-  public bigBoxHeight: number;
-  public contentBoxHeight: number;
-  public barBoxHeight: string;
   public modalRef: BsModalRef;
   public personInfo: PersonInfo;
   public personInfoModifyForm: FormGroup;
@@ -30,6 +23,7 @@ export class HeaderComponent implements OnInit {
   @Input()
   public cisMenu: boolean;
   public userLineIds: Array<SelectLineIdsStatus>;
+  public userName: string;
   constructor(
     private route: Router,
     private http: HttpClient,
@@ -40,16 +34,10 @@ export class HeaderComponent implements OnInit {
     ) {
     }
   ngOnInit() {
-    this.infoToggle = true;
-    this.scrollToggle = true;
-    this.navListToggle = true;
+    this.userName = this.localSessionStorage.get('realName');
     this.userLineIds = [];
     this.cisMenu = false;
-    this.userReminds = [
-      new UserRemind('danger', '../../../assets/images/Nasta.png', '故障！一号仓库电机组出现故障', new Date('2018/03/11 22:03:11')),
-      new UserRemind('success', '../../../assets/images/Nasta.png', '操作：生产订单添加成功', new Date('2018/03/11 20:03:11')),
-      new UserRemind('warning', '../../../assets/images/Nasta.png', '警告！油漆数量不足', new Date('2018/03/11 20:11:35'))
-    ];
+    this.infoToggle = true;
     this.personInfoModifyForm = this.fb.group({
       id: ['', Validators.required],
       userCode: ['', Validators.required],
@@ -132,8 +120,6 @@ export class HeaderComponent implements OnInit {
   }
   // 个人信息修改
   public PersonInfoModify() {
-    // console.log('id=' + this.personInfoModifyForm.get('id').value);
-    // console.log('id=' + JSON.stringify(this.personInfoModifyForm.value));
         this.req.UserInfoModify(this.personInfoModifyForm.value)
           .subscribe(status => {
             console.log(status);
@@ -154,7 +140,7 @@ export class HeaderComponent implements OnInit {
                   });
     this.route.navigate(['/login']);
   }
-  public onToggleInfo(event): void {
+  public onToggleInfo(): void {
     this.infoToggle = !this.infoToggle;
   }
 }

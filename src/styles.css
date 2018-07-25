@@ -43,5 +43,8 @@
   -webkit-animation-timing-function: linear;
   -webkit-animation-iteration-count: infinite;
 }
+tr{
+  cursor: pointer;
+}
 
 

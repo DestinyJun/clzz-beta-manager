@@ -172,6 +172,7 @@ export class CameraComponent implements OnInit {
           const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
           this.req.deleteVideo(body)
             .subscribe(res => {
+              console.log(res);
               this.resMessage = res.message;
               this.status = Number(res.status);
               if (j === haschecklen - 1) {

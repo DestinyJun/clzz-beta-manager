@@ -5,8 +5,8 @@
         <i class="fa fa-navicon" (click)="controlMenu()"></i>
       </div>
       <div class="user pull-right">
-        <div class="user-admin">欢迎您，管理员</div>
-        <div class="user-photo" (click)="onToggleInfo($event)">
+        <div class="user-admin">欢迎您，{{userName}}</div>
+        <div class="user-photo" (click)="onToggleInfo()">
           <img class="rounded-circle" src="./assets/Nasta.png" alt="">
           <div class="user-photo-toggle" [hidden]="infoToggle">
             <ul class="list-group">
@@ -21,18 +21,18 @@
             </ul>
           </div>
         </div>
-        <div  class="user-remind-scroll" [hidden]="scrollToggle">
-          <div class="user-remind-scroll-h4">
-            <span class="pull-left">信息通知</span>
-            <!--<span class="pull-right" (click)="onScrollToggle($event)">关闭</span>-->
-            <div class="cl"></div>
-          </div>
-          <div class="user-remind-scroll-content" #userRemindScrollContent>
-            <div class="scroll-box" #scrollBox>
-              <div class="scroll-box-bar" #scrollBoxBar [ngStyle]="{height: '30px'}"></div>
-            </div>
-          </div>
-        </div>
+        <!--<div  class="user-remind-scroll" [hidden]="scrollToggle">-->
+          <!--<div class="user-remind-scroll-h4">-->
+            <!--<span class="pull-left">信息通知</span>-->
+            <!--&lt;!&ndash;<span class="pull-right" (click)="onScrollToggle($event)">关闭</span>&ndash;&gt;-->
+            <!--<div class="cl"></div>-->
+          <!--</div>-->
+          <!--<div class="user-remind-scroll-content" #userRemindScrollContent>-->
+            <!--<div class="scroll-box" #scrollBox>-->
+              <!--<div class="scroll-box-bar" #scrollBoxBar [ngStyle]="{height: '30px'}"></div>-->
+            <!--</div>-->
+          <!--</div>-->
+        <!--</div>-->
       </div>
     </div>
   </div>

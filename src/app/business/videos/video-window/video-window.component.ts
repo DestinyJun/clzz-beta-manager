@@ -27,6 +27,8 @@ export class VideoWindowComponent implements OnInit {
   public c3: Array<any>;
   public c4: Array<any>;
   public domSanitizer: DomSanitizer;
+  public treeScrollH: number;
+  public catalogH: number;
   /**************  ng2-tree ************/
   public tree: TreeModel;
 
@@ -37,6 +39,9 @@ export class VideoWindowComponent implements OnInit {
               private commonfun: CommonfunService
   ) {}
   ngOnInit() {
+    // 初始化树的高度
+    this.catalogH = window.innerHeight;
+    this.treeScrollH = 0;
     // 初始化四个监视窗口的数据，为空
     this.c1 = [];
     this.c2 = [];
@@ -49,8 +54,13 @@ export class VideoWindowComponent implements OnInit {
     this.videoUrl4 = `${null}`;
     this.Request();
   }
-
+  // 控制滚动条
+  public operateScroll(e): void {
+    this.treeScrollH = e.clientY;
+    console.log(this.treeScrollH);
+  }
   public logEvent(e: NodeEvent): void {
+    console.log(e);
     if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
       // this.videoUrl1 = `${e.node.node.outer_url}`;

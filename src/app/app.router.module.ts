@@ -5,6 +5,7 @@ const appRoutes: Routes = [
   {path: '', redirectTo: '/login', pathMatch: 'full'},
   {path: 'login', loadChildren: 'app/login/login.module#LoginModule'},
   {path: 'home', loadChildren: 'app/home/home.module#HomeModule', canActivate: [LoginGuard]},
+  {path: '*', loadChildren: 'app/login/login.module#LoginModule'},
 ];
 
 @NgModule({

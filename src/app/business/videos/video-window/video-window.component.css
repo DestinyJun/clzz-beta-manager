@@ -2,16 +2,27 @@
   position: fixed;
   top: 60px;
   left: 180px;
+  right: 0px;
+  height: 83vh;
+  z-index: -1;
 }
 .center-left-top-video{
+  position: relative;
   width: 100%;
   height: 38vh;
   padding: 0.5vh;
   background-color: black;
   margin-bottom: 3vh;
+  visibility: visible;
+  z-index: 1;
 }
-object > embed{
-  display: none;
+/*object > embed{*/
+  /*display: none;*/
+/*}*/
+object {
+  z-index: 1040;
+  width: 100%;
+  height: 100%;
 }
 .list-group-item{
   border: none;
@@ -19,6 +30,19 @@ object > embed{
 .list-group-item:hover{
   cursor: pointer;
 }
+.tree-scrollbar {
+  width: 4px;
+  height: 16px;
+  background-color: black;
+  position: absolute;
+  top: 0px;
+  right: 14px;
+}
 .catalog{
-  overflow-Y: scroll;
+  border: 2px solid #EFF3F4;
+  padding-bottom: 50px;
+  overflow-y: scroll;
+}
+.catalog::-webkit-scrollbar {
+  display: none;
 }
