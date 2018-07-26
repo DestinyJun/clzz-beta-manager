@@ -10,7 +10,7 @@
           <img class="rounded-circle" src="./assets/Nasta.png" alt="">
           <div class="user-photo-toggle" [hidden]="infoToggle">
             <ul class="list-group">
-              <li class="list-group-item" (click)="openPersonInfo(visite)">
+              <li class="list-group-item" (click)="openModal(lookdesc)">
                 <i class="fa fa-user-o" aria-hidden="true"></i>
                 <span >个人信息</span>
               </li>
@@ -21,25 +21,13 @@
             </ul>
           </div>
         </div>
-        <!--<div  class="user-remind-scroll" [hidden]="scrollToggle">-->
-          <!--<div class="user-remind-scroll-h4">-->
-            <!--<span class="pull-left">信息通知</span>-->
-            <!--&lt;!&ndash;<span class="pull-right" (click)="onScrollToggle($event)">关闭</span>&ndash;&gt;-->
-            <!--<div class="cl"></div>-->
-          <!--</div>-->
-          <!--<div class="user-remind-scroll-content" #userRemindScrollContent>-->
-            <!--<div class="scroll-box" #scrollBox>-->
-              <!--<div class="scroll-box-bar" #scrollBoxBar [ngStyle]="{height: '30px'}"></div>-->
-            <!--</div>-->
-          <!--</div>-->
-        <!--</div>-->
       </div>
     </div>
   </div>
 </nav>
 
 
-<ng-template #visite>
+<ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left">个人信息</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
@@ -60,15 +48,15 @@
     <div class="form-group">
       <label>生产线列表: &nbsp;</label>
       <div class="container-fluid">
-        <div class="row">
-          <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+        <div class="row" id="addLineId">
+          <div *ngFor="let lineId of userLineIds;let i = index" class="line col-sx-3 col-sm-3">
             <!--
                 参数介绍：
                     lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                     $event: 用来判断当前被点击生产线的checkbox 是否被选中
             -->
-            <input type="checkbox" disabled #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
-            <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+            <input type="checkbox" disabled (click)="selectProLineId(lineId, $event)">
+            <span>{{lineId.sys_name}}</span>
           </div>
         </div>
       </div>
@@ -78,7 +66,7 @@
       <span *ngIf="personInfo.gender === 'm' || personInfo.gender === '男'">男</span>
       <span *ngIf="personInfo.gender === 'w' || personInfo.gender === '女'">女</span>
     </p><br>
-    <button class="btn btn-danger" (click)="modalRef.hide();openPersonInfo(modify)">修改</button>
+    <button class="btn btn-danger" (click)="modalRef.hide();openModal(modify)">修改</button>
   </div>
 </ng-template>
 
@@ -143,8 +131,8 @@
       <div class="form-group">
         <label>性别 &nbsp; : &nbsp;</label>
         <div class="form-control">
-          <input type="radio" name="gender" checked="{{genderm}}" (change)="SelectGender('m')"> &nbsp;男，
-          <input type="radio" name="gender" checked="{{genderw}}"  (change)="SelectGender('w')"> &nbsp;女
+          <input type="radio" name="gender" checked="{{genderm}}" (change)="selectGender('m')"> &nbsp;男，
+          <input type="radio" name="gender" checked="{{genderw}}"  (change)="selectGender('w')"> &nbsp;女
         </div>
       </div>
       <div class="form-group">
@@ -156,22 +144,23 @@
         <input type="text" formControlName="udt" class="form-control">
       </div>
       <div class="form-group">
-        <label>生产线列表: &nbsp;</label>
+        <label>生产线列表: &nbsp;(请勾选修改)</label>
         <div class="container-fluid">
-          <div class="row">
+          <div class="row" id="modifyLineId">
             <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
               <!--
                   参数介绍：
                       lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
-              <input type="checkbox" #addCheckboxLook [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxLook.checked)">
-              <span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+              <input type="checkbox" (click)="selectProLineId(lineId, $event)">
+              <!--<span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>-->
+              <span>{{lineId.sys_name}}</span>
             </div>
           </div>
         </div>
       </div>
     </form>
-    <button class="btn btn-danger" (click)="PersonInfoModify(); modalRef.hide()">确认修改</button>
+    <button class="btn btn-danger" (click)="personInfoModify(); modalRef.hide()">确认修改</button>
   </div>
 </ng-template>

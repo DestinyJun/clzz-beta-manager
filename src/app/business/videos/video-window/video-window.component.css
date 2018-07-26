@@ -3,26 +3,76 @@
   top: 60px;
   left: 180px;
   right: 0px;
+  bottom: 0px;
   height: 83vh;
+  user-select: none;
   z-index: -1;
 }
-.center-left-top-video{
-  position: relative;
-  width: 100%;
-  height: 38vh;
-  padding: 0.5vh;
-  background-color: black;
-  margin-bottom: 3vh;
-  visibility: visible;
-  z-index: 1;
+.center-left-top-title {
+  height: 20px;
+  line-height: 20px;
 }
-/*object > embed{*/
-  /*display: none;*/
-/*}*/
-object {
-  z-index: 1040;
-  width: 100%;
-  height: 100%;
+.videoRegion {
+  padding-left: 20px;
+  padding-right: 20px;
+}
+#window1Title{
+  width: 96%;
+  position: absolute;
+  top: 0px;
+  height: 20px;
+  line-height: 20px;
+}
+#window1{
+  position: absolute;
+  top: 20px;
+  left: 10px;
+  right: 1vh;
+}
+#window2Title{
+  width: 98%;
+  position: absolute;
+  top: 0px;
+  height: 20px;
+  line-height: 20px;
+}
+#window2{
+  position: absolute;
+  top: 20px;
+}
+#window3Title{
+  width: 96%;
+  position: absolute;
+  top: 41vh;
+  height: 20px;
+  line-height: 20px;
+}
+#window3{
+  position: absolute;
+  width: 98%;
+  top: 45vh;
+  left: 10px;
+  right: 1vh;
+}
+#window4Title{
+  width: 96%;
+  position: absolute;
+  top: 41vh;
+  height: 20px;
+  line-height: 20px;
+}
+#window4 {
+  position: absolute;
+  top: 45vh;
+}
+.center-left-top-video{
+  width: 98%;
+  height: 37vh;
+  background-color: black;
+  padding: 1px;
+  /*margin-bottom: 3vh;*/
+  /*visibility: visible;*/
+  /*z-index: 1;*/
 }
 .list-group-item{
   border: none;
@@ -30,6 +80,9 @@ object {
 .list-group-item:hover{
   cursor: pointer;
 }
+
+
+/*树目录*/
 .tree-scrollbar {
   width: 4px;
   height: 16px;
@@ -40,9 +93,15 @@ object {
 }
 .catalog{
   border: 2px solid #EFF3F4;
-  padding-bottom: 50px;
+  padding-bottom: 80px;
   overflow-y: scroll;
 }
 .catalog::-webkit-scrollbar {
   display: none;
+}
+
+
+/**/
+tree-internal ul {
+  padding: 3px 0 3px 18px;
 }

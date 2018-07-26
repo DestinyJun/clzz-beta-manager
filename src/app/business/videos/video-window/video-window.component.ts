@@ -48,40 +48,34 @@ export class VideoWindowComponent implements OnInit {
     this.c3 = [];
     this.c4 = [];
     this.pageBody = new PageBody(1, 4);
-    this.videoUrl1 = `${null}`;
-    this.videoUrl2 = `${null}`;
-    this.videoUrl3 = `${null}`;
-    this.videoUrl4 = `${null}`;
+    // this.videoUrl1 = '';
+    // this.videoUrl2 = `${null}`;
+    // this.videoUrl3 = `${null}`;
+    // this.videoUrl4 = `${null}`;
     this.Request();
   }
   // 控制滚动条
   public operateScroll(e): void {
     this.treeScrollH = e.clientY;
-    console.log(this.treeScrollH);
   }
   public logEvent(e: NodeEvent): void {
-    console.log(e);
     if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
-      // this.videoUrl1 = `${e.node.node.outer_url}`;
       document.querySelector('#window1').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else if (e.node.parent.positionInParent === 1) {
       this.videoLocation2 = e.node.node.value;
-      // this.videoUrl2 = e.node.node.outer_url;
       document.querySelector('#window2').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else if (e.node.parent.positionInParent === 2) {
       this.videoLocation3 = e.node.node.value;
-      // this.videoUrl3 = e.node.node.outer_url;
       document.querySelector('#window3').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     } else {
       this.videoLocation4 = e.node.node.value;
-      // this.videoUrl4 = e.node.node.outer_url;
       document.querySelector('#window4').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
     }
   }
 
   public addHtmlVideo1(url: string): string {
-    const html = `<object type='application/x-vlc-plugin' id='' style="position: relative;top: 0px;left: 0px;" width="100%" height="100%" events='True'
+    const html = `<object type='application/x-vlc-plugin' id='' style="height: 100%;width: 100%;position: absolute;visibility: visible;" events='True'
                 pluginspage="http://www.videolan.org"
                 codebase="http://downloads.videolan.org/pub/videolan/vlc-webplugins/2.0.6/npapi-vlc-2.0.6.tar.xz">
                 <param name='mrl' value='${url}' />
@@ -89,12 +83,8 @@ export class VideoWindowComponent implements OnInit {
                 <param name='autoplay' value='true' />
                 <param name='loop' value='false' />
                 <param value="transparent" name="wmode">
-                <!-- <embed id='vlc1' *ngIf="true" wmode="transparent" type="application/x-vlc-plugin" width="100%" height="100%"
-                        pluginspage="http://www.videolan.org" allownetworking="internal" allowscriptaccess="always" quality="high"
-                        src='${url}'>
-                -->
             </object>
-`;
+`
     return html;
   }
 
@@ -168,18 +158,19 @@ export class VideoWindowComponent implements OnInit {
                       },
                     ]
                   };
+                  // console.log(document.getElementsByTagName('tree-internal'));
                   // 初始化每个摄像机位置的url,如果摄像机窗口里面没有摄像机，则为null
-                  this.videoUrl1 = `${this.c1.length === 0 ? null : this.c1[0].outer_url}`;
-                  this.videoUrl2 = `${this.c2.length === 0 ? null : this.c2[0].outer_url}`;
-                  this.videoUrl3 = `${this.c3.length === 0 ? null : this.c3[0].outer_url}`;
-                  this.videoUrl4 = `${this.c4.length === 0 ? null : this.c4[0].outer_url}`;
+                  // this.videoUrl1 = `${this.c1.length === 0 ? null : this.c1[0].outer_url}`;
+                  // this.videoUrl2 = `${this.c2.length === 0 ? null : this.c2[0].outer_url}`;
+                  // this.videoUrl3 = `${this.c3.length === 0 ? null : this.c3[0].outer_url}`;
+                  // this.videoUrl4 = `${this.c4.length === 0 ? null : this.c4[0].outer_url}`;
 
                   // 初始化摄像机窗口的名称
-                  const tooltip = '该窗口没有摄像机';
-                  this.videoLocation1 = `${this.c1.length === 0 ? tooltip : this.c1[0].value}`;
-                  this.videoLocation2 = `${this.c2.length === 0 ? tooltip : this.c2[0].value}`;
-                  this.videoLocation3 = `${this.c3.length === 0 ? tooltip : this.c3[0].value}`;
-                  this.videoLocation4 = `${this.c4.length === 0 ? tooltip : this.c4[0].value}`;
+                  // const tooltip = '该窗口没有摄像机';
+                  // this.videoLocation1 = `${this.c1.length === 0 ? tooltip : this.c1[0].value}`;
+                  // this.videoLocation2 = `${this.c2.length === 0 ? tooltip : this.c2[0].value}`;
+                  // this.videoLocation3 = `${this.c3.length === 0 ? tooltip : this.c3[0].value}`;
+                  // this.videoLocation4 = `${this.c4.length === 0 ? tooltip : this.c4[0].value}`;
                 });
             });
         }

@@ -27,11 +27,9 @@ export class LoginComponent implements OnInit {
   ngOnInit() {
   }
   public OnSubmitInfo(): void {
-    // this.router.navigate(['/home']);
       if (this.userLoginInfoForm.valid) {
         this.req.Login(this.userLoginInfoForm.value)
           .subscribe(res => {
-            console.log(res);
             this.status = Number(res.status);
             if (Number(res.status) === 10) {
               this.localSessionStorage.set('realName', res.realName);
@@ -39,14 +37,6 @@ export class LoginComponent implements OnInit {
               this.localSessionStorage.set('logstatus', '10');
               this.router.navigate(['/home']);
             }
-            // if (Number(res.status) === 14) {
-            //   this.localSessionStorage.set('logstatus', '14');
-            //     this.router.navigate(['/home']);
-            // }
-            // if (Number(res.status) === 13) {
-            //   alert('用户不存在或密码错误');
-            //   return;
-            // }
           });
       } else {
         alert('账号或密码不能为空!');

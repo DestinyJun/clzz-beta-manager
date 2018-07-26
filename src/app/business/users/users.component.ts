@@ -1,9 +1,9 @@
-import { Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnInit, TemplateRef} from '@angular/core';
 import {Field, PageBody, UsersManager} from '../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
-import { mobileValidators} from '../../validator/Validators';
+import {mobileValidators} from '../../validator/Validators';
 import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
@@ -35,12 +35,13 @@ export class UsersComponent implements OnInit {
   // userLineIds 用来保存所有的生产线的id，增，修，查 共用。在切换到另一种模式下，userLineIds所有的sys_status 初始化为0
   public userLineIds: Array<SelectLineIdsStatus>;
   public openSelectAddProLineId: boolean;
-  constructor(
-              private modalService: BsModalService,
+
+  constructor(private modalService: BsModalService,
               private req: ReqService,
               private fb: FormBuilder,
-              private commonfun: CommonfunService
-  ) {}
+              private commonfun: CommonfunService) {
+  }
+
   ngOnInit() {
     this.status = 0;
     this.openstatus = true;
@@ -54,19 +55,19 @@ export class UsersComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('用户编码',	'userCode'),
-      new Field('身份证',	'idCode'),
-      new Field('真实姓名',	'realName'),
-      new Field('用户名',	'userName'),
-      new Field('家庭住址',	'homeAddress'),
-      new Field('家庭联系电话',	'homeTelephone'),
+      new Field('用户编码', 'userCode'),
+      new Field('身份证', 'idCode'),
+      new Field('真实姓名', 'realName'),
+      new Field('用户名', 'userName'),
+      new Field('家庭住址', 'homeAddress'),
+      new Field('家庭联系电话', 'homeTelephone'),
       // new Field('所属组织id',	'organizationId'),
-      new Field('密码',	'password'),
-      new Field('联系电话',	'phone'),
-      new Field('邮箱',	'email'),
-      new Field('生日',	'birthday'),
-      new Field('生产线列表',	'Sysids'),
-      new Field('性别',	'gendernew')
+      new Field('密码', 'password'),
+      new Field('联系电话', 'phone'),
+      new Field('邮箱', 'email'),
+      new Field('生日', 'birthday'),
+      new Field('生产线列表', 'Sysids'),
+      new Field('性别', 'gendernew')
     ];
     const id = new Field('用户数据id', 'id');
     this.fieldsModify = this.fieldsAdd;
@@ -115,6 +116,7 @@ export class UsersComponent implements OnInit {
       }
     });
   }
+
 // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
@@ -139,7 +141,7 @@ export class UsersComponent implements OnInit {
           this.modifyForm.reset(this.detail);
           this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
-        }else {
+        } else {
           this.mustone = true;
         }
       } else {
@@ -162,28 +164,33 @@ export class UsersComponent implements OnInit {
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'organizationId': value});
   }
+
   // 修改时，选择部门id
   public SelectModifyModalId(value): void {
     this.modifyForm.patchValue({'organizationId': value});
   }
+
   // 增加 和 修改 时，选择用户性别
   public selectGender(value): void {
-      this.addForm.patchValue({gender: value});
+    this.addForm.patchValue({gender: value});
   }
+
   // 选择生产线 ID 并保存在 userLineIds 数组里面，增，修，查 共用
-  public selectProLineId(id, checkvalue): void {
+  public selectProLineId(id, e): void {
     // 不需要考虑到 index = -1 的情况
     const index = this.userLineIds.indexOf(id);
-    if (checkvalue) {
-        this.userLineIds[index].sys_status = 1;
-    }else {
-        this.userLineIds[index].sys_status = 0;
+    if (e.srcElement.checked) {
+      this.userLineIds[index].sys_status = 1;
+    } else {
+      this.userLineIds[index].sys_status = 0;
     }
   }
+
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
   }
+
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
@@ -195,6 +202,7 @@ export class UsersComponent implements OnInit {
       this.checked = '';
     }
   }
+
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
     const haschecklen = this.hasChecked.length;
@@ -213,6 +221,7 @@ export class UsersComponent implements OnInit {
       this.detail = null;
     }
   }
+
 //  删除表格 并且 重新请求数据
   public deleteuser(): void {
     const haschecklen = this.hasChecked.length;
@@ -236,6 +245,7 @@ export class UsersComponent implements OnInit {
     }
 
   }
+
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public userAdd(): void {
     // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
@@ -260,8 +270,17 @@ export class UsersComponent implements OnInit {
       this.inputvalid = true;
     }
   }
+
 //  修改表格内容
   public userModify(): void {
+    // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
+    let sysidsStr = [];
+    for (let i = 0; i < this.userLineIds.length; ++i) {
+      if (this.userLineIds[i].sys_status === 1) {
+        sysidsStr.push(this.userLineIds[i].sys_id);
+      }
+    }
+    this.modifyForm.patchValue({sysids: sysidsStr.toString()});
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -276,6 +295,7 @@ export class UsersComponent implements OnInit {
       this.inputvalid = true;
     }
   }
+
   // 在增加， 删除，修改后即时刷新
   public Update(): void {
     this.gtone = false;
@@ -308,12 +328,14 @@ export class UsersComponent implements OnInit {
         this.num = Math.ceil(num.data / 10);
       });
   }
+
   // 重置userLineIds
   public reset_userLineIds(): void {
     for (let i = 0; i < this.userLineIds.length; ++i) {
       this.userLineIds[i].sys_status = 0;
     }
   }
+
   // 改变userLineIds在哪种情况下使用的sys_status 的内容
   public change_userLineIds(detail, userLineIds): Array<SelectLineIdsStatus> {
     // modifyIds 用来保存用户的生产线权限id
@@ -343,9 +365,9 @@ export class UsersComponent implements OnInit {
 }
 
 export class SelectLineIdsStatus {
-  constructor(
-    public sys_id: string,
-    public sys_name: string,
-    public sys_status: number // 0 表示被点击的复选框没有被选中， 1 表示被点击的复选框已被选中
-  ) {}
+  constructor(public sys_id: string,
+              public sys_name: string,
+              public sys_status: number // 0 表示被点击的复选框没有被选中， 1 表示被点击的复选框已被选中
+  ) {
+  }
 }
