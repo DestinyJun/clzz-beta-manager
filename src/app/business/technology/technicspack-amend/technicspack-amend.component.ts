@@ -289,7 +289,6 @@ export class TechnicspackAmendComponent implements OnInit {
     this.mustone = false;
     this.req.FindTechnicsPackAmend(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
-        console.log(value);
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.amenddata;
         for (let i = 0; i < this.datas.length; i++) {

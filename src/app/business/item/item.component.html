@@ -78,12 +78,13 @@
         <label>巡检开始时间</label>
         <div class="form-control">
           <p>
-            <span contenteditable="true" #year class="year"></span>年
-            <span contenteditable="true" #mouth class="mouth"></span>月
-            <span contenteditable="true" #day class="day"></span>日
-            <span contenteditable="true" #hour class="hour"></span>时
-            <span contenteditable="true" #minutes class="minutes"></span>分
+            <span contenteditable="true" id="addYear" class="year"></span>年
+            <span contenteditable="true" id="addMonth" class="mouth"></span>月
+            <span contenteditable="true" id="addDay" class="day"></span>日
+            <span contenteditable="true" id="addHour" class="hour"></span>时
+            <span contenteditable="true" id="addMinutes" class="minutes"></span>分
             <span *ngIf="validTimeFormat" style="color: red;margin-left: 10px;">时间格式不正确，请检查</span>
+            <button type="button" (click)="getLocalTime('add')">获取本地当前时间</button>
           </p>
         </div>
       </div>
@@ -117,6 +118,20 @@
         <input [type]="(modify.field === 'starttime')?'date':'text'" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
         <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
           <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>巡检开始时间</label>
+        <div class="form-control">
+          <p>
+            <span contenteditable="true" id="modifyYear" class="year"></span>年
+            <span contenteditable="true" id="modifyMonth" class="mouth"></span>月
+            <span contenteditable="true" id="modifyDay" class="day"></span>日
+            <span contenteditable="true" id="modifyHour" class="hour"></span>时
+            <span contenteditable="true" id="modifyMinutes" class="minutes"></span>分
+            <span *ngIf="validTimeFormat" style="color: red;margin-left: 10px;">时间格式不正确，请检查</span>
+            <button type="button" (click)="getLocalTime('modify')">获取本地当前时间</button>
+          </p>
         </div>
       </div>
     </form>

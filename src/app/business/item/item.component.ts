@@ -96,6 +96,7 @@ export class ItemComponent implements OnInit {
       itemdetail: ['', Validators.required],
       unitcode: ['', Validators.required],
       itemmembers: ['', Validators.required],
+      starttime: ['', Validators.required],
       timecell: ['', Validators.required]
     });
     this.Update();
@@ -111,24 +112,26 @@ export class ItemComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      // 因为拿到的数据是时间戳，所有要转换成时间格式。xxxx-xx-xx xx:xx
-      const dateTime = new Date();
-      // 结束时间
-      dateTime.setTime(Number(this.detail.endtime));
-      this.detail.endtime = dateTime.getFullYear() + '-' + (dateTime.getMonth() + 1) + '-' + dateTime.getDate() + ' ' + dateTime.getHours() + ':' + dateTime.getMinutes();
-      // 起始时间
-      dateTime.setTime(Number(this.detail.starttime));
-      this.detail.starttime = dateTime.getFullYear() + '-' + (dateTime.getMonth() + 1) + '-' + dateTime.getDate() + ' ' + dateTime.getHours() + ':' + dateTime.getMinutes();
-
-      this.modalRef = this.modalService.show(template);
+      const s = new Date(this.detail.starttime);
+      this.detail.starttime = s.toLocaleDateString();
+      const e = new Date(this.detail.endtime);
+      this.detail.endtime = e.toLocaleDateString();
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
+          const date = new Date(this.detail.starttime);
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
+          document.getElementById('modifyYear').innerHTML = String(date.getFullYear());
+          document.getElementById('modifyMonth').innerHTML = String(date.getMonth() + 1);
+          document.getElementById('modifyDay').innerHTML = String(date.getDate());
+          document.getElementById('modifyHour').innerHTML = String(date.getHours());
+          document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -139,18 +142,16 @@ export class ItemComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
-
-
   // 关闭模态框, 增，修，查
   public closeModal(): void {
     this.listenDescModal = false;
@@ -234,7 +235,7 @@ export class ItemComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public itemAdd(): void {
-    this.getTime();
+    this.getTime(this.addForm, 'add');
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -251,6 +252,8 @@ export class ItemComponent implements OnInit {
   }
 //  修改表格内容
   public itemModify(): void {
+    this.getTime(this.modifyForm, 'modify');
+    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -299,18 +302,18 @@ export class ItemComponent implements OnInit {
   }
 
   // 时间格式验证 和 得到时间戳
-  public getTime(): boolean {
+  public getTime(form: FormGroup, type: string): void {
     let isCorrectYear = true;
     let isCorrectMouth = true;
     let isCorrectDay = true;
     let isCorrectHour = true;
     let isCorrectMinutes = true;
     const date = new Date();
-    const year = document.getElementsByClassName('year')[0].textContent;
-    const mouth = document.getElementsByClassName('mouth')[0].textContent;
-    const day = document.getElementsByClassName('day')[0].textContent;
-    const hour = document.getElementsByClassName('hour')[0].textContent;
-    const minutes = document.getElementsByClassName('minutes')[0].textContent;
+    const year = document.getElementById(type + 'Year').innerHTML;
+    const mouth = document.getElementById(type + 'Month').innerHTML;
+    const day = document.getElementById(type + 'Day').innerHTML;
+    const hour = document.getElementById(type + 'Hour').innerHTML;
+    const minutes = document.getElementById(type + 'Minutes').innerHTML;
     // 判断年是否成立
     for (let i = 0; i < year.length; ++i) {
       if (year.charCodeAt(i) < 48 || year.charCodeAt(i) > 57) {
@@ -405,14 +408,31 @@ export class ItemComponent implements OnInit {
     }else {
       isCorrectMinutes = false;
     }
-
     if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
       this.validTimeFormat = false;
-      this.addForm.patchValue({starttime: date.getTime()});
+      form.patchValue({starttime: date.getTime()});
     }else {
-      this.validTimeFormat = true;
-      this.addForm.patchValue({starttime: ''});
+      this.validTimeFormat = false;
+      form.patchValue({starttime: ''});
     }
-    return true;
+  }
+
+  // 获取本地当前时间
+  public getLocalTime(type: string): void {
+    // 获取一个时间
+    const date = new Date();
+    if (type === 'add') {
+      document.getElementById('addYear').innerHTML = String(date.getFullYear());
+      document.getElementById('addMonth').innerHTML = String(date.getMonth() + 1);
+      document.getElementById('addDay').innerHTML = String(date.getDate());
+      document.getElementById('addHour').innerHTML = String(date.getHours());
+      document.getElementById('addMinutes').innerHTML = String(date.getMinutes());
+    }else {
+      document.getElementById('modifyYear').innerText = String(date.getFullYear());
+      document.getElementById('modifyMonth').innerText = String(date.getMonth() + 1);
+      document.getElementById('modifyDay').innerText = String(date.getDate());
+      document.getElementById('modifyHour').innerHTML = String(date.getHours());
+      document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
+    }
   }
 }
