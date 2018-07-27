@@ -58,7 +58,7 @@
 <ng-template #add>
   <div class="modal-header">
     <h4 class="modal-title pull-left">部门增加</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -106,7 +106,7 @@
     </div>
     <div class="btn-box text-center">
       <button type="submit" class="btn btn-info" (click)="con_add()">确定增加</button>
-      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+      <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
     </div>
   </div>
 </ng-template>
@@ -115,7 +115,7 @@
 <ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left">部门修改</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -163,7 +163,7 @@
     </div>
     <div class="btn-box text-center">
       <button type="submit" class="btn btn-info" (click)="con_modify()">确定修改</button>
-      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+      <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
     </div>
   </div>
 </ng-template>
@@ -172,7 +172,7 @@
 <ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left">部门查看详情</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -188,7 +188,7 @@
     <div class="clearfix"></div>
     <div class="btn-box text-center">
       <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>
-      <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+      <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
     </div>
   </div>
 </ng-template>

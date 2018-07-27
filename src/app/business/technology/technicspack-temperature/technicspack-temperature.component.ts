@@ -132,9 +132,8 @@ export class TechnicspackTemperatureComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
-    console.log(this.detail);
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
@@ -145,7 +144,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
           this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
           this.detail.temperaturedata['al_width'] = this.detail.alwidth;
           this.paramModifyForm.reset(this.detail.temperaturedata);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
         } else {
           this.mustone = true;
@@ -160,17 +159,22 @@ export class TechnicspackTemperatureComponent implements OnInit {
         this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
         this.detail.temperaturedata['al_width'] = this.detail.alwidth;
         this.paramModifyForm.reset(this.detail.temperaturedata);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
 
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
+  }
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;

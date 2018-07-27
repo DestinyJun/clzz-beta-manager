@@ -75,7 +75,7 @@ export class VideoWindowComponent implements OnInit {
   }
 
   public addHtmlVideo1(url: string): string {
-    const html = `<object type='application/x-vlc-plugin' id='' style="height: 100%;width: 100%;position: absolute;visibility: visible;" events='True'
+    const html = `<object type='application/x-vlc-plugin' id='' style="height: 100%;width: 100%;position: absolute;visibility: visible;z-index: 1030;" events='True'
                 pluginspage="http://www.videolan.org"
                 codebase="http://downloads.videolan.org/pub/videolan/vlc-webplugins/2.0.6/npapi-vlc-2.0.6.tar.xz">
                 <param name='mrl' value='${url}' />
@@ -103,17 +103,13 @@ export class VideoWindowComponent implements OnInit {
                   // console.log(values);
                   values.map((value, index) => {
                     switch (index % 4) {
-                      case 0:
-                        this.c1.push(value);
-                        break;
-                      case 1:
-                        this.c2.push(value);
-                        break;
-                      case 2:
-                        this.c3.push(value);
-                        break;
-                      case 3:
-                        this.c4.push(value);
+                      case 0: this.c1.push(value);
+                               break;
+                      case 1: this.c2.push(value);
+                               break;
+                      case 2: this.c3.push(value);
+                               break;
+                      case 3: this.c4.push(value);
                     }
                   });
                   this.tree = {
@@ -158,19 +154,6 @@ export class VideoWindowComponent implements OnInit {
                       },
                     ]
                   };
-                  // console.log(document.getElementsByTagName('tree-internal'));
-                  // 初始化每个摄像机位置的url,如果摄像机窗口里面没有摄像机，则为null
-                  // this.videoUrl1 = `${this.c1.length === 0 ? null : this.c1[0].outer_url}`;
-                  // this.videoUrl2 = `${this.c2.length === 0 ? null : this.c2[0].outer_url}`;
-                  // this.videoUrl3 = `${this.c3.length === 0 ? null : this.c3[0].outer_url}`;
-                  // this.videoUrl4 = `${this.c4.length === 0 ? null : this.c4[0].outer_url}`;
-
-                  // 初始化摄像机窗口的名称
-                  // const tooltip = '该窗口没有摄像机';
-                  // this.videoLocation1 = `${this.c1.length === 0 ? tooltip : this.c1[0].value}`;
-                  // this.videoLocation2 = `${this.c2.length === 0 ? tooltip : this.c2[0].value}`;
-                  // this.videoLocation3 = `${this.c3.length === 0 ? tooltip : this.c3[0].value}`;
-                  // this.videoLocation4 = `${this.c4.length === 0 ? tooltip : this.c4[0].value}`;
                 });
             });
         }

@@ -58,7 +58,7 @@
 <ng-template #add>
   <div class="modal-header">
     <h4 class="modal-title pull-left">摄像机增加</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -112,7 +112,7 @@
       </div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="con_add()">确定增加</button>
-        <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+        <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
       </div>
     </form>
   </div>
@@ -122,19 +122,12 @@
 <ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left" >摄像机修改</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
-      <!--<div class="form-group">-->
-        <!--<label>正在被修改摄像机id</label>-->
-        <!--<input type="text" class="form-control" formControlName="Update_id" [class.hasError]="modifyForm.get('Update_id').invalid && modifyForm.get('Update_id').touched">-->
-        <!--<div [hidden]="modifyForm.get('Update_id').valid || modifyForm.get('Update_id').untouched">-->
-          <!--<span [hidden]="!modifyForm.hasError('required', 'Update_id')">必填</span>-->
-        <!--</div>-->
-      <!--</div>-->
       <div class="form-group">
         <label>修改摄像机后的id</label>
         <input type="text" class="form-control" placeholder="选填" formControlName="id" [class.hasError]="modifyForm.get('id').invalid && modifyForm.get('id').touched">
@@ -180,7 +173,7 @@
       </div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="con_modify()">确定修改</button>
-        <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+        <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
       </div>
     </form>
   </div>
@@ -190,7 +183,7 @@
 <ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left" >摄像机查看</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -205,7 +198,7 @@
       <div class="clearfix"></div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>
-        <button type="button" class="btn btn-danger" (click)="modalRef.hide()">取消</button>
+        <button type="button" class="btn btn-danger" (click)="closeModal()">取消</button>
       </div>
     </div>
   </div>

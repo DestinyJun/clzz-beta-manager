@@ -102,7 +102,7 @@ export class ModalManagerComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -110,7 +110,7 @@ export class ModalManagerComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -121,15 +121,21 @@ export class ModalManagerComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
+  }
+
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
   }
   // 增加时，选择组织ID
   public selectAddModalOid(value): void {

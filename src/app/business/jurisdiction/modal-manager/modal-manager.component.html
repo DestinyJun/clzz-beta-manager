@@ -54,7 +54,7 @@
 <ng-template #add>
   <div class="modal-header">
     <h4 class="modal-title pull-left">模块数据增加</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -91,7 +91,7 @@
       <button type="button" class="btn btn-info" aria-label="Close" (click)="modalAdd()">
         确定增加
       </button>
-      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
         返回
       </button>
     </div>
@@ -101,7 +101,7 @@
 <ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left">接口数据修改</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -137,7 +137,7 @@
       <button type="button" class="btn btn-info" aria-label="Close" (click)="modalModify()">
         确定修改
       </button>
-      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
         返回
       </button>
     </div>
@@ -147,7 +147,7 @@
 <ng-template #lookdesc>
   <div class="modal-header">
     <h4 class="modal-title pull-left">生产线查看详情</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -165,7 +165,7 @@
       <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
         跳转到修改
       </button>
-      <button type="button" class="btn btn-danger" aria-label="Close" (click)="modalRef.hide()">
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
         返回
       </button>
     </div>

@@ -81,7 +81,7 @@ export class UserManagerComponent implements OnInit {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -89,7 +89,7 @@ export class UserManagerComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -100,14 +100,20 @@ export class UserManagerComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
+  }
+
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
   }
   public selectAddModalId(value): void {
     this.addForm.patchValue({'moduleid': value});

@@ -150,6 +150,13 @@ export class ItemComponent implements OnInit {
     }
   }
 
+
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
+  }
+
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;

@@ -84,7 +84,7 @@ export class ProductionLineComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -92,7 +92,7 @@ export class ProductionLineComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -103,14 +103,14 @@ export class ProductionLineComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
 
@@ -119,6 +119,12 @@ export class ProductionLineComponent implements OnInit {
   }
   public SelectModifyModalId(value): void {
     this.modifyForm.patchValue({'did': value});
+  }
+
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
   }
   // 监控翻页事件
   public getPageBody(event): void {

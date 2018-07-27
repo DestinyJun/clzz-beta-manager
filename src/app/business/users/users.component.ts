@@ -117,8 +117,9 @@ export class UsersComponent implements OnInit {
     });
   }
 
-// 控制模态框, 增，修，查
+// 打开模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
+    console.log(this.listenDescModal);
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
@@ -130,16 +131,17 @@ export class UsersComponent implements OnInit {
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
+        // console.log(this.listenDescModal);
         if (this.listenDescModal) {
           this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
+          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
         } else {
           this.mustone = true;
@@ -151,15 +153,19 @@ export class UsersComponent implements OnInit {
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
-        this.modalRef = this.modalService.show(template);
+        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
         this.listenDescModal = false;
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
-
+// 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
+  }
   // 增加时，选择部门id
   public SelectAddModalId(value): void {
     this.addForm.patchValue({'organizationId': value});
