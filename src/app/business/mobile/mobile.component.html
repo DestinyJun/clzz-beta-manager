@@ -15,11 +15,12 @@
           <th>版本描述</th>
           <th>服务器路径</th>
           <th>最新更新时间</th>
-          <th>app下载</th>
+          <th>下载</th>
+          <th>扫码</th>
         </tr>
         </thead>
         <tbody>
-        <tr *ngFor="let app of apps">
+        <tr *ngFor="let app of apps; let i = index">
           <td>{{app.id}}</td>
           <td>{{app.version}}</td>
           <td>{{app.versionName}}</td>
@@ -58,12 +59,15 @@
               </button>
             </div>
           </td>
+          <td>
+            <button class="btn btn-primary" (click)="openModal(openQRcode, i)">扫码下载</button>
+          </td>
         </tr>
         </tbody>
       </table>
     </div>
     <div class="row text-center">
-      <button class="btn btn-primary" (click)="uploadfileModal(open)">
+      <button class="btn btn-primary" (click)="openModal(openUploadFile, -1)">
         <span>上传更新版本文件</span>
         <span class="fa fa-upload"></span>
       </button>
@@ -72,7 +76,7 @@
 </div>
 
 
-<ng-template #open style="padding: 15px">
+<ng-template #openUploadFile style="padding: 15px">
   <div class="modal-header">
     <div class="modal-title" >
       <h4 class="modal-title pull-left">App&nbsp; 文件上传</h4>
@@ -102,6 +106,20 @@
       </div>
       <input type="submit" class="btn btn-success" value="上传">
     </form>
+  </div>
+</ng-template>
+
+<ng-template #openQRcode style="padding: 15px">
+  <div class="modal-header">
+    <div class="modal-title" >
+      <h4 class="modal-title pull-left">扫码下载App</h4>
+      <button type="button" class="close pull-right" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+  </div>
+  <div class="modal-body text-center">
+    <ngx-qrcode [qrc-value]="QRcodeValue" [qrc-version]=5 [qrc-correction-level]="'L'"></ngx-qrcode>
   </div>
 </ng-template>
 

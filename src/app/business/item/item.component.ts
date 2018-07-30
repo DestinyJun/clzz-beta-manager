@@ -34,6 +34,7 @@ export class ItemComponent implements OnInit {
   public controlSearchText: boolean;
   // 用来监听模态框 是否 是从查看详情 跳转到 修改模态框
   public listenDescModal: boolean;
+  public QRcodeValue: string;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
@@ -101,7 +102,7 @@ export class ItemComponent implements OnInit {
     });
     this.Update();
   }
-// 控制模态框, 增，修，查
+// 控制模态框, 增，修，查，二维码
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
     this.gtone = false;
@@ -151,6 +152,11 @@ export class ItemComponent implements OnInit {
       // console.log('增加');
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
+      // 打印二维码
+      this.QRcodeValue = this.datas[i].itemcode;
+      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+    }
   }
   // 关闭模态框, 增，修，查
   public closeModal(): void {
@@ -159,7 +165,7 @@ export class ItemComponent implements OnInit {
   }
 
   // 监控翻页事件
-  public getPageBody(event): void {
+  public getPageBody(event: PageBody): void {
     this.pageBody = event;
     this.Update();
   }
@@ -253,7 +259,6 @@ export class ItemComponent implements OnInit {
 //  修改表格内容
   public itemModify(): void {
     this.getTime(this.modifyForm, 'modify');
-    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -284,13 +289,25 @@ export class ItemComponent implements OnInit {
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {
           const trs = document.getElementsByTagName('tr');
-          for (let i = 1; i < trs.length; ++i) {
-            trs[i].children[0].addEventListener('click', (e) => {
-              e.stopImmediatePropagation();
-            });
-          }
-          // trs 长度大于 1时， 取消setInterval
           if (trs.length > 1) {
+            for (let i = 1; i < trs.length; ++i) {
+              const check = trs[i].children[0];
+              const QR = trs[i].children[6];
+              // 移除勾选框的title属性
+              check.setAttribute('title', '');
+              // check.removeAttribute('title');
+              // 移除打印二维码的title属性
+              QR.setAttribute('title', '');
+              // 取消勾选框冒泡默认行为
+              check.addEventListener('click', (e) => {
+                e.stopImmediatePropagation();
+              });
+              // 取消打印二维码按钮的默认行为
+              QR.addEventListener('click', (e) => {
+                e.stopImmediatePropagation();
+              });
+            }
+            // trs 长度大于 1时， 取消setInterval
             clearInterval(setinter);
           }
         });
@@ -435,4 +452,5 @@ export class ItemComponent implements OnInit {
       document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
     }
   }
+
 }

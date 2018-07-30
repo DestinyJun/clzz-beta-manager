@@ -4,6 +4,7 @@ import {MobileRoutersModule} from './mobile.routers.module';
 import {MobileComponent} from './mobile.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ModalModule} from 'ngx-bootstrap';
+import {NgxQRCodeModule} from 'ngx-qrcode3';
 
 @NgModule({
   imports: [
@@ -11,7 +12,8 @@ import {ModalModule} from 'ngx-bootstrap';
     MobileRoutersModule,
     ModalModule.forRoot(),
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxQRCodeModule
   ],
   declarations: [
     MobileComponent

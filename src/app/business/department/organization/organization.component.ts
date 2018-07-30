@@ -223,13 +223,18 @@ export class OrganizationComponent implements OnInit {
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {
           const trs = document.getElementsByTagName('tr');
-          for (let i = 1; i < trs.length; ++i) {
-            trs[i].children[0].addEventListener('click', (e) => {
-              e.stopImmediatePropagation();
-            });
-          }
           // trs 长度大于 1时， 取消setInterval
           if (trs.length > 1) {
+            for (let i = 1; i < trs.length; ++i) {
+              const check = trs[i].children[0];
+              // 移除勾选框的title属性
+              check.setAttribute('title', '');
+              // check.removeAttribute('title');
+              // 取消勾选框冒泡默认行为
+              check.addEventListener('click', (e) => {
+                e.stopImmediatePropagation();
+              });
+            }
             clearInterval(setinter);
           }
         });

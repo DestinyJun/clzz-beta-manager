@@ -7,7 +7,6 @@ import {SidebarComponent} from './sidebar/sidebar.component';
 import {FooterComponent} from './footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ModalModule} from 'ngx-bootstrap';
-import {SlimLoadingBarModule} from './../../../node_modules/ng2-slim-loading-bar';
 
 @NgModule({
   imports: [
@@ -15,8 +14,7 @@ import {SlimLoadingBarModule} from './../../../node_modules/ng2-slim-loading-bar
     HomeRoutersModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalModule.forRoot(),
-    SlimLoadingBarModule
+    ModalModule.forRoot()
   ],
   declarations: [
     HomeComponent,

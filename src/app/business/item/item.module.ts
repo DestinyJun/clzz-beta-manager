@@ -5,6 +5,7 @@ import { ItemRoutingModule } from './item-routing.module';
 import { ItemComponent } from './item.component';
 import {BasedModule} from '../../based/based.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {NgxQRCodeModule} from 'ngx-qrcode3';
 
 @NgModule({
   imports: [
@@ -12,7 +13,8 @@ import {FormsModule, ReactiveFormsModule} from '@angular/forms';
     ItemRoutingModule,
     BasedModule,
     FormsModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgxQRCodeModule
   ],
   declarations: [ItemComponent]
 })

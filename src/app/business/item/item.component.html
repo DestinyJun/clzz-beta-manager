@@ -32,7 +32,7 @@
             <th>项目位置</th>
             <th>项目位置经度</th>
             <th>项目位置纬度</th>
-            <th>...</th>
+            <th>打印二维码</th>
           </tr>
           </thead>
           <tbody>
@@ -43,7 +43,7 @@
             <td>{{it.itemposition}}</td>
             <td>{{it.longitude}}</td>
             <td>{{it.latitude}}</td>
-            <td>...</td>
+            <td><button (click)="openModal(openQRcode, i)">打印二维码</button></td>
           </tr>
           </tbody>
         </table>
@@ -158,13 +158,13 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>项目编号	: &nbsp;I{{detail.itemcode}}</p>
+    <p>项目编号	: &nbsp;{{detail.itemcode}}</p>
     <p>项目名称	: &nbsp;{{detail.itemname}}</p>
     <p>项目位置	: &nbsp;{{detail.itemposition}}</p>
     <p>项目位置经度: &nbsp;	{{detail.longitude}}</p>
     <p>项目位置纬度: &nbsp;	{{detail.latitude}}</p>
-    <p>项目明细项目所属单位编号: &nbsp;	{{detail.itemdetail}}</p>
-    <p>单位编号: &nbsp;	{{detail.unitcode}}</p>
+    <p>项目明细项目: &nbsp;	{{detail.itemdetail}}</p>
+    <p>所属单位编号: &nbsp;	{{detail.unitcode}}</p>
     <p>项目巡检成员: &nbsp;	{{detail.itemmembers}}</p>
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
     <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
@@ -183,7 +183,23 @@
     </div>
   </div>
 </ng-template>
-
+<ng-template #openQRcode>
+  <div class="modal-header">
+    <h4 class="modal-title pull-left">二维码扫描查看详情</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
+      <span aria-hidden="true">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body text-center">
+    <ngx-qrcode [qrc-value]="QRcodeValue" [qrc-version]=5 [qrc-correction-level]="'L'"></ngx-qrcode>
+    <div class="clearfix"></div>
+    <div class="text-center">
+      <button type="button" class="btn  btn-danger" aria-label="Close" (click)="closeModal()">
+        返回
+      </button>
+    </div>
+  </div>
+</ng-template>
 <div [hidden]="openstatus">
   <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
     <span>{{resMessage}}</span>

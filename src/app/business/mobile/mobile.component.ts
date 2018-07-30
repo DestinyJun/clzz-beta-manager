@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {AppManager} from '../../shared/global.service';
 import {ReqService} from '../../shared/req.service';
+import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
   selector: 'app-mobile',
@@ -19,11 +20,13 @@ export class MobileComponent implements OnInit {
   public file: any;
   public status: number;
   public openstatus: boolean;
+  public QRcodeValue: string;
   constructor(
     public http: HttpClient,
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public req: ReqService
+    public req: ReqService,
+    public commonfun: CommonfunService
     ) {
     this.infoForm = fb.group({
       appType: ['APP01', Validators.required],
@@ -48,8 +51,11 @@ export class MobileComponent implements OnInit {
     });
   }
   // 打开模态框
-  public uploadfileModal(template: TemplateRef<any>): void {
-    this.modalRef = this.modalService.show(template);
+  public openModal(template: TemplateRef<any>, i): void {
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
+      this.QRcodeValue = this.apps[i].url;
+    }
+    this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
   }
   // 选择文件
   public getFile(event): void {
