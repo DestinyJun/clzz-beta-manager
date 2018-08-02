@@ -217,7 +217,7 @@ export class UserPowerInfo {
   ) {}
 }
 
-// 用户管理
+// 用户管理类
 export class UsersManager {
   constructor(
    public id: string,

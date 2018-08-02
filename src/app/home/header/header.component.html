@@ -55,7 +55,7 @@
                     lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                     $event: 用来判断当前被点击生产线的checkbox 是否被选中
             -->
-            <input type="checkbox" disabled (click)="selectProLineId(lineId, $event)">
+            <input type="checkbox" disabled [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
             <span>{{lineId.sys_name}}</span>
           </div>
         </div>
@@ -153,7 +153,7 @@
                       lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
-              <input type="checkbox" (click)="selectProLineId(lineId, $event)">
+              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
               <!--<span [ngStyle]="{color: (addCheckboxLook.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>-->
               <span>{{lineId.sys_name}}</span>
             </div>
@@ -164,3 +164,11 @@
     <button class="btn btn-danger" (click)="personInfoModify(); modalRef.hide()">确认修改</button>
   </div>
 </ng-template>
+
+
+<div [hidden]="openstatus">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status !== 10">
+    <span *ngIf="status === 10">修改成功</span>
+    <span *ngIf="status !== 10">修改失败</span>
+  </div>
+</div>

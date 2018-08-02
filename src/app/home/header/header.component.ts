@@ -7,7 +7,6 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GlobalService, PersonInfo} from '../../shared/global.service';
 import {SelectLineIdsStatus} from '../../business/users/users.component';
 import 'rxjs/Rx';
-import {forEach} from '@angular/router/src/utils/collection';
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
@@ -26,6 +25,8 @@ export class HeaderComponent implements OnInit {
   public cisMenu: boolean;
   public userLineIds: Array<SelectLineIdsStatus>;
   public userName: string;
+  public openstatus: boolean;
+  public status: number;
   // public bool: boolean;
   constructor(
     private route: Router,
@@ -37,6 +38,7 @@ export class HeaderComponent implements OnInit {
     ) {
     }
   ngOnInit() {
+    this.openstatus = true;
     this.userName = this.localSessionStorage.get('realName');
     this.userLineIds = [];
     this.cisMenu = false;
@@ -121,7 +123,6 @@ export class HeaderComponent implements OnInit {
         // this.updateLineShow('addLineId');
       });
     }
-
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // 这里是增加生产线在模态框的显示
       //   this.updateLineShow('modifyLineId');
@@ -135,9 +136,21 @@ export class HeaderComponent implements OnInit {
   }
   // 个人信息修改
   public personInfoModify() {
+    this.openstatus = false;
+    // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
+    let sysidsStr = [];
+    for (let i = 0; i < this.userLineIds.length; ++i) {
+      if (this.userLineIds[i].sys_status === 1) {
+        sysidsStr.push(this.userLineIds[i].sys_id);
+      }
+    }
+    this.personInfoModifyForm.patchValue({sysids: sysidsStr.toString()});
         this.req.UserInfoModify(this.personInfoModifyForm.value)
-          .subscribe(status => {
-            console.log(status);
+          .subscribe(res => {
+            this.status = Number(res.status);
+            setTimeout(() => {
+              this.openstatus = true;
+            }, 2000);
           });
   }
   // 控制左边导航栏
