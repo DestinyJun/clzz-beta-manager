@@ -71,7 +71,7 @@ export class ItemComponent implements OnInit {
       new Field('经度',	'longitude'),
       new Field('纬度',	'latitude'),
       new Field('项目明细',	'itemdetail'),
-      new Field('单位编号',	'unitcode'),
+      new Field('生产线编号',	'unitcode'),
       new Field('项目巡检成员',	'itemmembers'),
       new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
@@ -107,16 +107,13 @@ export class ItemComponent implements OnInit {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      const s = new Date(this.detail.starttime);
-      this.detail.starttime = s.toLocaleDateString();
-      const e = new Date(this.detail.endtime);
-      this.detail.endtime = e.toLocaleDateString();
+      this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
+      this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {

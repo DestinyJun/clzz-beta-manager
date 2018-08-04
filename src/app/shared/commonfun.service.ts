@@ -60,4 +60,18 @@ export class CommonfunService {
     };
     return operateModal;
   }
+  // 时间格式化输出, 没有精确到秒
+  public defineTimeFormat(time: any): string {
+    const t = Number(time);
+    let newTime = '';
+    if (typeof t === 'number') {
+      const strTime = new Date(t);
+      newTime = strTime.getFullYear() +
+        '/' + (strTime.getMonth() + 1) +
+        '/' + strTime.getDate() +
+        ' ' + strTime.getHours() +
+        ':' + strTime.getMinutes();
+    }
+    return newTime;
+  }
 }
