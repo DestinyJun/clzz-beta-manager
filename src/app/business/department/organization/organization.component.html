@@ -19,7 +19,7 @@
         <table class="table table-responsive">
           <thead>
           <tr>
-            <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th class="checkboxoption" ><input type="checkbox" (click)="checkAll()">全选/全不选</th>
             <th>部门ID</th>
             <th>部门名称</th>
             <th>部门编号</th>
@@ -31,16 +31,16 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let list of datas;let i=index;" (click)="openModal(lookdesc, i)" title="点击查看详情">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{list['id']}}</td>
-            <td>{{list['name']}}</td>
-            <td>{{list['dcode']}}</td>
-            <td>{{list['tel']}}</td>
-            <td>{{list['oid']}}</td>
-            <td>{{list['pid']}}</td>
-            <td>{{list['idt']}}</td>
-            <td>{{list['udt']}}</td>
+          <tr *ngFor="let data of datas;let i=index;" (click)="openModal(lookdesc, data)" title="点击查看详情">
+            <td><input type="checkbox" (click)="check(data, $event)"></td>
+            <td>{{data['id']}}</td>
+            <td>{{data['name']}}</td>
+            <td>{{data['dcode']}}</td>
+            <td>{{data['tel']}}</td>
+            <td>{{data['oid']}}</td>
+            <td>{{data['pid']}}</td>
+            <td>{{data['idt']}}</td>
+            <td>{{data['udt']}}</td>
           </tr>
           </tbody>
         </table>

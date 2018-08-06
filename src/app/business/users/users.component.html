@@ -170,8 +170,8 @@
                       lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
-              <input type="checkbox" #addCheckboxAdd [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, addCheckboxAdd.checked)">
-              <span [ngStyle]="{'color': (addCheckboxAdd.checked === true)?'#646464':'red'}">{{lineId.sys_name}}</span>
+              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
+              <span class="lineColor">{{lineId.sys_name}}</span>
             </div>
           </div>
         </div>
@@ -315,8 +315,7 @@
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
               <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
-              <!--<span [ngStyle]="{'color': addCheckboxModify.checked?'#646464':'red'}">{{lineId.sys_name}}</span>-->
-              <span>{{lineId.sys_name}}</span>
+              <span [ngStyle]="{color: lineId['sys_status']===1?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
             </div>
           </div>
         </div>
@@ -378,8 +377,8 @@
                   $event: 用来判断当前被点击生产线的checkbox 是否被选中
           -->
           <input [checked]="lineId['sys_status'] === 1" type="checkbox" disabled>
-          <span>{{lineId.sys_name}}</span>
-          <!--<span [ngStyle]="{color: addCheckboxLook.checked?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>-->
+          <!--<span class="lineColor">{{lineId.sys_name}}</span>-->
+          <span [ngStyle]="{color: lineId['sys_status']===1?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
         </div>
       </div>
     </div>

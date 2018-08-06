@@ -119,7 +119,6 @@ export class UsersComponent implements OnInit {
 
 // 打开模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
-    console.log(this.listenDescModal);
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
@@ -134,9 +133,7 @@ export class UsersComponent implements OnInit {
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
-        // console.log(this.listenDescModal);
         if (this.listenDescModal) {
           this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
           this.mustone = false;
@@ -187,8 +184,10 @@ export class UsersComponent implements OnInit {
     const index = this.userLineIds.indexOf(id);
     if (e.srcElement.checked) {
       this.userLineIds[index].sys_status = 1;
+      e.target.parentElement.children[1].style.color = '#646464';
     } else {
       this.userLineIds[index].sys_status = 0;
+      e.target.parentElement.children[1].style.color = 'red';
     }
   }
 
@@ -255,13 +254,15 @@ export class UsersComponent implements OnInit {
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public userAdd(): void {
     // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
-    let sysidsStr = [];
+    const sysidsStr = [];
     for (let i = 0; i < this.userLineIds.length; ++i) {
       if (this.userLineIds[i].sys_status === 1) {
+        console.log(1111);
         sysidsStr.push(this.userLineIds[i].sys_id);
       }
     }
     this.addForm.patchValue({sysids: sysidsStr.toString()});
+    console.log(this.userLineIds);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

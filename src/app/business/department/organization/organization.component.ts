@@ -21,7 +21,7 @@ export class OrganizationComponent implements OnInit {
   public addForm: FormGroup;
   public modifyForm: FormGroup;
   public detail: DeparmentList;
-  public hasChecked: Array<number> = [];
+  public hasChecked: Array<DeparmentList> = [];
   public checked: string;
   public Fmodalid: any;
   public openstatus: boolean;
@@ -44,6 +44,7 @@ export class OrganizationComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
+    this.hasChecked = [];
     this.pageBody = new PageBody(1, 10);
     // 增加表单信息
     this.addForm = this.fb.group({
@@ -69,7 +70,7 @@ export class OrganizationComponent implements OnInit {
     });
   }
   // 控制模态框, 增，修，查
-  public openModal(template: TemplateRef<any>, i): void {
+  public openModal(template: TemplateRef<any>, data): void {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
@@ -77,7 +78,7 @@ export class OrganizationComponent implements OnInit {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
       this.listenDescModal = true;
-      this.detail = this.datas[i];
+      this.detail = data;
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
@@ -93,7 +94,7 @@ export class OrganizationComponent implements OnInit {
         }
       } else {
         if (!this.listenDescModal) {
-          this.detail = this.datas[this.hasChecked[0]];
+          // this.detail = this.datas[this.hasChecked[0]];
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
@@ -105,11 +106,12 @@ export class OrganizationComponent implements OnInit {
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
-
-
-
+  // 关闭模态框, 增，修，查
+  public closeModal(): void {
+    this.listenDescModal = false;
+    this.modalRef.hide();
+  }
   public selectAddModalOrgaId(value): void {
-    console.log(value);
     this.addForm.patchValue({'oid': value});
   }
   public selectAddModalDeparId(value): void {
@@ -127,32 +129,28 @@ export class OrganizationComponent implements OnInit {
     this.Update();
   }
   // 全选 或 全不选
-  public getAllCheckBoxStatus(e): void {
-    if (e.srcElement.checked === true) {
-      this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.datas.length, 10);
-      this.checked = 'checked';
-    } else {
-      this.hasChecked = [];
-      this.checked = '';
+  public checkAll(): void {
+    const checks = document.querySelectorAll('input[type=\'checkbox\']');
+    for (let i = 1; i < checks.length; i++) {
+      if (checks[0]['checked'] === true) {
+        checks[i]['checked'] = true;
+        // this.hasChecked = this.datas; 不能怎样赋值，因为datas是一个对象地址的引用，如果把datas赋给hasChecked, 那么操作hasCheck就等于操作datas
+        this.datas.forEach(value => {
+          this.hasChecked.push(value);
+        });
+      }else {
+        checks[i]['checked'] = false;
+        this.hasChecked = [];
+      }
     }
   }
   // 得到已选择的checkBox
-  public getCheckBoxStatus(e, i): void {
-    const haschecklen = this.hasChecked.length;
-    if (e.srcElement.checked === true) {
-      this.hasChecked.push(i);
-    } else {
-      for (let j = 0; j < haschecklen; j++ ) {
-        if (this.hasChecked[j] === i) {
-          this.hasChecked.splice(j, 1);
-        }
-      }
-    }
-    if (this.hasChecked.length === 1) {
-      this.detail = this.datas[this.hasChecked[0]];
-    } else {
-      this.detail = null;
+  public check(data, e): void {
+    if (e.srcElement['checked'] === true) {
+      this.hasChecked.push(data);
+    }else {
+      document.querySelector('input[type=\'checkbox\']')['checked'] = false;
+      this.hasChecked.splice(this.datas.indexOf(data), 1);
     }
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
@@ -162,10 +160,14 @@ export class OrganizationComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      let bb = [];
+      this.hasChecked.forEach(value => {
+        bb.push(value.id);
+      });
+      if (this.commonfun.deleteChecked(this.datas, bb, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          this.req.deleteDepartment('id=' +  this.datas[this.hasChecked[j]].id)
+          this.req.deleteDepartment('id=' +  this.hasChecked[j].id)
             .subscribe(res => {
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
