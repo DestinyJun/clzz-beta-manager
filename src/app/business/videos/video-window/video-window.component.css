@@ -86,6 +86,7 @@
 .tree-scrollbar {
   width: 4px;
   height: 16px;
+  border-radius: 2px;
   background-color: black;
   position: absolute;
   top: 0px;

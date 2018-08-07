@@ -57,8 +57,8 @@ export class ItemComponent implements OnInit {
     this.fieldsAdd = [
       new Field('项目名称',	'itemname'),
       new Field('项目位置',	'itemposition'),
-      new Field('项目位置经度',	'longitude'),
-      new Field('项目位置纬度',	'latitude'),
+      // new Field('项目位置经度',	'longitude'),
+      // new Field('项目位置纬度',	'latitude'),
       new Field('项目明细',	'itemdetail'),
       new Field('单位编号',	'unitcode'),
       new Field('项目巡检成员',	'itemmembers'),
@@ -79,8 +79,8 @@ export class ItemComponent implements OnInit {
     this.addForm = this.fb.group({
       itemname: ['', Validators.required],
       itemposition: ['', Validators.required],
-      longitude: ['', Validators.required],
-      latitude: ['', Validators.required],
+      // longitude: ['', Validators.required],
+      // latitude: ['', Validators.required],
       itemdetail: ['', Validators.required],
       unitcode: ['', Validators.required],
       itemmembers: ['', Validators.required],

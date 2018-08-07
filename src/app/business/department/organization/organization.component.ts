@@ -164,7 +164,7 @@ export class OrganizationComponent implements OnInit {
       this.hasChecked.forEach(value => {
         bb.push(value.id);
       });
-      if (this.commonfun.deleteChecked(this.datas, bb, 'name')) {
+      if (confirm('你确定删除已勾选项吗?')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.deleteDepartment('id=' +  this.hasChecked[j].id)

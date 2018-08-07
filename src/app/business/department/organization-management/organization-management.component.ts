@@ -132,7 +132,6 @@ export class OrganizationManagementComponent implements OnInit {
   }
 
   public SelectAddModalId(value): void {
-    console.log(value);
     this.addForm.patchValue({'pid': value});
   }
   public SelectModifyModalId(value): void {

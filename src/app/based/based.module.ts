@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {PagingComponent} from './paging/paging.component';
 import {FormsModule} from '@angular/forms';
+import {DataloadComponent} from './dataload/dataload.component';
 
 @NgModule({
   imports: [
@@ -9,8 +10,12 @@ import {FormsModule} from '@angular/forms';
     FormsModule
   ],
   declarations: [
-    PagingComponent
+    PagingComponent,
+    DataloadComponent
   ],
-  exports: [PagingComponent]
+  exports: [
+    PagingComponent,
+    DataloadComponent
+  ]
 })
 export class BasedModule { }
