@@ -2,6 +2,16 @@
   margin: 0px;
   padding: 0px;
 }
+.btn:focus,
+.btn:active,
+.btn-default:focus,
+.btn-default:active,
+button:focus,
+button:active,
+.btn:active:focus
+{
+  outline: none;
+}
 /* You can add global styles to this file, and also import other style files */
 
 

@@ -429,3 +429,18 @@ export class ItemList {
 
 ) {}
 }
+// 页面字段类
+export class HtmlVarible {
+  constructor(
+    public datas: Array<any>,
+    public num: number,
+    public openstatus: boolean,
+    public detail: any,
+    public status: number,
+    public inputvalid: boolean,
+    public mustone: boolean,
+    public gtone: boolean,
+    public resMessage: string,
+    public listenDescModal:  boolean,
+  ) {}
+}

@@ -31,6 +31,10 @@ export class OrganizationComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   public listenDescModal: boolean;
+  public mouseCurrentX;
+  public mouseCurrentY;
+  public moveX = 0;
+  public moveY = 0;
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
@@ -160,7 +164,7 @@ export class OrganizationComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      let bb = [];
+      const bb = [];
       this.hasChecked.forEach(value => {
         bb.push(value.id);
       });
@@ -245,5 +249,61 @@ export class OrganizationComponent implements OnInit {
           this.status = 0;
         }, 2500);
       });
+  }
+/**
+ *  模态框移动
+ * */
+// public startDrop(e): void {
+//   e.srcElement.parentElement.parentNode.style.position = 'absolute';
+//   e.srcElement.parentElement.parentNode.style.top = '0px';
+//   e.srcElement.parentElement.parentNode.style.right = '0px';
+//   console.log(e.srcElement.parentElement.parentNode);
+//   console.log(e.srcElement.parentNode);
+//   // let ev = e;
+//   // while (true) {
+//   //   if (ev.srcElement.parentElement === null) {
+//   //     ev.style.backgroundColor = 'red';
+//   //     break;
+//   //   }else {
+//   //     ev = ev.srcElement.parentElement;
+//   //   }
+//   // }
+// }
+
+  public startDrop(e): void {
+    e.srcElement.parentElement.parentNode.style.position = 'absolute';
+    e.srcElement.parentElement.parentNode.style.top = (e.clientY - e.offsetY) + 'px';
+    console.log(e.clientX);
+    console.log(e.offsetX);
+    e.srcElement.parentElement.parentNode.style.left = (e.clientX - e.offsetX) + 'px';
+    console.log('开始拖动');
+    this.mouseCurrentX = e.clientX;
+    this.mouseCurrentY = e.clientY;
+    if (e.target.addEventListener) {
+      e.target.addEventListener('mousemove', this.mouseMove, false);
+      e.target.addEventListener('mouseup', this.stopMove, false);
+      e.target.addEventListener('mouseleave', this.stopMove, false);
+    }else if (e.target.attachEventthis) {
+      e.target.attachEvent('onmousemove', this.mouseMove, false);
+      e.target.attachEvent('onmouseup', this.stopMove, false);
+      e.target.attachEvent('onmouseleave', this.stopMove, false);
+    }
+  }
+
+  public mouseMove(e): void {
+    console.log('正在拖动');
+    this.moveX = e.clientX - this.mouseCurrentX;
+    this.moveY = e.clientY - this.mouseCurrentY;
+    const x = e.clientX - e.offsetX + this.moveX;
+    const y = e.clientY - e.offsetY + this.moveY;
+    // e.target.style.top =  y + 'px';
+    // e.target.style.left = x + 'px';
+    this.mouseCurrentX = e.clientX;
+    this.mouseCurrentY = e.clientY;
+  }
+
+  public stopMove(e): void {
+    console.log('结束拖动');
+    e.target.removeEventListener('mousemove', this.mouseMove);
   }
 }

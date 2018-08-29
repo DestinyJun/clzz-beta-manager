@@ -30,6 +30,7 @@
           </div>
         </div>-->
         <div class="hasError">
+          <span *ngIf="status === 12">服务器处理故障！</span>
           <span *ngIf="status === 13">账户错误！</span>
           <span *ngIf="status === 14">账户已经在线！</span>
         </div>

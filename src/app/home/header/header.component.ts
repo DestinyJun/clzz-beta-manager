@@ -20,7 +20,7 @@ export class HeaderComponent implements OnInit {
   public genderm: string;
   public genderw: string;
   @Output()
-  public cisMenuChange: EventEmitter<boolean> = new EventEmitter;
+  public cisMenuChange = new EventEmitter();
   @Input()
   public cisMenu: boolean;
   public userLineIds: Array<SelectLineIdsStatus>;
@@ -64,9 +64,11 @@ export class HeaderComponent implements OnInit {
     });
     // 查找系统所有id
     this.req.FindsystemSysid().subscribe(value => {
-      // 再初始化 userLineIds 并向里面增加所有生产线，sys_status 为 0 时，没有该权限，反之为1时，有权限。
-      for (let i = 0; i < value.values.length; ++i) {
-        this.userLineIds.push(new SelectLineIdsStatus(value.values[i].sid, value.values[i].name, 0));
+      if (value.values) {
+        // 再初始化 userLineIds 并向里面增加所有生产线，sys_status 为 0 时，没有该权限，反之为1时，有权限。
+        for (let i = 0; i < value.values.length; ++i) {
+          this.userLineIds.push(new SelectLineIdsStatus(value.values[i].sid, value.values[i].name, 0));
+        }
       }
     });
   }

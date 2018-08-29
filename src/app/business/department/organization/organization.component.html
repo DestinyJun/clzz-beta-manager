@@ -170,13 +170,13 @@
 
 <!--查看的模态框-->
 <ng-template #lookdesc>
-  <div class="modal-header">
+  <div class="modal-header" style="position: absolute;width: 100%;z-index: 1050;top: 0px;left: 0px;" (mousedown)="startDrop($event)">
     <h4 class="modal-title pull-left">部门查看详情</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body" style="margin-top: 50px;">
     <p>部门ID &nbsp; : &nbsp; {{detail.id}}</p>
     <p>部门名称&nbsp; : &nbsp;	{{detail.name}}</p>
     <p>部门编号&nbsp; : &nbsp;	{{detail.dcode}}</p>
