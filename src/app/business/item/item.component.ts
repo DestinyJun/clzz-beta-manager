@@ -60,7 +60,7 @@ export class ItemComponent implements OnInit {
       // new Field('项目位置经度',	'longitude'),
       // new Field('项目位置纬度',	'latitude'),
       new Field('项目明细',	'itemdetail'),
-      new Field('单位编号',	'unitcode'),
+      // new Field('生产线编号',	'unitcode'),
       new Field('项目巡检成员',	'itemmembers'),
       new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
@@ -71,7 +71,7 @@ export class ItemComponent implements OnInit {
       new Field('经度',	'longitude'),
       new Field('纬度',	'latitude'),
       new Field('项目明细',	'itemdetail'),
-      new Field('生产线编号',	'unitcode'),
+      // new Field('生产线编号',	'unitcode'),
       new Field('项目巡检成员',	'itemmembers'),
       new Field('巡检时间间隔（单位：小时）',	'timecell')
     ];
@@ -100,7 +100,14 @@ export class ItemComponent implements OnInit {
       starttime: ['', Validators.required],
       timecell: ['', Validators.required]
     });
+    // 得到系统id
+    this.req.FindsystemSysid().subscribe(value => {
+      this.Fmodalid = value.values;
+    });
     this.Update();
+  }
+  public SelectAddModalId(value, form): void {
+    form.patchValue({'unitcode': value});
   }
 // 控制模态框, 增，修，查，二维码
   public openModal(template: TemplateRef<any>, i): void {
@@ -178,7 +185,8 @@ export class ItemComponent implements OnInit {
     }
   }
   // 按编号查找
-  public numSearch(searchContext, template: TemplateRef<any>): void {
+  public numSearch(searchContext, template: TemplateRef<any>, e): void {
+    e.stopPropagation();
     if (this.controlSearchText) {
       this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
         if (String(res.values) !== 'null') {
