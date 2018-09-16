@@ -5,6 +5,7 @@ import {ReqService} from '../../shared/req.service';
 import {BsModalService} from 'ngx-bootstrap/modal';
 import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {Field, ItemList, PageBody} from '../../shared/global.service';
+import {copyObj} from '@angular/animations/browser/src/util';
 
 @Component({
   selector: 'app-item',
@@ -44,6 +45,7 @@ export class ItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.detail = new ItemList(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
@@ -118,9 +120,13 @@ export class ItemComponent implements OnInit {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       // console.log('这是详情查看');
       this.listenDescModal = true;
-      this.detail = this.datas[i];
+      this.commonfun.objDeepCopy(this.datas[i], this.detail);
+      setTimeout(() => {
+        console.log(this.detail);
+      }, 1000)
       this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
       this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
+      console.log(this.datas[i]);
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
@@ -128,7 +134,7 @@ export class ItemComponent implements OnInit {
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
-          const date = new Date(this.detail.starttime);
+          let date = new Date(this.detail.starttime);
           this.modifyForm.reset(this.detail);
           this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
@@ -268,6 +274,7 @@ export class ItemComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
+      console.log(this.modifyForm.value);
       this.req.ItemModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;

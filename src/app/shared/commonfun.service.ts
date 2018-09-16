@@ -61,6 +61,7 @@ export class CommonfunService {
   }
   // 时间格式化输出, 没有精确到秒
   public defineTimeFormat(time: any): string {
+    console.log(time);
     const t = Number(time);
     let newTime = '';
     if (typeof t === 'number') {
@@ -71,6 +72,21 @@ export class CommonfunService {
         ' ' + strTime.getHours() +
         ':' + strTime.getMinutes();
     }
+    console.log(newTime);
     return newTime;
+  }
+
+  // 对象深度拷贝
+  public objDeepCopy(oldObj: any, newObj: any): void {
+    newObj = newObj || {};
+    for (const prop in oldObj) {
+      if (typeof oldObj[prop] === 'object') {
+        newObj[prop] = (oldObj[prop].constructor === 'Array' ? [] : {});
+        this.objDeepCopy(oldObj[prop], newObj[prop]);
+      }else {
+        newObj[prop] = oldObj[prop];
+      }
+    }
+    console.log(newObj);
   }
 }
