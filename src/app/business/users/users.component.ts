@@ -374,6 +374,10 @@ export class UsersComponent implements OnInit {
     }
     return userLineIds;
   }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
 }
 
 export class SelectLineIdsStatus {

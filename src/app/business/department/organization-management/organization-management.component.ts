@@ -253,10 +253,10 @@ export class OrganizationManagementComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
   }
 }

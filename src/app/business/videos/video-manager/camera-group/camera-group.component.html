@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" (click)="cleanScreen()">
   <div class="main" style="border: 1px solid #acacac">
     <div class="row" style="padding: 0px 16px;">
       <div class="col-md-12 col-xs-12 title">摄像头组管理</div>
@@ -25,8 +25,8 @@
           <thead>
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>摄像机组名称</th>
             <th>摄像机组id</th>
+            <th>摄像机组名称</th>
             <th>摄像机组创建人</th>
             <th>摄像机组状态</th>
             <th>所属部门ID</th>
@@ -36,11 +36,11 @@
           <tbody>
           <tr *ngFor="let list of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
             <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{list['value']}}</td>
             <td>{{list['id']}}</td>
+            <td>{{list['value']}}</td>
             <td>{{list['creator']}}</td>
             <td>{{list['status']}}</td>
-            <td>{{list['p_id']}}</td>
+            <td>{{list['pId']}}</td>
             <td><a [routerLink]="['./camera', list['id']]">进入摄像机组</a></td>
           </tr>
           </tbody>
@@ -94,9 +94,16 @@
       </div>
       <div class="form-group">
         <label>所属部门ID: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+        <select #addModalId (change)="selectModalId(addModalId.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid.departments" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>生产线系统ID: &nbsp;</label>
+        <select #addLineId (change)="selectLineId(addLineId.value, addForm)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
+          <option *ngFor="let modal of proLineids" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
       <div class="clearfix"></div>
@@ -122,14 +129,14 @@
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
       <div class="form-group">
-        <label>修改摄像机组ID</label>
-        <input type="text" class="form-control" formControlName="Update_id" placeholder="请输入修改的摄像机ID">
+        <label>请输入修正的摄像机ID</label>
+        <input type="text" class="form-control" formControlName="id" placeholder="请输入修正的摄像机ID">
       </div>
       <div class="form-group">
         <label>摄像机组名称</label>
-        <input type="text" class="form-control" formControlName="value" [class.hasError]="modifyForm.get('value').invalid && modifyForm.get('value').touched">
-        <div [hidden]="modifyForm.get('value').valid || modifyForm.get('value').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'value')">必填</span>
+        <input type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
+        <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
         </div>
       </div>
       <div class="form-group">
@@ -146,8 +153,14 @@
       </div>
       <div class="form-group">
         <label>所属部门ID: &nbsp;</label>
-        <select #modal_id (change)="selectModalId(modal_id.value)" class="form-control">
-          <option *ngFor="let modal of Fmodalid.departments" [selected]="modal.id === detail.p_id" [value]="modal.id">{{modal.name}}</option>
+        <select #modifyModalId (change)="selectModalId(modifyModalId.value, modifyForm)" class="form-control">
+          <option *ngFor="let modal of Fmodalid.departments" [selected]="modal.id === detail.pId" [value]="modal.id">{{modal.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>生产线ID: &nbsp;</label>
+        <select #modifyLineid (change)="selectLineId(modifyLineid.value, modifyForm)" class="form-control">
+          <option *ngFor="let modal of proLineids" [selected]="modal.sid === detail.proSystem" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
       <div class="clearfix"></div>
@@ -177,6 +190,7 @@
       <p>摄像机组创建人&nbsp; : &nbsp;	{{detail?.creator}}</p>
       <p>摄像机组状态&nbsp; : &nbsp;	{{detail?.status}}</p>
       <p>摄像机组部门id&nbsp; : &nbsp;	{{detail?.id}}</p>
+      <p>生产线ID&nbsp; : &nbsp;	{{detail?.proSystem}}</p>
       <div class="clearfix"></div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>
@@ -187,7 +201,7 @@
 </ng-template>
 
 <div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 14">
+  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 ||status === 12 || status === 13 || status === 14">
     <span>{{resMessage}}</span>
   </div>
 </div>

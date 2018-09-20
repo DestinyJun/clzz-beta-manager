@@ -244,10 +244,6 @@ export class OrganizationComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
   }
 /**
@@ -305,5 +301,10 @@ export class OrganizationComponent implements OnInit {
   public stopMove(e): void {
     console.log('结束拖动');
     e.target.removeEventListener('mousemove', this.mouseMove);
+  }
+
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
   }
 }

@@ -43,10 +43,6 @@ export class CameraComponent implements OnInit {
     private routerInfo: ActivatedRoute
   ) {}
   ngOnInit() {
-    // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
-    this.routerInfo.params.subscribe((value) => {
-      this.gid = value.id;
-    });
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
@@ -62,18 +58,23 @@ export class CameraComponent implements OnInit {
       id: ['', Validators.required],
       name: ['', Validators.required],
       creator: ['', Validators.required],
-      inner_url: [''],
-      outer_url: ['', Validators.required],
-      g_id: ['', Validators.required]
+      innerUrl: [''],
+      outerUrl: ['', Validators.required],
+      gId: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
       id: [''],
       Update_id: ['', Validators.required],
       name: [''],
       creator: [''],
-      inner_url: [''],
-      outer_url: [''],
-      g_id: ['']
+      // innerUrl: [''],
+      // outerUrl: [''],
+      gId: ['']
+    });
+    // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
+    this.routerInfo.params.subscribe((value) => {
+      this.gid = value.id;
+      this.addForm.patchValue({gId: this.gid});
     });
     this.Update();
   }
@@ -175,10 +176,9 @@ export class CameraComponent implements OnInit {
       if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+          const body = 'id=' + this.datas[this.hasChecked[j]].id + '&creator=' + this.datas[this.hasChecked[j]].creator;
           this.req.deleteVideo(body)
             .subscribe(res => {
-              console.log(res);
               this.resMessage = res.message;
               this.status = Number(res.status);
               if (j === haschecklen - 1) {
@@ -197,6 +197,7 @@ export class CameraComponent implements OnInit {
       this.modalRef.hide();
       this.req.addVideo(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
+          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -227,10 +228,11 @@ export class CameraComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findVideos('gid=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
+    this.req.findVideos('gId=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
-        this.num = Math.ceil(value.values.number / 10);
-        this.datas = value.values.datas;
+        console.log(value);
+        this.num = value.values.totalPage + 1;
+        this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {
           const trs = document.getElementsByTagName('tr');
@@ -249,12 +251,14 @@ export class CameraComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+
+  // 清除屏幕
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
   }
 }

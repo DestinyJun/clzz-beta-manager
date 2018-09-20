@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" (click)="cleanScreen()">
   <div class="main" style="border: 1px solid #acacac">
     <div class="row" style="padding: 0px 16px;">
       <div class="col-md-12 col-xs-12 title">摄像机管理</div>
@@ -6,7 +6,7 @@
     <div class="clearfix"></div>
     <div class="row" style="background-color: #efefef;margin: 0 1px;">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default"><span class="fa fa-reply-all"><a [routerLink]="['./../../']">返回</a></span></button>
+        <button type="button" class="btn btn-default" [routerLink]="['./../../']"><span class="fa fa-reply-all">返回</span></button>
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="fa fa-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="delete()"><span class="fa fa-trash-o" ></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
@@ -34,13 +34,13 @@
             <td>{{list.value}}</td>
             <td>{{list.id}}</td>
             <td>{{list.creator}}</td>
-            <td>{{list.inner_url}}</td>
-            <td>{{list.outer_url}}</td>
-            <td>{{list.g_id}}</td>
+            <td>{{list.innerUrl}}</td>
+            <td>{{list.outerUrl}}</td>
+            <td>{{list.gId}}</td>
           </tr>
           </tbody>
         </table>
-        <div *ngIf="num === 0" class="text-center">
+        <div *ngIf="!datas || !datas.length || datas.length === 0" class="text-center">
           <h3>此摄像机组没有摄像头</h3>
         </div>
       </div>
@@ -87,25 +87,25 @@
       </div>
       <div class="form-group">
         <label >摄像机内网url</label>
-        <input type="text" class="form-control" formControlName="inner_url"  [class.hasError]="addForm.get('inner_url').invalid && addForm.get('inner_url').touched">
-        <div [hidden]="addForm.get('inner_url').valid || addForm.get('inner_url').untouched">
-          <span [hidden]="!addForm.hasError('required', 'inner_url')">必填</span>
+        <input type="text" class="form-control" formControlName="innerUrl"  [class.hasError]="addForm.get('innerUrl').invalid && addForm.get('innerUrl').touched">
+        <div [hidden]="addForm.get('innerUrl').valid || addForm.get('innerUrl').untouched">
+          <span [hidden]="!addForm.hasError('required', 'innerUrl')">必填</span>
         </div>
       </div>
       <div class="form-group">
         <label >摄像机外网url</label>
-        <input type="text" class="form-control" formControlName="outer_url" [class.hasError]="addForm.get('outer_url').invalid && addForm.get('outer_url').touched">
-        <div [hidden]="addForm.get('outer_url').valid || addForm.get('outer_url').untouched">
-          <span [hidden]="!addForm.hasError('required', 'outer_url')">必填</span>
+        <input type="text" class="form-control" formControlName="outerUrl" [class.hasError]="addForm.get('outerUrl').invalid && addForm.get('outerUrl').touched">
+        <div [hidden]="addForm.get('outerUrl').valid || addForm.get('outerUrl').untouched">
+          <span [hidden]="!addForm.hasError('required', 'outerUrl')">必填</span>
         </div>
       </div>
-      <div class="form-group">
-        <label >所属摄像机组ID</label>
-        <input type="text" class="form-control" formControlName="g_id" [class.hasError]="addForm.get('g_id').invalid && addForm.get('g_id').touched">
-        <div [hidden]="addForm.get('g_id').valid || addForm.get('g_id').untouched">
-          <span [hidden]="!addForm.hasError('required', 'g_id')">必填</span>
-        </div>
-      </div>
+      <!--<div class="form-group">-->
+        <!--<label >所属摄像机组ID</label>-->
+        <!--<input type="text" class="form-control" formControlName="g_id" [class.hasError]="addForm.get('g_id').invalid && addForm.get('g_id').touched">-->
+        <!--<div [hidden]="addForm.get('g_id').valid || addForm.get('g_id').untouched">-->
+          <!--<span [hidden]="!addForm.hasError('required', 'g_id')">必填</span>-->
+        <!--</div>-->
+      <!--</div>-->
       <div class="clearfix"></div>
       <div class="text-center">
         <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
@@ -151,22 +151,22 @@
       </div>
       <div class="form-group">
         <label >摄像机内网url</label>
-        <input type="text" class="form-control" formControlName="inner_url">
+        <input type="text" class="form-control" formControlName="innerUrl">
       </div>
       <div class="form-group">
         <label >摄像机外网url</label>
-        <input type="text" class="form-control" formControlName="outer_url" [class.hasError]="modifyForm.get('outer_url').invalid && modifyForm.get('outer_url').touched">
-        <div [hidden]="modifyForm.get('outer_url').valid || modifyForm.get('outer_url').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'outer_url')">必填</span>
+        <input type="text" class="form-control" formControlName="outerUrl" [class.hasError]="modifyForm.get('outerUrl').invalid && modifyForm.get('outerUrl').touched">
+        <div [hidden]="modifyForm.get('outerUrl').valid || modifyForm.get('outerUrl').untouched">
+          <span [hidden]="!modifyForm.hasError('required', 'outerUrl')">必填</span>
         </div>
       </div>
-      <div class="form-group">
-        <label >所属摄像机组ID</label>
-        <input type="text" class="form-control" formControlName="g_id" [class.hasError]="modifyForm.get('g_id').invalid && modifyForm.get('g_id').touched">
-        <div [hidden]="modifyForm.get('g_id').valid || modifyForm.get('g_id').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'g_id')">必填</span>
-        </div>
-      </div>
+      <!--<div class="form-group">-->
+        <!--<label >所属摄像机组ID</label>-->
+        <!--<input type="text" class="form-control" formControlName="g_id" [class.hasError]="modifyForm.get('g_id').invalid && modifyForm.get('g_id').touched">-->
+        <!--<div [hidden]="modifyForm.get('g_id').valid || modifyForm.get('g_id').untouched">-->
+          <!--<span [hidden]="!modifyForm.hasError('required', 'g_id')">必填</span>-->
+        <!--</div>-->
+      <!--</div>-->
       <div class="clearfix"></div>
       <div class="text-center">
         <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
@@ -193,8 +193,8 @@
       <p>摄像机名称&nbsp;:&nbsp;	{{detail?.value}}</p>
       <p>摄像机创建人&nbsp;:&nbsp;	{{detail?.creator}}</p>
       <p>组id&nbsp;:&nbsp;	{{detail?.g_id}}</p>
-      <p>内网url&nbsp;:&nbsp;	{{detail?.inner_url}}</p>
-      <p>外网url&nbsp;:&nbsp;	{{detail?.outer_url}}</p>
+      <p>内网url&nbsp;:&nbsp;	{{detail?.innerUrl}}</p>
+      <p>外网url&nbsp;:&nbsp;	{{detail?.outerUrl}}</p>
       <div class="clearfix"></div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>

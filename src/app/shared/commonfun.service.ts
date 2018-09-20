@@ -87,6 +87,5 @@ export class CommonfunService {
         newObj[prop] = oldObj[prop];
       }
     }
-    console.log(newObj);
   }
 }

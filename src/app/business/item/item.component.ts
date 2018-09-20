@@ -118,23 +118,17 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.commonfun.objDeepCopy(this.datas[i], this.detail);
-      setTimeout(() => {
-        console.log(this.detail);
-      }, 1000)
       this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
       this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
-      console.log(this.datas[i]);
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
-          let date = new Date(this.detail.starttime);
+          const date = new Date(this.detail.starttime);
           this.modifyForm.reset(this.detail);
           this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
@@ -159,7 +153,6 @@ export class ItemComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
@@ -221,7 +214,7 @@ export class ItemComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.detail = this.datas[this.hasChecked[0]];
+      this.commonfun.objDeepCopy(this.datas[this.hasChecked[0]], this.detail);
     } else {
       this.detail = null;
     }
@@ -269,7 +262,7 @@ export class ItemComponent implements OnInit {
   }
 //  修改表格内容
   public itemModify(): void {
-    this.getTime(this.modifyForm, 'modify');
+    this.modifyForm.patchValue({starttime: this.getTime(this.modifyForm, 'modify')});
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -323,15 +316,11 @@ export class ItemComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
   }
 
   // 时间格式验证 和 得到时间戳
-  public getTime(form: FormGroup, type: string): void {
+  public getTime(form: FormGroup, type: string): string {
     let isCorrectYear = true;
     let isCorrectMouth = true;
     let isCorrectDay = true;
@@ -439,10 +428,12 @@ export class ItemComponent implements OnInit {
     }
     if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
       this.validTimeFormat = false;
-      form.patchValue({starttime: date.getTime()});
+      // form.patchValue({starttime: date.getTime()});
+      return date.getTime().toString();
     }else {
       this.validTimeFormat = false;
-      form.patchValue({starttime: ''});
+      // form.patchValue({starttime: ''});
+      return '';
     }
   }
 
@@ -464,5 +455,10 @@ export class ItemComponent implements OnInit {
       document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
     }
   }
-
+// 清除屏幕
+  public cleanScreen(): void {
+    this.controlSearchText = false;
+      this.openstatus = true;
+      this.status = 0;
+  }
 }

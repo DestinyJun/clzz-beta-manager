@@ -30,7 +30,6 @@ export class LoginComponent implements OnInit {
       if (this.userLoginInfoForm.valid) {
         this.req.Login(this.userLoginInfoForm.value)
           .subscribe(res => {
-            console.log(res);
             this.status = Number(res.status);
             if (Number(res.status) === 10) {
               this.localSessionStorage.set('realName', res.realName);

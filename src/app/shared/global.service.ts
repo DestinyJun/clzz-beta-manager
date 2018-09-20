@@ -260,18 +260,19 @@ export class CameraGroup {
     public id: string,
     public creator: string,
     public status: string,
-    public p_id: string
+    public pId: string,
+    public proSystem: string,
   ) {}
 }
 // 摄像机管理
 export class Camera {
   constructor(
     public creator: string,
-    public g_id: string,
+    public gId: string,
     public id: string,
-    public inner_url: string,
+    public innerUrl: string,
     public value: string,
-    public outer_url: string
+    public outerUrl: string
 ) {}
 }
 

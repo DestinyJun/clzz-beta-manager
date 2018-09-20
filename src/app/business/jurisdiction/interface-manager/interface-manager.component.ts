@@ -244,12 +244,12 @@ export class InterfaceManagerComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
   }
 }

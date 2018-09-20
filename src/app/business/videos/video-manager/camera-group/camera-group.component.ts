@@ -35,13 +35,16 @@ export class CameraGroupComponent implements OnInit {
   // 控制摄像组 的状态值，只能为 0 和 1.
   public cameraGroupStatus: FormControl;
   // cameraGroupStatusPrompt 用来检测到 cameraGroupStatus 的 控件值不是为 0 ， 1，则提示用户。true 表示合法， false 则相反。
-  public cameraGroupStatusPrompt: boolean;
+  public cameraGroupStatusPrompt = true;
+
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
     private commonfun: CommonfunService
-  ) {}
+  ) {
+  }
+
   ngOnInit() {
     this.status = 0;
     this.openstatus = true;
@@ -59,50 +62,53 @@ export class CameraGroupComponent implements OnInit {
       name: ['', Validators.required],
       creator: ['', Validators.required],
       status: ['0', Validators.required],
-      p_id: ['', Validators.required]
+      pId: ['', Validators.required],
+      proSystem: ['']
     });
     this.modifyForm = this.fb.group({
       id: [''],
-      Update_id: ['', Validators.required],
-      value: [''],
+      UpdateId: ['', Validators.required],
+      name: [''],
       creator: [''],
       status: [''],
-      p_id: ['']
+      pId: [''],
+      proSystem: ['']
     });
     // 得到所有的组织id
     this.req.FindDepartOrgani().subscribe(value => {
       // this.Fmodalid = value.values.departments;  // 这有问题，id 为undefined， 只有下面才不会出现问题
-      this.Fmodalid = value.values;
+      this.Fmodalid = value.values || null;
       for (let i = 0; i < this.Fmodalid.departments.length; i++) {
         this.Fmodalid.departments[i].id = String(this.Fmodalid.departments[i].id);
       }
     });
     // 得到所有的生产线id
-    // this.req.FindsystemSysid().subscribe(value => {
-    //   this.proLineids = value.values;
-    //   if (this.proLineids !== null && this.proLineids !== undefined) {
-    //     // 通过生产线来查找视频组，对表格的初始化。
-    //     this.pageBody = new pageBody(1, 10, this.proLineids[0].sid);
-    //     this.Update();
-    //   }
-    // });
+    this.req.FindsystemSysid().subscribe(value => {
+      this.proLineids = value.values || null;
+    });
     // 监视摄像机组的状态，每一 500ms 读取用户输入的摄像机组值
     this.cameraGroupStatus = new FormControl();
     this.cameraGroupStatus.valueChanges
       .debounceTime(500)
       .subscribe(changeValue => {
-        if (changeValue === '1' || changeValue === '0') {
+        if (changeValue === '1' || changeValue === '0' || changeValue === '') {
           this.cameraGroupStatusPrompt = true;
-        }else {
+        } else {
           this.cameraGroupStatusPrompt = false;
         }
       });
     this.Update();
   }
-  // 增，修。选择模块id
-  public selectModalId(modalId): void {
 
+  // 增，修。选择模块id
+  public selectModalId(modalId, form): void {
+    form.patchValue({pId: modalId});
   }
+  // 增，修。选择生产线id
+  public selectLineId(lineId, form): void {
+    form.patchValue({proSystem: lineId});
+  }
+
   // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
     this.inputvalid = false;
@@ -110,20 +116,20 @@ export class CameraGroupComponent implements OnInit {
     this.mustone = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
+          this.modifyForm.patchValue({UpdateId: this.detail.id});
+          this.modifyForm.patchValue({name: this.detail.value});
           this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
           this.listenDescModal = false;
-        }else {
+        } else {
           this.mustone = true;
         }
       } else {
@@ -138,7 +144,6 @@ export class CameraGroupComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }
@@ -148,11 +153,13 @@ export class CameraGroupComponent implements OnInit {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
+
   // 翻页
   public getPageBody(event): void {
     this.pageBody.page = event.page;
     this.Update();
   }
+
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
@@ -164,13 +171,14 @@ export class CameraGroupComponent implements OnInit {
       this.checked = '';
     }
   }
+
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
     const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
-      for (let j = 0; j < haschecklen; j++ ) {
+      for (let j = 0; j < haschecklen; j++) {
         if (this.hasChecked[j] === i) {
           this.hasChecked.splice(j, 1);
         }
@@ -193,7 +201,7 @@ export class CameraGroupComponent implements OnInit {
       if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+          const body = 'id=' + this.datas[this.hasChecked[j]].id + '&creator=' + this.datas[this.hasChecked[j]].creator;
           this.req.deleteVideomanager(body)
             .subscribe((res) => {
               if (j === haschecklen - 1) {
@@ -207,6 +215,7 @@ export class CameraGroupComponent implements OnInit {
     }
 
   }
+
 // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public con_add(): void {
     if (this.addForm.value) {
@@ -223,6 +232,7 @@ export class CameraGroupComponent implements OnInit {
       this.inputvalid = true;
     }
   }
+
 //  修改表格内容
   public con_modify(): void {
     if (this.modifyForm.valid) {
@@ -239,16 +249,18 @@ export class CameraGroupComponent implements OnInit {
       this.inputvalid = true;
     }
   }
+
   // 在增加， 删除，修改后即时刷新
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
     this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
-        this.num = Math.ceil(value.values.number / 10);
-        this.datas = value.values.datas;
+        console.log(value);
+        this.num = value.values.totalPage;
+        this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框
-        const setinter = setInterval(() => {
+        const setInter = setInterval(() => {
           const trs = document.getElementsByTagName('tr');
           // trs 长度大于 1时， 取消setInterval
           if (trs.length > 1) {
@@ -262,15 +274,17 @@ export class CameraGroupComponent implements OnInit {
                 e.stopImmediatePropagation();
               });
             }
-            clearInterval(setinter);
+            clearInterval(setInter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+
+  // 清除屏幕
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
   }
 }

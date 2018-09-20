@@ -237,7 +237,7 @@ export class ReqService {
 
   // 视频管理组的查看
   public findVideomanager(body): Observable<any> {
-    return this.http.post(this.IP_Port + '/element/SelectCameraGroupAll', body, this.headers);
+    return this.http.post(this.IP_Port + '/element/SelectCameraGroup', body, this.headers);
   }
   // 视频管理组的增加
   public addVideomanager(body): Observable<any> {
@@ -353,7 +353,9 @@ export class ReqService {
     return this.http.post(this.IP_Port + '/element-admin/item-info/delete', body, this.headers);
   }
 
-//  以下是查看父id请求
+ /**
+  * 以下是查看父id请求
+  * */
   // 组织和部门ID
   public FindDepartOrgani(): Observable<any> {
     return this.http.post(this.IP_Port + '/element-admin/department/tree', null, this.headers);
