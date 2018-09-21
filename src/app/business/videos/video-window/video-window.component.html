@@ -1,6 +1,11 @@
 <div class="container-fluid">
   <div class="row">
     <div class="videoRegion col-lg-9 col-md-9 col-sm-9" >
+      <div class="row text-center">
+        <button type="button" class="controlRoute" (click)="changeRoute()">切换网线</button>
+        <span *ngIf="controlRoute">当前的线路:&nbsp;外网</span>
+        <span *ngIf="!controlRoute">当前的线路:&nbsp;内网</span>
+      </div>
       <div class="row">
         <div class="col-lg-6 col-md-6 col-sm-6">
           <div class="center-left-top">

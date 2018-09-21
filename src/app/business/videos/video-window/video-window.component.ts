@@ -22,9 +22,10 @@ export class VideoWindowComponent implements OnInit {
   public c2: Array<any>;
   public c3: Array<any>;
   public c4: Array<any>;
-  public domSanitizer: DomSanitizer;
   public treeScrollH: number;
   public catalogH: number;
+  // 当它为true的时候为外网，默认为外网。false的时候为内网
+  public controlRoute = true;
   /**************  ng2-tree ************/
   public tree: TreeModel;
 
@@ -51,23 +52,30 @@ export class VideoWindowComponent implements OnInit {
     this.treeScrollH = e.clientY;
   }
   public logEvent(e: NodeEvent): void {
+    let url;
+    if (this.controlRoute) {
+      url = this.addHtmlVideo1(e.node.node.outerUrl);
+    }else {
+      url = this.addHtmlVideo1(e.node.node.innerUrl);
+    }
     if (e.node.parent.positionInParent === 0) {
       this.videoLocation1 = e.node.node.value;
-      document.querySelector('#window1').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+      document.querySelector('#window1').innerHTML = this.addHtmlVideo1(url);
     } else if (e.node.parent.positionInParent === 1) {
       this.videoLocation2 = e.node.node.value;
-      document.querySelector('#window2').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+      document.querySelector('#window2').innerHTML = this.addHtmlVideo1(url);
     } else if (e.node.parent.positionInParent === 2) {
       this.videoLocation3 = e.node.node.value;
-      document.querySelector('#window3').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+      document.querySelector('#window3').innerHTML = this.addHtmlVideo1(url);
     } else {
       this.videoLocation4 = e.node.node.value;
-      document.querySelector('#window4').innerHTML = this.addHtmlVideo1(e.node.node.outer_url);
+      document.querySelector('#window4').innerHTML = this.addHtmlVideo1(url);
     }
   }
 
   public addHtmlVideo1(url: string): string {
-    const html = `<object type='application/x-vlc-plugin' id='' style="height: 100%;width: 100%;position: absolute;visibility: visible;z-index: 1030;" events='True'
+    const html = `<object type='application/x-vlc-plugin' id=''
+                style="height: 100%;width: 100%;position: absolute;visibility: visible;z-index: 1030;" events='True'
                 pluginspage="http://www.videolan.org"
                 codebase="http://downloads.videolan.org/pub/videolan/vlc-webplugins/2.0.6/npapi-vlc-2.0.6.tar.xz">
                 <param name='mrl' value='${url}' />
@@ -78,6 +86,10 @@ export class VideoWindowComponent implements OnInit {
             </object>
 `
     return html;
+  }
+  // 切换内外网
+  public changeRoute(): void {
+    this.controlRoute = !this.controlRoute;
   }
 
   public Request(): void {
@@ -91,23 +103,26 @@ export class VideoWindowComponent implements OnInit {
               // 发送请求拿到摄像机组的摄像机数量
               this.req.findVideos('gId=' + gvalueAll.values.contents[i].id + '&page=1' + '&row=1')
                 .subscribe(cvalue => {
-                  console.log(cvalue);
-                  this.req.findVideos('gId=' + gvalueAll.values.contents[i].id + '&page=' + this.pageBody.page + '&row=' + cvalue.values.totalRecord)
+                  this.req.findVideos('gId=' + gvalueAll.values.contents[i].id +
+                                              '&page=' + this.pageBody.page +
+                                              '&row=' + cvalue.values.totalRecord)
                     .subscribe(ccvalue => {
                       // 用 values  拿到该组全部的摄像机
-                      const values = ccvalue.values.contents;
-                      // console.log(values);
-                      values.map((value, index) => {
-                        switch (index % 4) {
-                          case 0: this.c1.push(value);
-                            break;
-                          case 1: this.c2.push(value);
-                            break;
-                          case 2: this.c3.push(value);
-                            break;
-                          case 3: this.c4.push(value);
-                        }
-                      });
+                      const values = ccvalue;
+                      if (ccvalue.values) {
+                        console.log(values);
+                        values.values.contents.map((value, index) => {
+                          switch (index % 4) {
+                            case 0: this.c1.push(value);
+                              break;
+                            case 1: this.c2.push(value);
+                              break;
+                            case 2: this.c3.push(value);
+                              break;
+                            case 3: this.c4.push(value);
+                          }
+                        });
+                      }
                       this.tree = {
                         value: '彩铝智能制造视频监控平台',
                         settings: {

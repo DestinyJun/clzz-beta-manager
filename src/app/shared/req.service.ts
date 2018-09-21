@@ -4,7 +4,7 @@ import {HttpClient, HttpHeaders} from '@angular/common/http';
 
 @Injectable()
 export class ReqService {
-  private IP_Port = 'http://123.249.28.108:8081';
+  private IP_Port = 'http://119.23.219.22:80';
   private headers = { headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})};
   constructor(private http: HttpClient) { }
   // 登陆验证
