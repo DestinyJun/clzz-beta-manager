@@ -267,7 +267,6 @@ export class ItemComponent implements OnInit {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      console.log(this.modifyForm.value);
       this.req.ItemModify(this.commonfun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;

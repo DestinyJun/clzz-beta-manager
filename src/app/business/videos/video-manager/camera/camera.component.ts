@@ -231,7 +231,7 @@ export class CameraComponent implements OnInit {
     this.req.findVideos('gId=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
         console.log(value);
-        this.num = value.values.totalPage + 1;
+        this.num = value.values.totalPage;
         this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {

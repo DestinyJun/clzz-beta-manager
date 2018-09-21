@@ -110,7 +110,6 @@ export class VideoWindowComponent implements OnInit {
                       // 用 values  拿到该组全部的摄像机
                       const values = ccvalue;
                       if (ccvalue.values) {
-                        console.log(values);
                         values.values.contents.map((value, index) => {
                           switch (index % 4) {
                             case 0: this.c1.push(value);

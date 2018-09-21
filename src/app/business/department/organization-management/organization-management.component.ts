@@ -92,13 +92,11 @@ export class OrganizationManagementComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
@@ -120,7 +118,6 @@ export class OrganizationManagementComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
     }
   }

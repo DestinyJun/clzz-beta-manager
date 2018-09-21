@@ -256,7 +256,6 @@ export class CameraGroupComponent implements OnInit {
     this.mustone = false;
     this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
       .subscribe(value => {
-        console.log(value);
         this.num = value.values.totalPage;
         this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框
