@@ -122,7 +122,7 @@ export class ItemComponent implements OnInit {
       this.commonfun.objDeepCopy(this.datas[i], this.detail);
       this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
       this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       if (this.hasChecked.length !== 1) {
@@ -130,7 +130,7 @@ export class ItemComponent implements OnInit {
           this.mustone = false;
           const date = new Date(this.detail.starttime);
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
           document.getElementById('modifyYear').innerHTML = String(date.getFullYear());
           document.getElementById('modifyMonth').innerHTML = String(date.getMonth() + 1);
@@ -147,18 +147,18 @@ export class ItemComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
       // 打印二维码
       this.QRcodeValue = this.datas[i].itemcode;
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
   // 关闭模态框, 增，修，查

@@ -130,7 +130,7 @@ export class UsersComponent implements OnInit {
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       if (this.hasChecked.length !== 1) {
@@ -138,7 +138,7 @@ export class UsersComponent implements OnInit {
           this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         } else {
           this.mustone = true;
@@ -150,12 +150,12 @@ export class UsersComponent implements OnInit {
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 // 关闭模态框, 增，修，查
