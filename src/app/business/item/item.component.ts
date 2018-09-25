@@ -32,7 +32,7 @@ export class ItemComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   public validTimeFormat: boolean;
-  public controlSearchText: boolean;
+  // public controlSearchText: boolean;
   // 用来监听模态框 是否 是从查看详情 跳转到 修改模态框
   public listenDescModal: boolean;
   public QRcodeValue: string;
@@ -52,7 +52,7 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.validTimeFormat = false;
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
     this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
@@ -184,23 +184,23 @@ export class ItemComponent implements OnInit {
     }
   }
   // 按编号查找
-  public numSearch(searchContext, template: TemplateRef<any>, e): void {
-    e.stopPropagation();
-    if (this.controlSearchText) {
-      this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
-        if (String(res.values) !== 'null') {
-          this.detail = res.values;
-          this.modalRef = this.modalService.show(template);
-          this.controlSearchText = false;
-        }else {
-          this.status = 13;
-          this.resMessage = '项目编号不存在';
-        }
-      });
-    }else {
-      this.controlSearchText = true;
-    }
-  }
+  // public numSearch(searchContext, template: TemplateRef<any>, e): void {
+  //   e.stopPropagation();
+  //   if (this.controlSearchText) {
+  //     this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
+  //       if (String(res.values) !== 'null') {
+  //         this.detail = res.values;
+  //         this.modalRef = this.modalService.show(template);
+  //         this.controlSearchText = false;
+  //       }else {
+  //         this.status = 13;
+  //         this.resMessage = '项目编号不存在';
+  //       }
+  //     });
+  //   }else {
+  //     this.controlSearchText = true;
+  //   }
+  // }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
     const haschecklen = this.hasChecked.length;
@@ -221,7 +221,7 @@ export class ItemComponent implements OnInit {
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public deleteItem(): void {
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
     const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
@@ -456,7 +456,7 @@ export class ItemComponent implements OnInit {
   }
 // 清除屏幕
   public cleanScreen(): void {
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
       this.openstatus = true;
       this.status = 0;
   }

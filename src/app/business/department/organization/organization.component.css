@@ -17,6 +17,9 @@ table thead tr{
 .hasError{
   border: 1px red solid;
 }
+.validField {
+  color: #00a435;
+}
 .status{
   padding: 15px;
   width: 280px;

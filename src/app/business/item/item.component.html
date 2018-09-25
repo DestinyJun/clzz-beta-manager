@@ -10,14 +10,14 @@
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <div class="numSearchDiv" [class.numSearch]="controlSearchText">
-           <!--这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查-->
-           <!--而hidden 仅仅只是掩藏 input ,但是要检查-->
-          <!--<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入项目编号">-->
-          <input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入项目编号">
-          <span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>
-        </div>
-        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <!--<div class="numSearchDiv" [class.numSearch]="controlSearchText">-->
+           <!--&lt;!&ndash;这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查&ndash;&gt;-->
+           <!--&lt;!&ndash;而hidden 仅仅只是掩藏 input ,但是要检查&ndash;&gt;-->
+          <!--&lt;!&ndash;<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入项目编号">&ndash;&gt;-->
+          <!--<input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入项目编号">-->
+          <!--&lt;!&ndash;<span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>&ndash;&gt;-->
+        <!--</div>-->
+        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
     </div>
@@ -43,7 +43,7 @@
             <td>{{it.itemposition}}</td>
             <td>{{it.longitude}}</td>
             <td>{{it.latitude}}</td>
-            <td><button (click)="openModal(openQRcode, i)">打印二维码</button></td>
+            <td><button type="button" class="btn btn-default" (click)="openModal(openQRcode, i)">打印二维码</button></td>
           </tr>
           </tbody>
         </table>

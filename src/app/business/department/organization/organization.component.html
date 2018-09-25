@@ -9,7 +9,7 @@
           <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="fa fa-plus"></span>增加</button>
           <button type="button" class="btn btn-default"  (click)="delete()"><span class="fa fa-trash-o" ></span>删除</button>
           <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
-          <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+          <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
           <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
         </div>
       </div>
@@ -68,21 +68,21 @@
         <label for="name1">部门名称</label>
         <input type="text" class="form-control" formControlName="name" [class.hasError]="addForm.get('name').invalid && addForm.get('name').touched">
         <div [hidden]="addForm.get('name').valid || addForm.get('name').untouched">
-          <span [hidden]="!addForm.hasError('required', 'name')">必填</span>
+          <span [hidden]="!addForm.hasError('required', 'name')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="number1">部门编号</label>
         <input type="text" class="form-control" formControlName="dcode" [class.hasError]="addForm.get('dcode').invalid && addForm.get('dcode').touched">
         <div [hidden]="addForm.get('dcode').valid || addForm.get('dcode').untouched">
-          <span [hidden]="!addForm.hasError('required', 'dcode')">必填</span>
+          <span [hidden]="!addForm.hasError('required', 'dcode')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="tel1">部门电话</label>
         <input type="text" class="form-control" formControlName="tel" [class.hasError]="addForm.get('tel').invalid && addForm.get('tel').touched">
         <div [hidden]="addForm.get('tel').valid || addForm.get('tel').untouched">
-          <span [hidden]="!addForm.hasError('required', 'tel')">必填</span>
+          <span [hidden]="!addForm.hasError('required', 'tel')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
@@ -125,21 +125,21 @@
         <label for="name1">部门名称</label>
         <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
         <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
+          <span [hidden]="!modifyForm.hasError('required', 'name')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="number1">部门编号</label>
         <input id="number1" type="text" class="form-control" formControlName="dcode" [class.hasError]="modifyForm.get('dcode').invalid && modifyForm.get('dcode').touched">
         <div [hidden]="modifyForm.get('dcode').valid || modifyForm.get('dcode').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'dcode')">必填</span>
+          <span [hidden]="!modifyForm.hasError('required', 'dcode')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
         <label for="tel1">部门电话</label>
         <input id="tel1" type="text" class="form-control" formControlName="tel" [class.hasError]="modifyForm.get('tel').invalid && modifyForm.get('tel').touched">
         <div [hidden]="modifyForm.get('tel').valid || modifyForm.get('tel').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'tel')">必填</span>
+          <span [hidden]="!modifyForm.hasError('required', 'tel')" class="validField">* 必填</span>
         </div>
       </div>
       <div class="form-group">
