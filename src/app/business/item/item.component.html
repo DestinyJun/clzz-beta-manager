@@ -69,14 +69,16 @@
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
         <label>{{add.name}}</label>
-        <input [type]="add.field === 'starttime'?'date':'text'" [formControlName]="(add.field === 'starttime')?'starttime1':add.field" class="form-control">
-        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
-          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
         <label>生产线编号: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value, addForm)" class="form-control">
+        <select #a_lineId (change)="selectLine(a_lineId.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.sid">{{modal.name}}</option>
         </select>
@@ -122,14 +124,16 @@
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
         <label>{{modify.name}}</label>
-        <input [type]="(modify.field === 'starttime')?'date':'text'" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
-        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
-          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
         <label>生产线编号: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value, modifyForm)" class="form-control">
+        <select #m_lineId (change)="selectLine(m_lineId.value, modifyForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [selected]="modifyForm.get('unitcode').value === modal.sid" [value]="modal.sid">{{modal.name}}</option>
         </select>
@@ -178,7 +182,9 @@
     <p>项目位置经度: &nbsp;	{{detail.longitude}}</p>
     <p>项目位置纬度: &nbsp;	{{detail.latitude}}</p>
     <p>项目明细项目: &nbsp;	{{detail.itemdetail}}</p>
-    <p>所属单位编号: &nbsp;	{{detail.unitcode}}</p>
+    <p>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f['sid'] === detail.unitcode)">所属生产线ID: {{f.sid}}, &nbsp;&nbsp;所属生产线名称: {{f.name}}</span>
+    </p>
     <p>项目巡检成员: &nbsp;	{{detail.itemmembers}}</p>
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
     <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>

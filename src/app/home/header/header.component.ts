@@ -27,7 +27,7 @@ export class HeaderComponent implements OnInit {
   public userName: string;
   public openstatus: boolean;
   public status: number;
-  // public bool: boolean;
+  public organization: any;
   constructor(
     private route: Router,
     private http: HttpClient,
@@ -61,6 +61,12 @@ export class HeaderComponent implements OnInit {
       sysids: ['', Validators.required],
       idt: [{value: '', disabled: true}, Validators.required],
       udt: [{value: '', disabled: true}, Validators.required]
+    });
+    // 查找机构
+    this.req.FindDepartOrgani().subscribe(value => {
+      this.organization = value.values.organizations;
+      console.log(this.organization);
+      console.log(value);
     });
     // 查找系统所有id
     this.req.FindsystemSysid().subscribe(value => {

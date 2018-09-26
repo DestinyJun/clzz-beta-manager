@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {CommonfunService} from '../../../../shared/commonfun.service';
 import {ReqService} from '../../../../shared/req.service';
-import {Camera, Field, PageBody} from '../../../../shared/global.service';
+import {Camera, Field, PageBody, ValidMsg} from '../../../../shared/global.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
@@ -67,10 +67,26 @@ export class CameraComponent implements OnInit {
       Update_id: ['', Validators.required],
       name: [''],
       creator: [''],
-      // innerUrl: [''],
-      // outerUrl: [''],
+      innerUrl: [''],
+      outerUrl: [''],
       gId: ['']
     });
+    this.fieldsAdd = [
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机外网地址', 'outerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('所属摄像机组编号', 'gId', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机外网地址', 'outerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('所属摄像机组编号', 'gId', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
     this.routerInfo.params.subscribe((value) => {
       this.gid = value.id;
@@ -86,13 +102,11 @@ export class CameraComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;

@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
 import {BsModalService} from 'ngx-bootstrap/modal';
 import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import {Field, ItemList, PageBody} from '../../shared/global.service';
+import {Field, ItemList, PageBody, ValidMsg} from '../../shared/global.service';
 import {copyObj} from '@angular/animations/browser/src/util';
 
 @Component({
@@ -57,25 +57,25 @@ export class ItemComponent implements OnInit {
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     this.fieldsAdd = [
-      new Field('项目名称',	'itemname'),
-      new Field('项目位置',	'itemposition'),
+      new Field('项目名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('项目位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('项目位置经度',	'longitude'),
       // new Field('项目位置纬度',	'latitude'),
-      new Field('项目明细',	'itemdetail'),
+      new Field('项目明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线编号',	'unitcode'),
-      new Field('项目巡检成员',	'itemmembers'),
-      new Field('巡检时间间隔（单位：小时）',	'timecell')
+      new Field('项目巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('项目编号',	'itemcode'),
-      new Field('项目名称',	'itemname'),
-      new Field('项目位置',	'itemposition'),
-      new Field('经度',	'longitude'),
-      new Field('纬度',	'latitude'),
-      new Field('项目明细',	'itemdetail'),
-      // new Field('生产线编号',	'unitcode'),
-      new Field('项目巡检成员',	'itemmembers'),
-      new Field('巡检时间间隔（单位：小时）',	'timecell')
+      new Field('项目编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('项目名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('项目位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('项目明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('项目巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     //  增加表单
     this.addForm = this.fb.group({
@@ -108,7 +108,7 @@ export class ItemComponent implements OnInit {
     });
     this.Update();
   }
-  public SelectAddModalId(value, form): void {
+  public selectLine(value, form): void {
     form.patchValue({'unitcode': value});
   }
 // 控制模态框, 增，修，查，二维码
@@ -262,7 +262,7 @@ export class ItemComponent implements OnInit {
   }
 //  修改表格内容
   public itemModify(): void {
-    this.modifyForm.patchValue({starttime: this.getTime(this.modifyForm, 'modify')});
+    this.getTime(this.modifyForm, 'modify');
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -319,7 +319,7 @@ export class ItemComponent implements OnInit {
   }
 
   // 时间格式验证 和 得到时间戳
-  public getTime(form: FormGroup, type: string): string {
+  public getTime(form: FormGroup, type: string): void {
     let isCorrectYear = true;
     let isCorrectMouth = true;
     let isCorrectDay = true;
@@ -427,12 +427,9 @@ export class ItemComponent implements OnInit {
     }
     if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
       this.validTimeFormat = false;
-      // form.patchValue({starttime: date.getTime()});
-      return date.getTime().toString();
+      form.patchValue({starttime: date.getTime()});
     }else {
       this.validTimeFormat = false;
-      // form.patchValue({starttime: ''});
-      return '';
     }
   }
 

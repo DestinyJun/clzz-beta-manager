@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {PageBody, DeviceProductionLineList, Field} from '../../../shared/global.service';
+import {PageBody, DeviceProductionLineList, Field, ValidMsg} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -46,28 +46,28 @@ export class ProductionLineComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
+    // 增加模态框表单
+    this.addForm = this.fb.group({
+      sid: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      did: ['', [Validators.required]]
+    });
+    this.modifyForm = this.fb.group({
+      sid: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      did: ['', [Validators.required]]
+    });
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
+      new Field('生产线id',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];
     this.fieldsModify = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
+      new Field('生产线id',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];
-    // 增加模态框表单
-    this.addForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
-    this.modifyForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values['departments'];
@@ -114,11 +114,8 @@ export class ProductionLineComponent implements OnInit {
     }
   }
 
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'did': value});
-  }
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'did': value});
+  public selectDepartments(value, form): void {
+    form.patchValue({'did': value});
   }
 
   // 关闭模态框, 增，修，查

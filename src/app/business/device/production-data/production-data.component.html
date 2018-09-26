@@ -77,16 +77,42 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
-        <label>{{add.name}}:</label>
-        <input [type]="(add.field === 'dprodate' || add.field === 'dinstalldate')?'date':'text'" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
-        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
-          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
+        <label>{{add.name}}</label>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label>请选择所属模块id: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
-          <option [value]="null">默认值为空，请选择</option>
+        <label>使用状态: &nbsp;</label>
+        <select #a_usestatus (change)="selectUesStatus(a_usestatus.value, addForm)" class="form-control">
+          <option value="">请选择</option>
+          <option [value]="1">能使用</option>
+          <option [value]="0">不能使用</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>设备类型: &nbsp;</label>
+        <select #a_dtype (change)="selectDType(a_dtype.value, addForm)" class="form-control">
+          <option value="">请选择</option>
+          <option [value]="1">机电类</option>
+          <option [value]="0">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>设备运行状态: &nbsp;</label>
+        <select #a_dstatus (change)="selectDStatus(a_dstatus.value, addForm)" class="form-control">
+          <option value="">请选择</option>
+          <option [value]="1">运行中...</option>
+          <option [value]="0">未运行</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>所属模块id: &nbsp;</label>
+        <select #a_modalId (change)="selectModalId(a_modalId.value, addForm)" class="form-control">
+          <option value="">请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.mid">{{modal.name}}</option>
         </select>
       </div>
@@ -116,15 +142,40 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
-        <label>{{modify.name}}:</label>
-        <input [type]="(modify.field === 'dprodate' || modify.field === 'dinstalldate')?'date':'text'" formControlName="{{modify.field}}" class="form-control" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
-        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
-          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
+        <label>{{modify.name}}</label>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
+        <label>使用状态: &nbsp;</label>
+        <select #m_usestatus (change)="selectUesStatus(m_usestatus.value, modifyForm)" class="form-control">
+          <option [value]="''">不填</option>
+          <option [selected]="detail.usestatus === '1' || detail.usestatus === 1" [value]="1">能使用</option>
+          <option [selected]="detail.usestatus === '0' || detail.usestatus === 0" [value]="0">不能使用</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>设备类型: &nbsp;</label>
+        <select #m_dtype (change)="selectDType(m_dtype.value, modifyForm)" class="form-control">
+          <option [selected]="detail.dtype === '1' || detail.dtype === 1" [value]="1">机电类</option>
+          <option [selected]="detail.dtype === '0' || detail.dtype === 0" [value]="0">其他</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>设备运行状态: &nbsp;</label>
+        <select #m_dstatus (change)="selectDStatus(m_dstatus.value, modifyForm)" class="form-control">
+          <option [value]="null">不填</option>
+          <option [selected]="detail.dstatus === '1' || detail.dstatus === 1" [value]="1">运行中...</option>
+          <option [selected]="detail.dstatus === '0' || detail.dstatus === 0" [value]="0">未运行</option>
+        </select>
+      </div>
+      <div class="form-group">
         <label>所属模块id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <select #m_modalId (change)="selectModalId(m_modalId.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.mid === detail.mid" [value]="modal.mid">{{modal.name}}</option>
         </select>
       </div>
@@ -162,10 +213,19 @@
     <p>额定功率: {{detail['power']}}</p>
     <p>额定电流: {{detail['current']}}</p>
     <p>额定电压: {{detail['voltage']}}</p>
-    <p>使用状态: {{detail['usestatus']}}</p>
-    <p>设备类型: {{detail['dtype']}}</p>
-    <p>设备运行状态: {{detail['dstatus']}}</p>
-    <p>模块id: {{detail['mid']}}</p>
+    <p>
+      <span *ngIf="detail.usestatus === 1">使用状态: 能使用</span>
+      <span *ngIf="detail.usestatus === 0">使用状态: 不能使用</span>
+    </p>
+    <p>
+      <span *ngIf="detail['dtype'] === 1">设备类型: 机电类</span>
+      <span *ngIf="detail['dtype'] === 0">设备类型: 其他</span>
+    <p>
+    <span *ngIf="detail['dstatus'] === 1">设备运行状态: 运行中</span>
+    <span *ngIf="detail['dstatus'] === 1">设备运行状态: 未运行</span>
+    <p>
+      <span *ngFor="let modal of Fmodalid" [hidden]="!(modal.mid === detail.mid)">模块ID: {{detail['mid']}},&nbsp;&nbsp;模块名称: {{modal['name']}}</span>
+    </p>
     <p>插入时间 :{{detail['idt']}}</p>
     <p>更新时间 :{{detail['udt']}}</p>
     <div class="clearfix"></div>

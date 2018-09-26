@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {PageBody, DeviceProductionIcmList, Field} from '../../../shared/global.service';
+import {PageBody, DeviceProductionIcmList, Field, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -47,13 +47,13 @@ export class ProductionIcmComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('模块id',	'mid'),
-      new Field('名称',	'name'),
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid')
     ];
     this.fieldsModify = [
-      new Field('模块id',	'mid'),
-      new Field('名称',	'name')
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid'),
     ];
     this.addForm = this.fb.group({
@@ -119,13 +119,9 @@ export class ProductionIcmComponent implements OnInit {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
-// 选择增加设备id
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'sid': value});
-  }
 // 选择修改设备id
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'sid': value});
+  public selectLineId(value, form): void {
+    form.patchValue({'sid': value});
   }
   // 控制模态框
   public openProIcm(template: TemplateRef<any>): void {

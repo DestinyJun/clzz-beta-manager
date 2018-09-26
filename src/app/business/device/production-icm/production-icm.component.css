@@ -54,7 +54,10 @@
   padding: 25px;
 }
 .hasError{
-  border: 1px red solid;
+  border: 1px #d44b39 solid;
+}
+.validField {
+  color: #f1432e;
 }
 .status{
   padding: 15px;

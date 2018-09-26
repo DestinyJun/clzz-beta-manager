@@ -1,6 +1,6 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {DeviceProductionSensorList, Field, PageBody} from '../../../shared/global.service';
+import {DeviceProductionSensorList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -20,7 +20,7 @@ export class ProductionSensorComponent implements OnInit {
   public num: number;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
-  public detail: any;
+  public detail: DeviceProductionSensorList;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -30,6 +30,9 @@ export class ProductionSensorComponent implements OnInit {
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
+  public sensorType: SensorType[];
+  public sensorStatus: SensorStatus[];
+  public dataType: DataType[];
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
@@ -47,43 +50,58 @@ export class ProductionSensorComponent implements OnInit {
     this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      new Field('监控器sid',	'sid'),
-      new Field('名称',	'sname'),
-      new Field('类型',	'stype'),
-      new Field('数据类型',	'sdatatype'),
-      new Field('变量地址',	'saddress'),
-      new Field('状态',	'sstatus'),
-      new Field('数值最大值',	'smax'),
-      new Field('初始值',	'initialvalue')
-      // new Field('推荐值',	'srecomm'),
-      // new Field('设备id',	'did')
-    ];
-    this.fieldsModify = this.fieldsAdd;
     // 模态框表单
     this.addForm = this.fb.group({
-      sid: ['', Validators.required],
-      sname: ['', Validators.required],
-      stype: ['', Validators.required],
-      sdatatype: ['', Validators.required],
-      saddress: ['', Validators.required],
-      sstatus: ['', Validators.required],
-      smax: ['', Validators.required],
-      initialvalue: ['', Validators.required],
-      did: ['', Validators.required]
+      sid: ['', [Validators.required]],
+      sname: ['', [Validators.required]],
+      stype: ['', [Validators.required]],
+      sdatatype: ['', [Validators.required]],
+      saddress: ['', [Validators.required]],
+      sstatus: ['', [Validators.required]],
+      smax: ['', [Validators.required]],
+      initialvalue: ['', [Validators.required]],
+      did: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      sid: ['', Validators.required],
-      sname: ['', Validators.required],
-      stype: ['', Validators.required],
-      sdatatype: ['', Validators.required],
-      saddress: ['', Validators.required],
-      sstatus: ['', Validators.required],
-      smax: ['', Validators.required],
-      initialvalue: ['', Validators.required],
-      did: ['', Validators.required]
+      sid: ['', [Validators.required]],
+      sname: ['', [Validators.required]],
+      stype: ['', [Validators.required]],
+      sdatatype: ['', [Validators.required]],
+      saddress: ['', [Validators.required]],
+      sstatus: ['', [Validators.required]],
+      smax: ['', [Validators.required]],
+      initialvalue: ['', [Validators.required]],
+      did: ['', [Validators.required]]
     });
+    // 显示页面增，修改表单控件
+    this.fieldsAdd = [
+      new Field('传感器编号',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'sname', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('类型',	'stype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('数据类型',	'sdatatype', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('变量地址',	'saddress', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('状态',	'sstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('数值最大值',	'smax', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('初始值',	'initialvalue', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = this.fieldsAdd;
+    // 初始化传感器类型
+    this.sensorType = [
+      {value: 0, note: '普通'},
+      {value: 1, note: '温度'},
+      {value: 2, note: '厚度'},
+      {value: 3, note: '速度'},
+      {value: 4, note: '电流'},
+      {value: 4, note: '水位'},
+    ];
+    this.sensorStatus = [
+      {value: 1, note: '启用'},
+      {value: 0, note: '未启用'},
+    ];
+    this.dataType = [
+      {value: 'BOOL', note: 'BOOL'},
+      {value: 'REAL', note: 'REAL'},
+    ];
     this.Update();
     this.req.FindDeviceDeviceid().subscribe(value => {
       this.Fmodalid = value.values;
@@ -95,16 +113,13 @@ export class ProductionSensorComponent implements OnInit {
     this.inputvalid = false;
     this.gtone = false;
     this.mustone = false;
-    // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
@@ -126,23 +141,29 @@ export class ProductionSensorComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
-
   // 关闭模态框, 增，修，查
   public closeModal(): void {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
-// 选择增加设备id
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'did': value});
+//  数据类型选择
+  public selectDataType(value, form): void {
+    form.patchValue({sdatatype: value});
   }
-// 选择修改设备id
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'did': value});
+//  类型选择
+  public selectSType(value, form): void {
+    form.patchValue({stype: value});
+  }
+  //  状态选择
+  public selectStatus(value, form): void {
+    form.patchValue({sstatus: value});
+  }
+// 选择设备id
+  public selectDeviceId(value, form): void {
+    form.patchValue({did: value});
   }
   public getPageBody(event): void {
     this.pageBody = event;
@@ -162,7 +183,7 @@ export class ProductionSensorComponent implements OnInit {
 
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
@@ -197,7 +218,7 @@ export class ProductionSensorComponent implements OnInit {
   }
 //  删除表格 并且 重新请求数据
   public deleteProSensor(): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
       this.gtone = true;
@@ -272,4 +293,22 @@ export class ProductionSensorComponent implements OnInit {
     this.status = 0;
   }
 
+}
+
+// 传感器类型
+interface SensorType {
+  value: number;
+  note: string;
+}
+
+// 传感器状态
+interface SensorStatus {
+  value: number;
+  note: string;
+}
+
+// 数理类型
+interface DataType {
+  value: string;
+  note: string;
 }

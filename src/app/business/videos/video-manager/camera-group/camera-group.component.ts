@@ -4,7 +4,7 @@ import {CommonfunService} from '../../../../shared/commonfun.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../../shared/req.service';
 import 'rxjs/Rx';
-import {CameraGroup, Field, PageBody} from '../../../../shared/global.service';
+import {CameraGroup, Field, PageBody, ValidMsg} from '../../../../shared/global.service';
 
 @Component({
   selector: 'app-camera-group',
@@ -32,8 +32,7 @@ export class CameraGroupComponent implements OnInit {
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
-  // 控制摄像组 的状态值，只能为 0 和 1.
-  public cameraGroupStatus: FormControl;
+  public cameraGroupStatus: CameraGroupStatus[];
   // cameraGroupStatusPrompt 用来检测到 cameraGroupStatus 的 控件值不是为 0 ， 1，则提示用户。true 表示合法， false 则相反。
   public cameraGroupStatusPrompt = true;
 
@@ -74,6 +73,22 @@ export class CameraGroupComponent implements OnInit {
       pId: [''],
       proSystem: ['']
     });
+    this.fieldsAdd = [
+      new Field('摄像机组编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机组名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机组创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机组状态', 'status', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('所属部门ID', 'pId', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('原摄像机编号', 'UpdateId', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('请输入修正的摄像机ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机组名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机组创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机组状态', 'status', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('所属部门ID', 'pId', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('操作', 'proSystem', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 得到所有的组织id
     this.req.FindDepartOrgani().subscribe(value => {
       // this.Fmodalid = value.values.departments;  // 这有问题，id 为undefined， 只有下面才不会出现问题
@@ -86,20 +101,17 @@ export class CameraGroupComponent implements OnInit {
     this.req.FindsystemSysid().subscribe(value => {
       this.proLineids = value.values || null;
     });
-    // 监视摄像机组的状态，每一 500ms 读取用户输入的摄像机组值
-    this.cameraGroupStatus = new FormControl();
-    this.cameraGroupStatus.valueChanges
-      .debounceTime(500)
-      .subscribe(changeValue => {
-        if (changeValue === '1' || changeValue === '0' || changeValue === '') {
-          this.cameraGroupStatusPrompt = true;
-        } else {
-          this.cameraGroupStatusPrompt = false;
-        }
-      });
+    this.cameraGroupStatus = [
+      {status: 1, msg: '开启'},
+      {status: 0, msg: '停用'},
+    ];
     this.Update();
   }
 
+  // 选择状态
+  public selectStatus(value, form): void {
+      form.patchValue({status: value});
+  }
   // 增，修。选择模块id
   public selectModalId(modalId, form): void {
     form.patchValue({pId: modalId});
@@ -213,7 +225,6 @@ export class CameraGroupComponent implements OnInit {
         }
       }
     }
-
   }
 
 // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
@@ -286,4 +297,10 @@ export class CameraGroupComponent implements OnInit {
     this.openstatus = true;
     this.status = 0;
   }
+}
+
+
+interface CameraGroupStatus {
+  status: number;
+  msg: string;
 }

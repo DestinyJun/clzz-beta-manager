@@ -1,9 +1,9 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
-import {Field, PageBody, UsersManager} from '../../shared/global.service';
+import {Field, PageBody, UsersManager, ValidMsg} from '../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
-import {mobileValidators} from '../../validator/Validators';
+import {emailValidator, idCardValidators, mobileValidators} from '../../validator/Validators';
 import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
@@ -14,8 +14,8 @@ import {CommonfunService} from '../../shared/commonfun.service';
 })
 export class UsersComponent implements OnInit {
   public datas: Array<UsersManager>;
-  public fieldsAdd: Array<Field>;
-  public fieldsModify: Array<Field>;
+  public fieldsAdd: Array<Field> = [];
+  public fieldsModify: Array<Field> = [];
   public listenDescModal: boolean;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
@@ -53,37 +53,18 @@ export class UsersComponent implements OnInit {
     this.userLineIds = [];
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      new Field('用户编码', 'userCode'),
-      new Field('身份证', 'idCode'),
-      new Field('真实姓名', 'realName'),
-      new Field('用户名', 'userName'),
-      new Field('家庭住址', 'homeAddress'),
-      new Field('家庭联系电话', 'homeTelephone'),
-      // new Field('所属组织id',	'organizationId'),
-      new Field('密码', 'password'),
-      new Field('联系电话', 'phone'),
-      new Field('邮箱', 'email'),
-      new Field('生日', 'birthday'),
-      new Field('生产线列表', 'Sysids'),
-      new Field('性别', 'gendernew')
-    ];
-    const id = new Field('用户数据id', 'id');
-    this.fieldsModify = this.fieldsAdd;
-    this.fieldsModify.push(id);
     //  增加模态框表单
     this.addForm = this.fb.group({
       userCode: ['', Validators.required],
-      idCode: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18)]],
+      idCode: ['', [Validators.required, idCardValidators]],
       realName: ['', Validators.required],
       userName: ['', Validators.required],
       homeAddress: ['', Validators.required],
-      homeTelephone: ['', Validators.required],
+      homeTelephone: ['', [Validators.required, mobileValidators]],
       organizationId: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(16)]],
       phone: ['', [Validators.required, mobileValidators]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, emailValidator]],
       birthday: ['', Validators.required],
       sysids: ['', Validators.required],
       gender: ['', Validators.required]
@@ -91,19 +72,51 @@ export class UsersComponent implements OnInit {
     this.modifyForm = this.fb.group({
       id: ['', Validators.required],
       userCode: ['', Validators.required],
-      idCode: ['', [Validators.required, Validators.minLength(18), Validators.maxLength(18)]],
+      idCode: ['', [Validators.required, idCardValidators]],
       realName: ['', Validators.required],
       userName: ['', Validators.required],
       homeAddress: ['', Validators.required],
-      homeTelephone: ['', Validators.required],
+      homeTelephone: ['', [Validators.required, mobileValidators]],
       organizationId: ['', Validators.required],
       password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(16)]],
       phone: ['', [Validators.required, mobileValidators]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, emailValidator]],
       birthday: ['', Validators.required],
       sysids: ['', Validators.required],
       gender: ['', Validators.required]
     });
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('用户编码', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('身份证', 'idCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('真实姓名', 'realName', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('用户名', 'userName', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('家庭住址', 'homeAddress', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('家庭联系电话', 'homeTelephone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织id',	'organizationId'),
+      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('联系电话', 'phone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
+      new Field('生日', 'birthday', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线列表', 'sysids', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
+    ];
+    this.fieldsModify = [
+      new Field('用户数据ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('用户编码', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('身份证', 'idCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('真实姓名', 'realName', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('用户名', 'userName', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('家庭住址', 'homeAddress', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('家庭联系电话', 'homeTelephone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织id',	'organizationId'),
+      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('联系电话', 'phone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
+      new Field('生日', 'birthday', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线列表', 'sysids', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
+    ];
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.organizationId = value.values;
@@ -163,21 +176,15 @@ export class UsersComponent implements OnInit {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
-  // 增加时，选择部门id
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'organizationId': value});
-  }
 
-  // 修改时，选择部门id
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'organizationId': value});
+  // 选择部门id
+  public selectOrganization(value, form): void {
+    form.patchValue({'organizationId': value});
   }
-
   // 增加 和 修改 时，选择用户性别
   public selectGender(value): void {
     this.addForm.patchValue({gender: value});
   }
-
   // 选择生产线 ID 并保存在 userLineIds 数组里面，增，修，查 共用
   public selectProLineId(id, e): void {
     // 不需要考虑到 index = -1 的情况
@@ -257,12 +264,10 @@ export class UsersComponent implements OnInit {
     const sysidsStr = [];
     for (let i = 0; i < this.userLineIds.length; ++i) {
       if (this.userLineIds[i].sys_status === 1) {
-        console.log(1111);
         sysidsStr.push(this.userLineIds[i].sys_id);
       }
     }
     this.addForm.patchValue({sysids: sysidsStr.toString()});
-    console.log(this.userLineIds);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -360,7 +365,7 @@ export class UsersComponent implements OnInit {
       const lastf = /^\[/;
       sysids = sysids.replace(lastf, '');
       sysids = sysids.replace(firstf, '');
-      let ids = sysids.split(',');
+      const ids = sysids.split(',');
       // 如果存在某个 生产线权限，则相应的 sys_status 变成 1
       // 第一个 for 用来 遍历modifyids
       // 第二个for 用来 找查 modifyids 中的每一个 生产线id。如果存在，则相应的sysb

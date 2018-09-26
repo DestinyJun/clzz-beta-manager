@@ -1,7 +1,7 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import {DeviceProductionDataList, Field, PageBody} from '../../../shared/global.service';
+import {DeviceProductionDataList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -47,36 +47,36 @@ export class ProductionDataComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.fieldsAdd = [
-      new Field('设备id号', 'did'),
-      new Field('名称', 'name'),
-      new Field('厂家编号', 'fnum'),
-      new Field('生产厂家', 'dvender'),
-      new Field('设备型号', 'dmodule'),
-      new Field('生产日期', 'dprodate'),
-      new Field('安装日期', 'dinstalldate'),
-      new Field('额定功率', 'power'),
-      new Field('额定电流', 'current'),
-      new Field('额定电压', 'voltage'),
-      new Field('使用状态', 'usestatus'),
-      new Field('设备类型', 'dtype'),
-      new Field('设备运行状态', 'dstatus'),
-      // new Field('模块id', 'mid'),
-    ];
+      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号', 'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家', 'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号', 'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期', 'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期', 'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)', 'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)', 'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)', 'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('使用状态', 'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备类型', 'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备运行状态', 'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id', 'mid', 'text), [{'required,: '* 必填项
+      ];
     this.fieldsModify = [
-      new Field('设备id号',	'did'),
-      new Field('名称',	'name'),
-      new Field('厂家编号',	'fnum'),
-      new Field('生产厂家',	'dvender'),
-      new Field('设备型号',	'dmodule'),
-      new Field('生产日期',	'dprodate'),
-      new Field('安装日期',	'dinstalldate'),
-      new Field('额定功率',	'power'),
-      new Field('额定电流',	'current'),
-      new Field('额定电压',	'voltage'),
-      new Field('使用状态',	'usestatus'),
-      new Field('设备类型',	'dtype'),
-      new Field('设备运行状态',	'dstatus'),
-      // new Field('模块id',	'mid')
+      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号',	'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家',	'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号',	'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期',	'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期',	'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)',	'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)',	'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)',	'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('使用状态',	'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备类型',	'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备运行状态',	'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id',	'mid', 'text), [{'required,: '* 必填项
     ];
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
@@ -154,7 +154,6 @@ export class ProductionDataComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -164,6 +163,19 @@ export class ProductionDataComponent implements OnInit {
   public closeModal(): void {
     this.listenDescModal = false;
     this.modalRef.hide();
+  }
+  //  下面的关于下拉框选择的操作
+  public selectUesStatus(value, form): void {
+      form.patchValue({'usestatus': value});
+  }
+  public selectDType(value, form): void {
+    form.patchValue({'dtype': value});
+  }
+  public selectDStatus(value, form): void {
+    form.patchValue({'dstatus': value});
+  }
+  public selectModalId(value, form): void {
+    form.patchValue({'mid': value});
   }
   // 选择增加设备id
   public SelectAddModalId(value): void {
@@ -231,6 +243,7 @@ export class ProductionDataComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proDataAdd(): void {
+    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

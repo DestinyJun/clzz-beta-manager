@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
-import {Field, PageBody, UserPowerInfo} from '../../../shared/global.service';
+import {Field, PageBody, UserPowerInfo, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
@@ -19,13 +19,13 @@ export class UserManagerComponent implements OnInit {
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
-  public detail: any;
+  public detail: UserPowerInfo;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public Fmodalid: any;
-  public userid: any;
+  public userId: any;
   public openstatus: boolean;
   public status: number;
   public inputvalid: boolean;
@@ -52,9 +52,10 @@ export class UserManagerComponent implements OnInit {
       // new Field('用户ID',	'userid'),
       // new Field('模块ID',	'dcode')
     ];
-    const id = new Field('用户权限id', 'id');
+    this.fieldsModify = [
+      new Field('用户权限ID', 'id', 'text', [new ValidMsg('required', '* 必填项')])
+    ];
     this.fieldsModify = this.fieldsAdd;
-    this.fieldsModify.push(id);
     this.addForm = this.fb.group({
       userid: ['', Validators.required],
       moduleid: ['', Validators.required]
@@ -69,7 +70,7 @@ export class UserManagerComponent implements OnInit {
       this.Fmodalid = value.values;
     });
     this.req.FinduserIdname().subscribe(value => {
-      this.userid = value.values;
+      this.userId = value.values;
     });
   }
   // 控制模态框, 增，修，查

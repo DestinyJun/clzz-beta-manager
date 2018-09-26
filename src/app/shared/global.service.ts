@@ -162,7 +162,7 @@ export class DeviceProductionSensorList {
     public stype: number,
     public sdatatype: string,
     public saddress: string,
-    public sstatus: number,
+    public sstatus: any,
     public smax: number,
     public initialvalue: number,
     public did: string,
@@ -259,7 +259,7 @@ export class CameraGroup {
     public value: string,
     public id: string,
     public creator: string,
-    public status: string,
+    public status: number,
     public pId: string,
     public proSystem: string,
   ) {}
@@ -282,7 +282,8 @@ export class TechnologyParamsPackWord {
     public chinese_variable_name: string,
     public word_variable_name: string,
     public unit: string,
-    public notes: string
+    public notes: string,
+    public validators: Array<ValidMsg>
   ) {}
 }
 // 默认工艺
@@ -403,11 +404,13 @@ export class TechnologyTemperatureQueryList {
 }
 
 
-// 项目数据增加和修改 字段构造器
+// 文本框数据增加和修改 字段构造器
 export class Field {
   constructor(
     public name: string,
-    public field: string
+    public field: string,
+    public type: string,
+    public validators: Array<ValidMsg>
   ) {}
 }
 // 项目
@@ -443,5 +446,12 @@ export class HtmlVarible {
     public gtone: boolean,
     public resMessage: string,
     public listenDescModal:  boolean,
+  ) {}
+}
+// 验证的字段和当验证失败时的提示信息
+export class ValidMsg {
+  constructor(
+    public validField: string,
+    public msg: string
   ) {}
 }

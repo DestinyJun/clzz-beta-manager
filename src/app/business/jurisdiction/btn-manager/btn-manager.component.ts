@@ -1,6 +1,6 @@
 import {Component, OnChanges, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Field, JurisdictionBtnManager, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionBtnManager, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -47,32 +47,32 @@ export class BtnManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('名称',	'name'),
-      new Field('描述',	'decription'),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'decription', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('模块id',	'midnew Field')
     ];
     this.fieldsModify = [
-      new Field('按钮id', 'id'),
-      new Field('名称', 'name'),
-      new Field('描述', 'decription')
-      // new Field('模块id', 'mid'),
+      new Field('按钮编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述', 'decription', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块编号', 'mid'),
     ];
     // 增加模态框表单
     this.addForm = this.fb.group({
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
+      name: ['', [Validators.required]],
+      decription: ['', [Validators.required]],
+      mid: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
+      id: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      decription: ['', [Validators.required]],
+      mid: ['', [Validators.required]]
     });
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
-      if (this.Fmodalid !== undefined) {
+      if (this.Fmodalid) {
         // this.btnmanagerAddForm.patchValue({'mid': this.Fmodalid[0].id});
       }
     });

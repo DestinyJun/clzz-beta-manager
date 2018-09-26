@@ -20,7 +20,7 @@
           <thead>
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>sid</th>
+            <th>传感器编号</th>
             <th>名称</th>
             <th>类型</th>
             <th>数据类型</th>
@@ -28,7 +28,7 @@
             <th>状态</th>
             <th>数值最大值</th>
             <th>初始值</th>
-            <th>设备id</th>
+            <th>设备ID</th>
           </tr>
           </thead>
           <tbody>
@@ -67,15 +67,38 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
-        <label>{{add.name}}:</label>
-        <input type="text" formControlName="{{add.field}}" class="form-control" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
-        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
-          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
+        <label>{{add.name}}</label>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label>请选择设备id: &nbsp;</label>
-        <select #modal_id (change)="SelectAddModalId(modal_id.value)" class="form-control">
+        <label>数据类型: &nbsp;</label>
+        <select #a_sdatatype (change)="selectDataType(a_sdatatype.value, addForm)" class="form-control">
+          <option [value]="'REAL'">默认值(REAL)</option>
+          <option *ngFor="let daType of dataType" [value]="daType.value">{{daType.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>类型: &nbsp;</label>
+        <select #a_stype (change)="selectSType(a_stype.value, addForm)" class="form-control">
+          <option [value]="-1">未选择</option>
+          <option *ngFor="let senType of sensorType" [value]="senType.value">{{senType.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>状态: &nbsp;</label>
+        <select #a_sstatus (change)="selectStatus(a_sstatus.value, addForm)" class="form-control">
+          <option [value]="-1">未选择</option>
+          <option *ngFor="let senSta of sensorStatus" [value]="senSta.value">{{senSta.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>请选择设备ID: &nbsp;</label>
+        <select #a_device (change)="selectDeviceId(a_device.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.did">{{modal.name}}</option>
         </select>
@@ -107,15 +130,35 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
-        <label>{{modify.name}}:</label>
-        <input type="text" formControlName="{{modify.field}}" class="form-control" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
-        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
-          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
+        <label>{{modify.name}}</label>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label>设备id: &nbsp;</label>
-        <select #modal_id (change)="SelectModifyModalId(modal_id.value)" class="form-control">
+        <label>数据类型: &nbsp;</label>
+        <select #m_sdatatype (change)="selectDataType(m_sdatatype.value, modifyForm)" class="form-control">
+          <option *ngFor="let daType of dataType" [selected]="detail.sdatatype === daType.value" [value]="daType.value">{{daType.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>类型: &nbsp;</label>
+        <select #m_stype (change)="selectSType(m_stype.value, modifyForm)" class="form-control">
+          <option *ngFor="let senType of sensorType" [selected]="detail.stype === senType.value" [value]="senType.value">{{senType.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>状态: &nbsp;</label>
+        <select #m_sstatus (change)="selectStatus(m_sstatus.value, modifyForm)" class="form-control">
+          <option *ngFor="let senSta of sensorStatus" [selected]="detail.sstatus === senSta.value" [value]="senSta.value">{{senSta.note}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>设备ID: &nbsp;</label>
+        <select #m_device (change)="selectDeviceId(m_device.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.did === detail.did" [value]="modal.did">{{modal.name}}</option>
         </select>
       </div>
@@ -144,15 +187,20 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>sid	:&nbsp;{{detail.sid}}</p>
+    <p>SID	:&nbsp;{{detail.sid}}</p>
     <p>名称:&nbsp;	{{detail.sname}}</p>
     <p>类型:&nbsp;	{{detail.stype}}</p>
     <p>数据类型:&nbsp;	{{detail.sdatatype}}</p>
     <p>变量地址:&nbsp;	{{detail.saddress}}</p>
-    <p>状态:&nbsp;	{{detail.sstatus}}</p>
+    <p>
+      <span *ngIf="detail.sstatus === 1 || detail.sstatus === '1'">状态:&nbsp;	启用</span>
+      <span *ngIf="detail.sstatus === 0 || detail.sstatus === '0'">状态:&nbsp;	未启用</span>
+    </p>
     <p>数值最大值:&nbsp;	{{detail.smax}}</p>
     <p>初始值:&nbsp;	{{detail.initialvalue}}</p>
-    <p>设备id:&nbsp;	{{detail.did}}</p>
+    <p>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f.did === detail.did)">设备ID:&nbsp;	{{f.did}}, 设备名称: {{f.name}}</span>
+    </p>
     <p>插入时间:&nbsp;	{{detail.idt}}</p>
     <p>更新时间:&nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>

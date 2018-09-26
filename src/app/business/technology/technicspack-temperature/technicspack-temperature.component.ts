@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {PageBody, TechnologyParamsPackWord, TechnologyTemperatureQueryList} from '../../../shared/global.service';
+import {PageBody, TechnologyParamsPackWord, TechnologyTemperatureQueryList, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -17,8 +17,8 @@ export class TechnicspackTemperatureComponent implements OnInit {
   public pageBody: PageBody;
   public num: number;
   public detail: any;
-  public paramAddForm: FormGroup;
-  public paramModifyForm: FormGroup;
+  public addForm: FormGroup;
+  public modifyForm: FormGroup;
   public hasChecked: Array<number> = [];
   public checked: string;
   public openstatus: boolean;
@@ -43,80 +43,80 @@ export class TechnicspackTemperatureComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
-    this.paramAddForm = this.fb.group({
-      name: ['', Validators.required],
-      al_thickness: ['', Validators.required],
-      al_width: ['', Validators.required],
-      temperature_1_1: ['', Validators.required],
-      temperature_1_1_d: ['', Validators.required],
-      temperature_1_2: ['', Validators.required],
-      temperature_1_2_d: ['', Validators.required],
-      temperature_1_3: ['', Validators.required],
-      temperature_1_3_d: ['', Validators.required],
-      temperature_1_4: ['', Validators.required],
-      temperature_1_4_d: ['', Validators.required],
-      temperature_1_5: ['', Validators.required],
-      temperature_1_5_d: ['', Validators.required],
-      temperature_2_1: ['', Validators.required],
-      temperature_2_1_d: ['', Validators.required],
-      temperature_2_2: ['', Validators.required],
-      temperature_2_2_d: ['', Validators.required],
-      temperature_2_3: ['', Validators.required],
-      temperature_2_3_d: ['', Validators.required],
-      temperature_2_4: ['', Validators.required],
-      temperature_2_4_d: ['', Validators.required],
-      temperature_2_5: ['', Validators.required],
-      temperature_2_5_d: ['', Validators.required]
+    this.addForm = this.fb.group({
+      name: ['', [Validators.required]],
+      al_thickness: ['', [Validators.required]],
+      al_width: ['', [Validators.required]],
+      temperature_1_1: ['', [Validators.required]],
+      temperature_1_1_d: ['', [Validators.required]],
+      temperature_1_2: ['', [Validators.required]],
+      temperature_1_2_d: ['', [Validators.required]],
+      temperature_1_3: ['', [Validators.required]],
+      temperature_1_3_d: ['', [Validators.required]],
+      temperature_1_4: ['', [Validators.required]],
+      temperature_1_4_d: ['', [Validators.required]],
+      temperature_1_5: ['', [Validators.required]],
+      temperature_1_5_d: ['', [Validators.required]],
+      temperature_2_1: ['', [Validators.required]],
+      temperature_2_1_d: ['', [Validators.required]],
+      temperature_2_2: ['', [Validators.required]],
+      temperature_2_2_d: ['', [Validators.required]],
+      temperature_2_3: ['', [Validators.required]],
+      temperature_2_3_d: ['', [Validators.required]],
+      temperature_2_4: ['', [Validators.required]],
+      temperature_2_4_d: ['', [Validators.required]],
+      temperature_2_5: ['', [Validators.required]],
+      temperature_2_5_d: ['', [Validators.required]]
     });
-    this.paramModifyForm = this.fb.group({
-      name: ['', Validators.required],
-      al_thickness: ['', Validators.required],
-      al_width: ['', Validators.required],
-      temperature_1_1: ['', Validators.required],
-      temperature_1_1_d: ['', Validators.required],
-      temperature_1_2: ['', Validators.required],
-      temperature_1_2_d: ['', Validators.required],
-      temperature_1_3: ['', Validators.required],
-      temperature_1_3_d: ['', Validators.required],
-      temperature_1_4: ['', Validators.required],
-      temperature_1_4_d: ['', Validators.required],
-      temperature_1_5: ['', Validators.required],
-      temperature_1_5_d: ['', Validators.required],
-      temperature_2_1: ['', Validators.required],
-      temperature_2_1_d: ['', Validators.required],
-      temperature_2_2: ['', Validators.required],
-      temperature_2_2_d: ['', Validators.required],
-      temperature_2_3: ['', Validators.required],
-      temperature_2_3_d: ['', Validators.required],
-      temperature_2_4: ['', Validators.required],
-      temperature_2_4_d: ['', Validators.required],
-      temperature_2_5: ['', Validators.required],
-      temperature_2_5_d: ['', Validators.required]
+    this.modifyForm = this.fb.group({
+      name: ['', [Validators.required]],
+      al_thickness: ['', [Validators.required]],
+      al_width: ['', [Validators.required]],
+      temperature_1_1: ['', [Validators.required]],
+      temperature_1_1_d: ['', [Validators.required]],
+      temperature_1_2: ['', [Validators.required]],
+      temperature_1_2_d: ['', [Validators.required]],
+      temperature_1_3: ['', [Validators.required]],
+      temperature_1_3_d: ['', [Validators.required]],
+      temperature_1_4: ['', [Validators.required]],
+      temperature_1_4_d: ['', [Validators.required]],
+      temperature_1_5: ['', [Validators.required]],
+      temperature_1_5_d: ['', [Validators.required]],
+      temperature_2_1: ['', [Validators.required]],
+      temperature_2_1_d: ['', [Validators.required]],
+      temperature_2_2: ['', [Validators.required]],
+      temperature_2_2_d: ['', [Validators.required]],
+      temperature_2_3: ['', [Validators.required]],
+      temperature_2_3_d: ['', [Validators.required]],
+      temperature_2_4: ['', [Validators.required]],
+      temperature_2_4_d: ['', [Validators.required]],
+      temperature_2_5: ['', [Validators.required]],
+      temperature_2_5_d: ['', [Validators.required]]
     });
     this.technologyParamsPackWordList = [
-      new TechnologyParamsPackWord('方 案 名 称', 'name', '', ''),
-      new TechnologyParamsPackWord('铝板厚度', 'al_thickness', '毫米', '将（在）生产铝板厚度'),
-      new TechnologyParamsPackWord('铝板宽度', 'al_width', '毫米', '将（在）生产铝板宽度'),
-      new TechnologyParamsPackWord('一涂一区温度', 'temperature_1_1', '	摄氏度', '一涂一区温度设定'),
-      new TechnologyParamsPackWord('一涂一区温度差值', 'temperature_1_1_d', '	摄氏度', '一涂一区温度安全值设定'),
-      new TechnologyParamsPackWord('一涂二区温度', 'temperature_1_2', '	摄氏度', '一涂二区温度设定'),
-      new TechnologyParamsPackWord('一涂二区温度差值', 'temperature_1_2_d', '	摄氏度', '一涂二区温度安全值设定'),
-      new TechnologyParamsPackWord('一涂三区温度', 'temperature_1_3', '	摄氏度', '一涂三区温度设定'),
-      new TechnologyParamsPackWord('一涂三区温度差值', 'temperature_1_3_d', '	摄氏度', '一涂三区温度安全值设定'),
-      new TechnologyParamsPackWord('一涂四区温度', 'temperature_1_4', '	摄氏度', '一涂四区温度设定'),
-      new TechnologyParamsPackWord('一涂四区温度差值', 'temperature_1_4_d', '	摄氏度', '一涂四区温度安全值设定'),
-      new TechnologyParamsPackWord('一涂五区温度', 'temperature_1_5', '	摄氏度', '一涂五区温度设定'),
-      new TechnologyParamsPackWord('一涂五区温度差值', 'temperature_1_5_d', '	摄氏度', '一涂五区温度安全值设定'),
-      new TechnologyParamsPackWord('二涂一区温度', 'temperature_2_1', '	摄氏度', '二涂一区温度设定'),
-      new TechnologyParamsPackWord('二涂一区温度差值', 'temperature_2_1_d', '	摄氏度', '二涂一区温度安全值设定'),
-      new TechnologyParamsPackWord('二涂二区温度', 'temperature_2_2', '	摄氏度', '二涂二区温度设定'),
-      new TechnologyParamsPackWord('二涂二区温度差值', 'temperature_2_2_d', '	摄氏度', '二涂二区温度安全值设定'),
-      new TechnologyParamsPackWord('二涂三区温度', 'temperature_2_3', '	摄氏度', '二涂三区温度设定'),
-      new TechnologyParamsPackWord('二涂三区温度差值', 'temperature_2_3_d', '	摄氏度', '二涂三区温度安全值设定'),
-      new TechnologyParamsPackWord('二涂四区温度', 'temperature_2_4', '	摄氏度', '二涂四区温度设定'),
-      new TechnologyParamsPackWord('二涂四区温度差值', 'temperature_2_4_d', '	摄氏度', '二涂四区温度安全值设定'),
-      new TechnologyParamsPackWord('二涂五区温度', 'temperature_2_5', '	摄氏度', '二涂五区温度设定'),
-      new TechnologyParamsPackWord('二涂五区温度差值', 'temperature_2_5_d', '	摄氏度', '二涂五区温度安全值设定'),
+      new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('铝板厚度', 'al_thickness', '毫米', '将（在）生产铝板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('铝板宽度', 'al_width', '毫米', '将（在）生产铝板宽度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂一区温度', 'temperature_1_1', '	摄氏度', '一涂一区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂一区温度差值', 'temperature_1_1_d', '	摄氏度', '一涂一区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂二区温度', 'temperature_1_2', '	摄氏度', '一涂二区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂二区温度差值', 'temperature_1_2_d', '	摄氏度', '一涂二区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂三区温度', 'temperature_1_3', '	摄氏度', '一涂三区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂三区温度差值', 'temperature_1_3_d', '	摄氏度', '一涂三区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂四区温度', 'temperature_1_4', '	摄氏度', '一涂四区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂四区温度差值', 'temperature_1_4_d', '	摄氏度', '一涂四区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂五区温度', 'temperature_1_5', '	摄氏度', '一涂五区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂五区温度差值', 'temperature_1_5_d', '	摄氏度', '一涂五区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂一区温度', 'temperature_2_1', '	摄氏度', '二涂一区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂一区温度差值', 'temperature_2_1_d', '	摄氏度', '二涂一区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂二区温度', 'temperature_2_2', '	摄氏度', '二涂二区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂二区温度差值', 'temperature_2_2_d', '	摄氏度', '二涂二区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂三区温度', 'temperature_2_3', '	摄氏度', '二涂三区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂三区温度差值', 'temperature_2_3_d', '	摄氏度', '二涂三区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂四区温度', 'temperature_2_4', '	摄氏度', '二涂四区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂四区温度差值', 'temperature_2_4_d', '	摄氏度', '二涂四区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂五区温度', 'temperature_2_5', '	摄氏度', '二涂五区温度设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂五区温度差值', 'temperature_2_5_d', '	摄氏度', '二涂五区温度安全值设定', [new ValidMsg('required', '* 必填项')]),
     ];
     this.Update();
   }
@@ -143,7 +143,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
           this.detail.temperaturedata['name'] = this.detail.name;
           this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
           this.detail.temperaturedata['al_width'] = this.detail.alwidth;
-          this.paramModifyForm.reset(this.detail.temperaturedata);
+          this.modifyForm.reset(this.detail.temperaturedata);
           this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         } else {
@@ -158,7 +158,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
         this.detail.temperaturedata['name'] = this.detail.name;
         this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
         this.detail.temperaturedata['al_width'] = this.detail.alwidth;
-        this.paramModifyForm.reset(this.detail.temperaturedata);
+        this.modifyForm.reset(this.detail.temperaturedata);
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
@@ -195,7 +195,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
 
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
@@ -214,7 +214,7 @@ export class TechnicspackTemperatureComponent implements OnInit {
 
   // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public delete(): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
       this.gtone = true;
@@ -238,11 +238,11 @@ export class TechnicspackTemperatureComponent implements OnInit {
 
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public paramsAdd(): void {
-    if (this.paramAddForm.valid) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.AddTechnicsPackTemperature(this.paramAddForm.value)
+      this.req.AddTechnicsPackTemperature(this.addForm.value)
         .subscribe(res => {
           this.resMessage = res['message'];
           this.status = Number(res.status);
@@ -255,11 +255,11 @@ export class TechnicspackTemperatureComponent implements OnInit {
 
 //  修改表格内容
   public paramsModify(): void {
-    if (this.paramModifyForm.valid) {
+    if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.UpdateTechnicsPackTemperature(this.paramModifyForm.value)
+      this.req.UpdateTechnicsPackTemperature(this.modifyForm.value)
         .subscribe(res => {
           this.status = Number(res.status);
           this.resMessage = res['message'];

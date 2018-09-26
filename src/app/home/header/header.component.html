@@ -40,6 +40,9 @@
     <p><span>身份证号</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.idCode}}</p><br>
     <p><span>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>: &nbsp;{{personInfo.password}}</p><br>
     <p><span>所属组织ID</span>: &nbsp;{{personInfo.organizationId}}</p><br>
+    <p>
+      <span *ngFor="let o of organization" [hidden]="!(''+o.id === ''+personInfo.organizationId)">所属组织ID: {{o.id}}, &nbsp;&nbsp; 所属组织名称: {{o.name}}</span>
+    </p><br>
     <p><span>联系电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.phone}}</p><br>
     <p><span>家庭住址</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeAddress}}</p><br>
     <p><span>家庭电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeTelephone}}</p><br>

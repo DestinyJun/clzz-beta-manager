@@ -2,8 +2,9 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {DeparmentList, Field, PageBody} from '../../../shared/global.service';
+import {DeparmentList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {mobileValidators} from '../../../validator/Validators';
 
 
 @Component({
@@ -54,7 +55,7 @@ export class OrganizationComponent implements OnInit {
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
-      tel: ['', [Validators.required]],
+      tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['-1', [Validators.required]]
     });
@@ -63,10 +64,25 @@ export class OrganizationComponent implements OnInit {
       id: ['', [Validators.required]],
       name: ['', [Validators.required]],
       dcode: ['', [Validators.required]],
-      tel: ['', [Validators.required]],
+      tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['', [Validators.required]]
     });
+    this.fieldsAdd = [
+      new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 调用查看函数
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
@@ -98,7 +114,7 @@ export class OrganizationComponent implements OnInit {
         }
       } else {
         if (!this.listenDescModal) {
-          // this.detail = this.datas[this.hasChecked[0]];
+          this.detail = this.datas[this.datas.indexOf(this.hasChecked[0])];
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
@@ -173,6 +189,7 @@ export class OrganizationComponent implements OnInit {
         for (let j = 0; j < haschecklen; j++) {
           this.req.deleteDepartment('id=' +  this.hasChecked[j].id)
             .subscribe(res => {
+              console.log(res);
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
                 this.status = Number(res.status);

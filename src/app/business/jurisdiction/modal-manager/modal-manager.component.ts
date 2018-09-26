@@ -2,7 +2,7 @@ import {Component, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {Field, JurisdictionModalList, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionModalList, PageBody, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -48,18 +48,18 @@ export class ModalManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('名称',	'name'),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'pid'),
-      new Field('描述',	'description'),
-      new Field('模块代号',	'mcode')
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('组织id',	'oid'),
     ];
     this.fieldsModify = [
-      new Field('模块数据Id',	'id'),
-      new Field('名称',	'name'),
-      // new Field('父id',	'pid'),
-      new Field('描述',	'description'),
-      new Field('模块代号',	'mcode')
+      new Field('模块数据Id',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('父id',	'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('组织id',	'oid')
     ];
     // 增加模态框表单

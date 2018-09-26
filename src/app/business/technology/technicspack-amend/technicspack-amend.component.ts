@@ -1,5 +1,5 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
-import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord} from '../../../shared/global.service';
+import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
@@ -13,7 +13,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
 export class TechnicspackAmendComponent implements OnInit {
   // technologyParamsPackWordList 用于显示增，修表单，不需要在模板上写太多 input 的 formControlName 控件
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
-  public datas: Array<TechnologyAmendQueryList>
+  public datas: Array<TechnologyAmendQueryList>;
   public modalRef: BsModalRef;
   public pageBody: PageBody;
   public num: number;
@@ -45,100 +45,100 @@ export class TechnicspackAmendComponent implements OnInit {
     this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
     this.addForm = this.fb.group({
-      name: ['', Validators.required],
-      finish_type: ['', Validators.required],
-      bottom_dry_thickness: ['', Validators.required],
-      bottom_dry_thickness_d: ['', Validators.required],
-      bottom_dry_thickness_d_l: ['', Validators.required],
-      bottom_dry_thickness_d_r: ['', Validators.required],
-      bottom_wet_thickness: ['', Validators.required],
-      bottom_wet_thickness_d: ['', Validators.required],
-      bottom_wet_thickness_d_l: ['', Validators.required],
-      bottom_wet_thickness_d_r: ['', Validators.required],
-      back_dry_thickness: ['', Validators.required],
-      back_dry_thickness_d: ['', Validators.required],
-      back_dry_thickness_d_l: ['', Validators.required],
-      back_dry_thickness_d_r: ['', Validators.required],
-      back_wet_thickness: ['', Validators.required],
-      back_wet_thickness_d: ['', Validators.required],
-      back_wet_thickness_d_l: ['', Validators.required],
-      back_wet_thickness_d_r: ['', Validators.required],
-      surface_dry_thickness: ['', Validators.required],
-      surface_dry_thickness_d: ['', Validators.required],
-      surface_dry_thickness_d_l: ['', Validators.required],
-      surface_dry_thickness_d_r: ['', Validators.required],
-      surface_wet_thickness: ['', Validators.required],
-      surface_wet_thickness_d: ['', Validators.required],
-      surface_wet_thickness_d_l: ['', Validators.required],
-      surface_wet_thickness_d_r: ['', Validators.required],
-      exhaust_air_volume_1: ['', Validators.required],
-      exhaust_air_volume_1_d: ['', Validators.required],
-      exhaust_air_volume_2: ['', Validators.required],
-      exhaust_air_volume_2_d: ['', Validators.required]
+      name: ['', [Validators.required]],
+      finish_type: ['', [Validators.required]],
+      bottom_dry_thickness: ['', [Validators.required]],
+      bottom_dry_thickness_d: ['', [Validators.required]],
+      bottom_dry_thickness_d_l: ['', [Validators.required]],
+      bottom_dry_thickness_d_r: ['', [Validators.required]],
+      bottom_wet_thickness: ['', [Validators.required]],
+      bottom_wet_thickness_d: ['', [Validators.required]],
+      bottom_wet_thickness_d_l: ['', [Validators.required]],
+      bottom_wet_thickness_d_r: ['', [Validators.required]],
+      back_dry_thickness: ['', [Validators.required]],
+      back_dry_thickness_d: ['', [Validators.required]],
+      back_dry_thickness_d_l: ['', [Validators.required]],
+      back_dry_thickness_d_r: ['', [Validators.required]],
+      back_wet_thickness: ['', [Validators.required]],
+      back_wet_thickness_d: ['', [Validators.required]],
+      back_wet_thickness_d_l: ['', [Validators.required]],
+      back_wet_thickness_d_r: ['', [Validators.required]],
+      surface_dry_thickness: ['', [Validators.required]],
+      surface_dry_thickness_d: ['', [Validators.required]],
+      surface_dry_thickness_d_l: ['', [Validators.required]],
+      surface_dry_thickness_d_r: ['', [Validators.required]],
+      surface_wet_thickness: ['', [Validators.required]],
+      surface_wet_thickness_d: ['', [Validators.required]],
+      surface_wet_thickness_d_l: ['', [Validators.required]],
+      surface_wet_thickness_d_r: ['', [Validators.required]],
+      exhaust_air_volume_1: ['', [Validators.required]],
+      exhaust_air_volume_1_d: ['', [Validators.required]],
+      exhaust_air_volume_2: ['', [Validators.required]],
+      exhaust_air_volume_2_d: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      name: ['', Validators.required],
-      finish_type: ['', Validators.required],
-      bottom_dry_thickness: ['', Validators.required],
-      bottom_dry_thickness_d: ['', Validators.required],
-      bottom_dry_thickness_d_l: ['', Validators.required],
-      bottom_dry_thickness_d_r: ['', Validators.required],
-      bottom_wet_thickness: ['', Validators.required],
-      bottom_wet_thickness_d: ['', Validators.required],
-      bottom_wet_thickness_d_l: ['', Validators.required],
-      bottom_wet_thickness_d_r: ['', Validators.required],
-      back_dry_thickness: ['', Validators.required],
-      back_dry_thickness_d: ['', Validators.required],
-      back_dry_thickness_d_l: ['', Validators.required],
-      back_dry_thickness_d_r: ['', Validators.required],
-      back_wet_thickness: ['', Validators.required],
-      back_wet_thickness_d: ['', Validators.required],
-      back_wet_thickness_d_l: ['', Validators.required],
-      back_wet_thickness_d_r: ['', Validators.required],
-      surface_dry_thickness: ['', Validators.required],
-      surface_dry_thickness_d: ['', Validators.required],
-      surface_dry_thickness_d_l: ['', Validators.required],
-      surface_dry_thickness_d_r: ['', Validators.required],
-      surface_wet_thickness: ['', Validators.required],
-      surface_wet_thickness_d: ['', Validators.required],
-      surface_wet_thickness_d_l: ['', Validators.required],
-      surface_wet_thickness_d_r: ['', Validators.required],
-      exhaust_air_volume_1: ['', Validators.required],
-      exhaust_air_volume_1_d: ['', Validators.required],
-      exhaust_air_volume_2: ['', Validators.required],
-      exhaust_air_volume_2_d: ['', Validators.required]
+      name: ['', [Validators.required]],
+      finish_type: ['', [Validators.required]],
+      bottom_dry_thickness: ['', [Validators.required]],
+      bottom_dry_thickness_d: ['', [Validators.required]],
+      bottom_dry_thickness_d_l: ['', [Validators.required]],
+      bottom_dry_thickness_d_r: ['', [Validators.required]],
+      bottom_wet_thickness: ['', [Validators.required]],
+      bottom_wet_thickness_d: ['', [Validators.required]],
+      bottom_wet_thickness_d_l: ['', [Validators.required]],
+      bottom_wet_thickness_d_r: ['', [Validators.required]],
+      back_dry_thickness: ['', [Validators.required]],
+      back_dry_thickness_d: ['', [Validators.required]],
+      back_dry_thickness_d_l: ['', [Validators.required]],
+      back_dry_thickness_d_r: ['', [Validators.required]],
+      back_wet_thickness: ['', [Validators.required]],
+      back_wet_thickness_d: ['', [Validators.required]],
+      back_wet_thickness_d_l: ['', [Validators.required]],
+      back_wet_thickness_d_r: ['', [Validators.required]],
+      surface_dry_thickness: ['', [Validators.required]],
+      surface_dry_thickness_d: ['', [Validators.required]],
+      surface_dry_thickness_d_l: ['', [Validators.required]],
+      surface_dry_thickness_d_r: ['', [Validators.required]],
+      surface_wet_thickness: ['', [Validators.required]],
+      surface_wet_thickness_d: ['', [Validators.required]],
+      surface_wet_thickness_d_l: ['', [Validators.required]],
+      surface_wet_thickness_d_r: ['', [Validators.required]],
+      exhaust_air_volume_1: ['', [Validators.required]],
+      exhaust_air_volume_1_d: ['', [Validators.required]],
+      exhaust_air_volume_2: ['', [Validators.required]],
+      exhaust_air_volume_2_d: ['', [Validators.required]]
     });
     this.technologyParamsPackWordList = [
-      new TechnologyParamsPackWord('方 案 名 称', 'name', '', ''),
-      new TechnologyParamsPackWord('面 漆 颜 色', 'finish_type', '', ''),
-      new TechnologyParamsPackWord('底漆干膜厚度',	'bottom_dry_thickness',	'微米', '	float	1000.00 	模板厚度'),
-      new TechnologyParamsPackWord('底漆干膜厚度误差',	'bottom_dry_thickness_d', '微米'	, '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('底漆干膜厚度修正左',	'bottom_dry_thickness_d_l', '微米', '	模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('底漆干膜厚度修正右',	'bottom_dry_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('底漆湿膜厚度',	'bottom_wet_thickness', '微米'	, '模板厚度'),
-      new TechnologyParamsPackWord('底漆湿膜厚度误差',	'bottom_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('底漆湿膜厚度修正左',	'bottom_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('底漆湿膜厚度修正右',	'bottom_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('背漆干膜厚度',	'back_dry_thickness', '微米', '模板厚度'),
-      new TechnologyParamsPackWord('背漆干膜厚度误差',	'back_dry_thickness_d', '微米', '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('背漆干膜厚度修正左',	'back_dry_thickness_d_l', '微米'	, '模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('背漆干膜厚度修正右',	'back_dry_thickness_d_r', '微米'	, '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('背漆湿膜厚度',	'back_wet_thickness', '微米', '模板厚度'),
-      new TechnologyParamsPackWord('背漆湿膜厚度误差',	'back_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('背漆湿膜厚度修正左',	'back_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('背漆湿膜厚度修正右',	'back_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('面漆干膜厚度',	'surface_dry_thickness', '	微米', '模板厚度'),
-      new TechnologyParamsPackWord('面漆干膜厚度误差',	'surface_dry_thickness_d', '	微米', '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('面漆干膜厚度修正左',	'surface_dry_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('面漆干膜厚度修正右',	'surface_dry_thickness_d_r', '微米	', '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('面漆湿膜厚度',	'surface_wet_thickness', '	微米', '模板厚度'),
-      new TechnologyParamsPackWord('面漆湿膜厚度误差', 'surface_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）'),
-      new TechnologyParamsPackWord('面漆湿膜厚度修正左',	'surface_wet_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值'),
-      new TechnologyParamsPackWord('面漆湿膜厚度修正右',	'surface_wet_thickness_d_r', '	微米', '模板厚度测量仪（右侧）参数矫正值'),
-      new TechnologyParamsPackWord('一涂排气风量',	'exhaust_air_volume_1', 'CMH	', '一涂排气风量设定'),
-      new TechnologyParamsPackWord('一涂排气风量差值',	'exhaust_air_volume_1_d', 'CMH	', '一涂排气风量安全值设定'),
-      new TechnologyParamsPackWord('二涂排气风量',	'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定'),
-      new TechnologyParamsPackWord('二涂排气风量差值',	'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定'),
+      new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面 漆 颜 色', 'finish_type', '', '', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆干膜厚度',	'bottom_dry_thickness',	'微米', '	float	1000.00 	模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆干膜厚度误差',	'bottom_dry_thickness_d', '微米'	, '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆干膜厚度修正左',	'bottom_dry_thickness_d_l', '微米', '	模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆干膜厚度修正右',	'bottom_dry_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度',	'bottom_wet_thickness', '微米'	, '模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度误差',	'bottom_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度修正左',	'bottom_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度修正右',	'bottom_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆干膜厚度',	'back_dry_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆干膜厚度误差',	'back_dry_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆干膜厚度修正左',	'back_dry_thickness_d_l', '微米'	, '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆干膜厚度修正右',	'back_dry_thickness_d_r', '微米'	, '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度',	'back_wet_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度误差',	'back_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度修正左',	'back_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度修正右',	'back_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆干膜厚度',	'surface_dry_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆干膜厚度误差',	'surface_dry_thickness_d', '	微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆干膜厚度修正左',	'surface_dry_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆干膜厚度修正右',	'surface_dry_thickness_d_r', '微米	', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度',	'surface_wet_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度误差', 'surface_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度修正左',	'surface_wet_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度修正右',	'surface_wet_thickness_d_r', '	微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂排气风量',	'exhaust_air_volume_1', 'CMH	', '一涂排气风量设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('一涂排气风量差值',	'exhaust_air_volume_1_d', 'CMH	', '一涂排气风量安全值设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂排气风量',	'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定', [new ValidMsg('required', '* 必填项')]),
+      new TechnologyParamsPackWord('二涂排气风量差值',	'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定', [new ValidMsg('required', '* 必填项')]),
     ];
     this.Update();
   }
@@ -185,7 +185,6 @@ export class TechnicspackAmendComponent implements OnInit {
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
       this.modalRef = this.modalService.show(template);
     }
   }
@@ -213,7 +212,7 @@ export class TechnicspackAmendComponent implements OnInit {
   }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
