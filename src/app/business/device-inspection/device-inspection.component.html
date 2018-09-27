@@ -2,7 +2,7 @@
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
-        项目
+        <span>设备巡检</span>
       </div>
     </div>
     <div class="row options">
@@ -11,11 +11,11 @@
         <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <!--<div class="numSearchDiv" [class.numSearch]="controlSearchText">-->
-           <!--&lt;!&ndash;这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查&ndash;&gt;-->
-           <!--&lt;!&ndash;而hidden 仅仅只是掩藏 input ,但是要检查&ndash;&gt;-->
-          <!--&lt;!&ndash;<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入项目编号">&ndash;&gt;-->
-          <!--<input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入项目编号">-->
-          <!--&lt;!&ndash;<span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>&ndash;&gt;-->
+        <!--&lt;!&ndash;这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查&ndash;&gt;-->
+        <!--&lt;!&ndash;而hidden 仅仅只是掩藏 input ,但是要检查&ndash;&gt;-->
+        <!--&lt;!&ndash;<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入巡检编号">&ndash;&gt;-->
+        <!--<input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入巡检编号">-->
+        <!--&lt;!&ndash;<span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>&ndash;&gt;-->
         <!--</div>-->
         <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
@@ -27,11 +27,11 @@
           <thead>
           <tr>
             <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>项目编号</th>
-            <th>项目名称</th>
-            <th>项目位置</th>
-            <th>项目位置经度</th>
-            <th>项目位置纬度</th>
+            <th>巡检编号</th>
+            <th>巡检名称</th>
+            <th>巡检位置</th>
+            <th>位置经度</th>
+            <th>位置纬度</th>
             <th>打印二维码</th>
           </tr>
           </thead>
@@ -60,7 +60,7 @@
 <!--模态框-->
 <ng-template #add>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据增加</h4>
+    <h4 class="modal-title pull-left">巡检数据增加</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -115,7 +115,7 @@
 </ng-template>
 <ng-template #modify>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据修改</h4>
+    <h4 class="modal-title pull-left">巡检数据修改</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -170,22 +170,22 @@
 </ng-template>
 <ng-template #lookdesc>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据查看详情</h4>
+    <h4 class="modal-title pull-left">巡检数据查看详情</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>项目编号	: &nbsp;{{detail.itemcode}}</p>
-    <p>项目名称	: &nbsp;{{detail.itemname}}</p>
-    <p>项目位置	: &nbsp;{{detail.itemposition}}</p>
-    <p>项目位置经度: &nbsp;	{{detail.longitude}}</p>
-    <p>项目位置纬度: &nbsp;	{{detail.latitude}}</p>
-    <p>项目明细项目: &nbsp;	{{detail.itemdetail}}</p>
+    <p>巡检编号	: &nbsp;{{detail.itemcode}}</p>
+    <p>巡检名称	: &nbsp;{{detail.itemname}}</p>
+    <p>巡检位置	: &nbsp;{{detail.itemposition}}</p>
+    <p>巡检位置经度: &nbsp;	{{detail.longitude}}</p>
+    <p>巡检位置纬度: &nbsp;	{{detail.latitude}}</p>
+    <p>巡检明细巡检: &nbsp;	{{detail.itemdetail}}</p>
     <p>
       <span *ngFor="let f of Fmodalid" [hidden]="!(f['sid'] === detail.unitcode)">所属生产线ID: {{f.sid}}, &nbsp;&nbsp;所属生产线名称: {{f.name}}</span>
     </p>
-    <p>项目巡检成员: &nbsp;	{{detail.itemmembers}}</p>
+    <p>巡检巡检成员: &nbsp;	{{detail.itemmembers}}</p>
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
     <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
     <p>巡检结束时间: &nbsp;	{{detail.endtime}}</p>

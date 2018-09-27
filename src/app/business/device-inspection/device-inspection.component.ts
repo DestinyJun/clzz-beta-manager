@@ -1,18 +1,17 @@
 import {Component, OnInit, TemplateRef} from '@angular/core';
-import {CommonfunService} from '../../shared/commonfun.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ReqService} from '../../shared/req.service';
-import {BsModalService} from 'ngx-bootstrap/modal';
-import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {Field, ItemList, PageBody, ValidMsg} from '../../shared/global.service';
-import {copyObj} from '@angular/animations/browser/src/util';
+import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {BsModalService} from 'ngx-bootstrap/modal';
+import {ReqService} from '../../shared/req.service';
+import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
-  selector: 'app-item',
-  templateUrl: './item.component.html',
-  styleUrls: ['./item.component.css']
+  selector: 'app-device-inspection',
+  templateUrl: './device-inspection.component.html',
+  styleUrls: ['./device-inspection.component.css']
 })
-export class ItemComponent implements OnInit {
+export class DeviceInspectionComponent implements OnInit {
   public datas: Array<ItemList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -57,24 +56,24 @@ export class ItemComponent implements OnInit {
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     this.fieldsAdd = [
-      new Field('项目名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('项目位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('项目位置经度',	'longitude'),
-      // new Field('项目位置纬度',	'latitude'),
-      new Field('项目明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('巡检位置经度',	'longitude'),
+      // new Field('巡检位置纬度',	'latitude'),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线编号',	'unitcode'),
-      new Field('项目巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('项目编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('项目名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('项目位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('项目明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('项目巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     //  增加表单
@@ -194,7 +193,7 @@ export class ItemComponent implements OnInit {
   //         this.controlSearchText = false;
   //       }else {
   //         this.status = 13;
-  //         this.resMessage = '项目编号不存在';
+  //         this.resMessage = '巡检编号不存在';
   //       }
   //     });
   //   }else {
@@ -227,20 +226,20 @@ export class ItemComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-        if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
-          this.mustone = false;
-          this.openstatus = false;
-          for (let j = 0; j < haschecklen; j++) {
-            this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
-              .subscribe(res => {
-                if (j === haschecklen - 1) {
-                  this.resMessage = res.message;
-                  this.status = Number(res.status);
-                  this.Update();
-                }
-              });
-          }
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
+        this.mustone = false;
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
+            .subscribe(res => {
+              if (j === haschecklen - 1) {
+                this.resMessage = res.message;
+                this.status = Number(res.status);
+                this.Update();
+              }
+            });
         }
+      }
     }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
@@ -382,12 +381,12 @@ export class ItemComponent implements OnInit {
           }
         }
       }else if (Number(isCorrectMouth) === 0 && Number(isCorrectMouth)  === 2 && Number(isCorrectMouth)  === 4 && Number(isCorrectMouth)  === 6 && Number(isCorrectMouth)  === 7 && Number(isCorrectMouth)  === 9 && Number(isCorrectMouth)  === 11) {
-          if (Number(day) >= 0 && Number(day) <= 31) {
-            date.setDate(Number(day));
-            isCorrectDay = true;
-          }else {
-            isCorrectDay = false;
-          }
+        if (Number(day) >= 0 && Number(day) <= 31) {
+          date.setDate(Number(day));
+          isCorrectDay = true;
+        }else {
+          isCorrectDay = false;
+        }
       }else {
         if (Number(day) >= 0 && Number(day) <= 30) {
           date.setDate(Number(day));
@@ -454,7 +453,7 @@ export class ItemComponent implements OnInit {
 // 清除屏幕
   public cleanScreen(): void {
     // this.controlSearchText = false;
-      this.openstatus = true;
-      this.status = 0;
+    this.openstatus = true;
+    this.status = 0;
   }
 }

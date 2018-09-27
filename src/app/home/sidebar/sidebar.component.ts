@@ -38,7 +38,7 @@ export class SidebarComponent implements OnInit {
       new NavListChild('监控窗口', false, 'videos/videowin'),
       new NavListChild('视频管理', false, 'videos/videoman')
     ] , true),
-    new NavList('项目管理', 'item', 'fa fa-bug', false, [] , true)
+    new NavList('设备巡检', 'deviceInspection', 'fa fa-bug', false, [] , true)
   ];
   public slidinghight: number;
   public slidingTop: number;
