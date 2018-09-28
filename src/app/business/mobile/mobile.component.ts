@@ -23,6 +23,9 @@ export class MobileComponent implements OnInit {
   public openstatus: boolean;
   public QRcodeValue: string;
   public uploader: FileUploader = new FileUploader({});
+  public uploadHint = false;
+  public submitMsg = '上传';
+  public isUpload = false;
   constructor(
     public http: HttpClient,
     public fb: FormBuilder,
@@ -66,6 +69,7 @@ export class MobileComponent implements OnInit {
     this.file = e.target.files[0];
     this.formData.append('file', e.target.files[0]);
     if (!myReg.test(this.file.name)) {
+      this.uploadHint = true;
       document.getElementById('reset').click();
     }
   }
@@ -78,16 +82,16 @@ export class MobileComponent implements OnInit {
   public uploadfile(): void {
       if (this.infoForm.valid && (this.file !== undefined || this.file.length >= 1)) {
         this.openstatus = false;
+        this.submitMsg = '正在上传.....';
+        this.isUpload = true;
         this.formData.append('infomation', JSON.stringify(this.infoForm.value));
         this.req.AppUpload(this.formData)
               .subscribe(res => {
-                console.log(res);
+                // console.log(res);
                 // console.log(event.type === HttpEventType.UploadProgress);
                   this.status = Number(res.status);
-                    setTimeout(() => {
-                      this.openstatus = true;
-                      this.status = 0;
-                    }, 2500);
+                this.submitMsg = '上传';
+                this.isUpload = false;
               });
       } else {
         alert('请填写完整的信息!');
@@ -99,6 +103,15 @@ export class MobileComponent implements OnInit {
   // 下载文件
   public downloadFile(downloadUrl): void {
     window.open(downloadUrl);
+  }
+
+  // 清屏
+  public cleanScreen(): void {
+    this.uploadHint = false;
+    if (this.status !== 0) {
+      this.openstatus = true;
+      this.status = 0;
+    }
   }
 }
 

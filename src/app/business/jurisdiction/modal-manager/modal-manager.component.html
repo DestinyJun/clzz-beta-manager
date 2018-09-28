@@ -70,14 +70,14 @@
         </div>
       </div>
       <div class="form-group">
-        <label>对应模块的父ID: &nbsp;</label>
+        <label>请选择所属父模块: &nbsp;</label>
         <select #addPid (change)="selectAddModalPid(addPid.value)" class="form-control">
           <option [value]="-1">默认值为 -1</option>
           <option *ngFor="let modal of FmodalFid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>请选择所属组织ID: &nbsp;</label>
+        <label>请选择所属组织机构: &nbsp;</label>
         <select #addOid (change)="selectAddModalOid(addOid.value)" class="form-control">
           <option [value]="null">默认为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
@@ -119,14 +119,14 @@
         </div>
       </div>
       <div class="form-group">
-        <label>对应模块的父id: &nbsp;</label>
+        <label>所属父模块: &nbsp;</label>
         <select #modifyPid (change)="selectModifyModalPid(modifyPid.value)" class="form-control">
           <option [value]="detail.pid" selected>{{detail.name}}</option>
           <option *ngFor="let modal of FmodalFid" [selected]="modal.id === detail.pid" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>所属组织ID: &nbsp;</label>
+        <label>所属组织机构: &nbsp;</label>
         <select #modifyOid (change)="selectModifyModalOid(modifyOid.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modifyForm.get('oid').value" [value]="modal.id">{{modal.name}}</option>
         </select>
@@ -159,7 +159,7 @@
     <p>模块编号(唯一标识): {{detail['id']}}</p>
     <p>模块名称:{{detail['name']}}</p>
     <p>
-      <span *ngFor="let f of FmodalFid" [hidden]="!(f.id === detail.pid)">父ID&nbsp; : &nbsp;	{{f.id}},&nbsp;&nbsp;&nbsp;父名称&nbsp;:&nbsp;{{f.name}}</span>
+      <span *ngFor="let f of FmodalFid" [hidden]="!(f.id === detail.pid)">父模块ID&nbsp; : &nbsp;	{{f.id}},&nbsp;&nbsp;&nbsp;父模块名称&nbsp;:&nbsp;{{f.name}}</span>
     </p>
     <p>描述 :{{detail['description']}}</p>
     <p>模块编号 :{{detail['mcode']}}</p>

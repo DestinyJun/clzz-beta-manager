@@ -110,7 +110,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属模块编号: &nbsp;</label>
+        <label>请选择所属模块: &nbsp;</label>
         <select #a_modalId (change)="selectModalId(a_modalId.value, addForm)" class="form-control">
           <option value="">请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.mid">{{modal.name}}</option>
@@ -174,7 +174,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属模块编号: &nbsp;</label>
+        <label>所属模块: &nbsp;</label>
         <select #m_modalId (change)="selectModalId(m_modalId.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.mid === detail.mid" [value]="modal.mid">{{modal.name}}</option>
         </select>

@@ -83,14 +83,14 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属部门编号: &nbsp;</label>
+        <label>请选择所属部门: &nbsp;</label>
         <select #a_departmentId (change)="selectModalId(a_departmentId.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid.departments" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>生产线系统编号: &nbsp;</label>
+        <label>请选择所属生产线: &nbsp;</label>
         <select #a_lineId (change)="selectLineId(a_lineId.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let line of proLineids" [value]="line.sid">{{line.name}}</option>
@@ -135,13 +135,13 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属部门编号: &nbsp;</label>
+        <label>所属部门: &nbsp;</label>
         <select #m_departmentId (change)="selectModalId(m_departmentId.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid.departments" [selected]="modal.id === detail.pId" [value]="modal.id">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>生产线编号: &nbsp;</label>
+        <label>所属生产线: &nbsp;</label>
         <select #m_lineId (change)="selectLineId(m_lineId.value, modifyForm)" class="form-control">
           <option *ngFor="let line of proLineids" [selected]="line.sid === detail.proSystem" [value]="line.sid">{{line.name}}</option>
         </select>

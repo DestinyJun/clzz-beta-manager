@@ -39,13 +39,19 @@
   padding: 25px;
 }
 .status{
-  padding: 15px;
+  position: fixed;
+  top: 200px;
+  left: 45%;
+  z-index: 10000;
+}
+.hint {
   width: 280px;
   height: 45px;
-  position: fixed;
-  top: 100px;
-  left: 45%;
+  line-height: 45px;
+  text-align: center;
   color: #FFFFFF;
+  font-size: 16px;
+  font-weight: bold;
   border-radius: 3px;
 }
 .success{
@@ -53,4 +59,7 @@
 }
 .fail{
   background: red;
+}
+.uploadHint {
+  color: red;
 }

@@ -77,14 +77,14 @@
         </div>
       </div>
       <div class="form-group">
-        <label>生产线编号: &nbsp;</label>
+        <label>请选择所属生产线: &nbsp;</label>
         <select #a_lineId (change)="selectLine(a_lineId.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>巡检开始时间</label>
+        <label>开始时间</label>
         <div class="form-control">
           <p>
             <span contenteditable="true" id="addYear" class="year"></span>年
@@ -132,14 +132,14 @@
         </div>
       </div>
       <div class="form-group">
-        <label>生产线编号: &nbsp;</label>
+        <label>所属生产线: &nbsp;</label>
         <select #m_lineId (change)="selectLine(m_lineId.value, modifyForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [selected]="modifyForm.get('unitcode').value === modal.sid" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>巡检开始时间</label>
+        <label>开始时间</label>
         <div class="form-control">
           <p>
             <span contenteditable="true" id="modifyYear" class="year"></span>年

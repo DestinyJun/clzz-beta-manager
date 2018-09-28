@@ -70,7 +70,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>设备ID: &nbsp;</label>
+        <label>请选择所属设备: &nbsp;</label>
         <select #addEquipment (change)="selectAddModalId(addEquipment.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
@@ -112,7 +112,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>请选择设备id: &nbsp;</label>
+        <label>所属设备: &nbsp;</label>
         <select #modifyEquipment (change)="selectModifyModalId(modifyEquipment.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.id === detail.mid" [value]="modal.id">{{modal.name}}</option>
         </select>
