@@ -26,18 +26,20 @@ export class MobileComponent implements OnInit {
   public uploadHint = false;
   public submitMsg = '上传';
   public isUpload = false;
+
   constructor(
     public http: HttpClient,
     public fb: FormBuilder,
     public modalService: BsModalService,
     public req: ReqService,
     public commonfun: CommonfunService
-    ) {
+  ) {
     this.infoForm = fb.group({
       appType: ['APP01', Validators.required],
       description: ['', Validators.required]
     });
   }
+
   ngOnInit() {
     // this.uploader.
     this.formData = new FormData();
@@ -56,6 +58,7 @@ export class MobileComponent implements OnInit {
       this.apps = value.data;
     });
   }
+
   // 打开模态框
   public openModal(template: TemplateRef<any>, i): void {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
@@ -63,6 +66,7 @@ export class MobileComponent implements OnInit {
     }
     this.modalRef = this.modalService.show(template);
   }
+
   // 选择文件
   public getFile(e): void {
     const myReg = /[.apk]$/i;
@@ -71,32 +75,36 @@ export class MobileComponent implements OnInit {
     if (!myReg.test(this.file.name)) {
       this.uploadHint = true;
       document.getElementById('reset').click();
+    }else {
+      this.uploadHint = false;
     }
   }
+
   // 选择文件类型
   public typeSelect(appType: any): void {
-    this.infoForm.patchValue({appType : appType});
+    this.infoForm.patchValue({appType: appType});
     // console.log(appType);
   }
+
   // 上传文件
   public uploadfile(): void {
-      if (this.infoForm.valid && (this.file !== undefined || this.file.length >= 1)) {
-        this.openstatus = false;
-        this.submitMsg = '正在上传.....';
-        this.isUpload = true;
-        this.formData.append('infomation', JSON.stringify(this.infoForm.value));
-        this.req.AppUpload(this.formData)
-              .subscribe(res => {
-                // console.log(res);
-                // console.log(event.type === HttpEventType.UploadProgress);
-                  this.status = Number(res.status);
-                this.submitMsg = '上传';
-                this.isUpload = false;
-              });
-      } else {
-        alert('请填写完整的信息!');
-      }
-        // console.log(this.infoForm.value);
+    if (this.infoForm.valid && (this.file !== undefined || this.file.length >= 1)) {
+      this.openstatus = false;
+      this.submitMsg = '正在上传.....';
+      this.isUpload = true;
+      this.formData.append('infomation', JSON.stringify(this.infoForm.value));
+      this.req.AppUpload(this.formData)
+        .subscribe(res => {
+          // console.log(res);
+          // console.log(event.type === HttpEventType.UploadProgress);
+          this.status = Number(res.status);
+          this.submitMsg = '上传';
+          this.isUpload = false;
+        });
+    } else {
+      alert('请填写完整的信息!');
+    }
+    // console.log(this.infoForm.value);
   }
 
 
@@ -107,7 +115,6 @@ export class MobileComponent implements OnInit {
 
   // 清屏
   public cleanScreen(): void {
-    this.uploadHint = false;
     if (this.status !== 0) {
       this.openstatus = true;
       this.status = 0;
@@ -120,5 +127,6 @@ export class Options {
   constructor(
     public value: string,
     public content: string
-  ) {}
+  ) {
+  }
 }

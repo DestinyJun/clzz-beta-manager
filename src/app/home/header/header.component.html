@@ -39,7 +39,7 @@
     <p><span>用&nbsp;&nbsp;&nbsp;&nbsp;户&nbsp;&nbsp;&nbsp;名</span>: &nbsp;{{personInfo.userName}}</p><br>
     <p><span>身份证号</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.idCode}}</p><br>
     <p><span>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>: &nbsp;{{personInfo.password}}</p><br>
-    <p><span>所属组织ID</span>: &nbsp;{{personInfo.organizationId}}</p><br>
+    <p><span>所属组织编号</span>: &nbsp;{{personInfo.organizationId}}</p><br>
     <p>
       <span *ngFor="let o of organization" [hidden]="!(''+o.id === ''+personInfo.organizationId)">所属组织ID: {{o.id}}, &nbsp;&nbsp; 所属组织名称: {{o.name}}</span>
     </p><br>

@@ -65,8 +65,6 @@ export class HeaderComponent implements OnInit {
     // 查找机构
     this.req.FindDepartOrgani().subscribe(value => {
       this.organization = value.values.organizations;
-      console.log(this.organization);
-      console.log(value);
     });
     // 查找系统所有id
     this.req.FindsystemSysid().subscribe(value => {
