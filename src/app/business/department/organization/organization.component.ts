@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {DeparmentList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
-import {mobileValidators} from '../../../validator/Validators';
+import {digitAndLetterValidator, mobileValidators} from '../../../validator/Validators';
 
 
 @Component({
@@ -54,7 +54,7 @@ export class OrganizationComponent implements OnInit {
     // 增加表单信息
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
-      dcode: ['', [Validators.required]],
+      dcode: ['', [Validators.required, digitAndLetterValidator]],
       tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['-1', [Validators.required]]
@@ -63,20 +63,20 @@ export class OrganizationComponent implements OnInit {
     this.modifyForm = this.fb.group({
       id: ['', [Validators.required]],
       name: ['', [Validators.required]],
-      dcode: ['', [Validators.required]],
+      dcode: ['', [Validators.required, digitAndLetterValidator]],
       tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['', [Validators.required]]
     });
     this.fieldsAdd = [
+      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),

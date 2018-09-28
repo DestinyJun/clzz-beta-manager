@@ -5,6 +5,7 @@ import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../../shared/req.service';
 import 'rxjs/Rx';
 import {CameraGroup, Field, PageBody, ValidMsg} from '../../../../shared/global.service';
+import {digitAndLetterValidator} from '../../../../validator/Validators';
 
 @Component({
   selector: 'app-camera-group',
@@ -57,31 +58,31 @@ export class CameraGroupComponent implements OnInit {
     this.fieldsModify = [];
     // 增加模态框表单
     this.addForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
-      status: ['0', Validators.required],
-      pId: ['', Validators.required],
+      id: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      creator: ['', [Validators.required]],
+      status: ['0'],
+      pId: ['', [Validators.required]],
       proSystem: ['']
     });
     this.modifyForm = this.fb.group({
-      id: [''],
-      UpdateId: ['', Validators.required],
-      name: [''],
-      creator: [''],
-      status: [''],
-      pId: [''],
-      proSystem: ['']
+      id: ['', [Validators.required]],
+      UpdateId: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      creator: ['', [Validators.required]],
+      status: ['', [Validators.required]],
+      pId: ['', [Validators.required]],
+      proSystem: ['', [Validators.required]]
     });
     this.fieldsAdd = [
-      new Field('摄像机组编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机组编号', 'id', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('摄像机组名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机组创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('摄像机组状态', 'status', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('所属部门ID', 'pId', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('原摄像机编号', 'UpdateId', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('原摄像机编号', 'UpdateId', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('请输入修正的摄像机ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机组名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机组创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -229,7 +230,7 @@ export class CameraGroupComponent implements OnInit {
 
 // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public con_add(): void {
-    if (this.addForm.value) {
+    if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();

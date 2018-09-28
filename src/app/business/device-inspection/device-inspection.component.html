@@ -189,7 +189,10 @@
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
     <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
     <p>巡检结束时间: &nbsp;	{{detail.endtime}}</p>
-    <p>状态: &nbsp;	{{detail.status}}</p>
+    <p>是否巡检: &nbsp;
+      <span *ngIf="detail.status === 1">已巡检</span>
+      <span *ngIf="detail.status === 0">未巡检</span>
+    </p>
     <p>插入时间: &nbsp;	{{detail.idt}}</p>
     <p>更新时间: &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>

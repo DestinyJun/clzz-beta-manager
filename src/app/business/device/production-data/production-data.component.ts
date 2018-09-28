@@ -5,6 +5,7 @@ import {DeviceProductionDataList, Field, PageBody, ValidMsg} from '../../../shar
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-data',
@@ -47,8 +48,8 @@ export class ProductionDataComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.fieldsAdd = [
-      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('厂家编号', 'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('生产厂家', 'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('设备型号', 'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -63,8 +64,8 @@ export class ProductionDataComponent implements OnInit {
       // new Field('模块id', 'mid', 'text), [{'required,: '* 必填项
       ];
     this.fieldsModify = [
-      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('厂家编号',	'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('生产厂家',	'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('设备型号',	'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -82,7 +83,7 @@ export class ProductionDataComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     //  增加表单
     this.addForm = this.fb.group({
-      did: ['', Validators.required],
+      did: ['', Validators.required, digitAndLetterValidator],
       name: ['', Validators.required],
       fnum: ['', Validators.required],
       dvender: ['', Validators.required],
@@ -98,7 +99,7 @@ export class ProductionDataComponent implements OnInit {
       mid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      did: ['', Validators.required],
+      did: ['', Validators.required, digitAndLetterValidator],
       name: ['', Validators.required],
       fnum: ['', Validators.required],
       dvender: ['', Validators.required],

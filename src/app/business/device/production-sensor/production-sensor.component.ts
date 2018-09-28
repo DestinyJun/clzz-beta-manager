@@ -4,6 +4,7 @@ import {DeviceProductionSensorList, Field, PageBody, ValidMsg} from '../../../sh
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator, digitValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-sensor',
@@ -52,39 +53,48 @@ export class ProductionSensorComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 模态框表单
     this.addForm = this.fb.group({
-      sid: ['', [Validators.required]],
+      sid: ['', [Validators.required, digitAndLetterValidator]],
       sname: ['', [Validators.required]],
       stype: ['', [Validators.required]],
       sdatatype: ['', [Validators.required]],
       saddress: ['', [Validators.required]],
       sstatus: ['', [Validators.required]],
-      smax: ['', [Validators.required]],
-      initialvalue: ['', [Validators.required]],
+      smax: ['', [Validators.required, digitValidator]],
+      initialvalue: ['', [Validators.required, digitValidator]],
       did: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      sid: ['', [Validators.required]],
+      sid: ['', [Validators.required, digitAndLetterValidator]],
       sname: ['', [Validators.required]],
       stype: ['', [Validators.required]],
       sdatatype: ['', [Validators.required]],
       saddress: ['', [Validators.required]],
       sstatus: ['', [Validators.required]],
-      smax: ['', [Validators.required]],
-      initialvalue: ['', [Validators.required]],
+      smax: ['', [Validators.required, digitValidator]],
+      initialvalue: ['', [Validators.required, digitValidator]],
       did: ['', [Validators.required]]
     });
     // 显示页面增，修改表单控件
     this.fieldsAdd = [
-      new Field('传感器编号',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('传感器编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('名称',	'sname', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('类型',	'stype', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('数据类型',	'sdatatype', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('变量地址',	'saddress', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('状态',	'sstatus', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('数值最大值',	'smax', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('初始值',	'initialvalue', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('数值最大值',	'smax', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('初始值',	'initialvalue', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
     ];
-    this.fieldsModify = this.fieldsAdd;
+    this.fieldsModify = [
+      new Field('传感器编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('名称',	'sname', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('类型',	'stype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('数据类型',	'sdatatype', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('变量地址',	'saddress', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('状态',	'sstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('数值最大值',	'smax', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('初始值',	'initialvalue', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+    ];
     // 初始化传感器类型
     this.sensorType = [
       {value: 0, note: '普通'},

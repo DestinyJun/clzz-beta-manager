@@ -4,6 +4,7 @@ import {PageBody, DeviceProductionLineList, Field, ValidMsg} from '../../../shar
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-line',
@@ -48,23 +49,23 @@ export class ProductionLineComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 增加模态框表单
     this.addForm = this.fb.group({
-      sid: ['', [Validators.required]],
+      sid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', [Validators.required]],
       did: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      sid: ['', [Validators.required]],
+      sid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', [Validators.required]],
       did: ['', [Validators.required]]
     });
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('生产线id',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产线编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];
     this.fieldsModify = [
-      new Field('生产线id',	'sid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产线编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];

@@ -20,8 +20,8 @@
           <thead>
           <tr>
             <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>编号</th>
-            <th>组织名称</th>
+            <th>机构编号</th>
+            <th>机构名称</th>
             <th>机构编码</th>
             <th>机构类型</th>
             <th>联系电话</th>
@@ -66,7 +66,7 @@
     <form class="forms" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
         <label>{{add.name}}</label>
-        <input type="text" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
         <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
           <div *ngFor="let valid of add.validators">
             <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
@@ -104,7 +104,7 @@
     <form class="forms" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
         <label>{{modify.name}}</label>
-        <input type="text" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
         <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
           <div *ngFor="let valid of modify.validators">
             <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
@@ -133,13 +133,13 @@
 <!--查看的模态框-->
 <ng-template #lookdesc>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">部门查看</h4>
+    <h4 class="modal-title pull-left">机构查看</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>编号&nbsp; : &nbsp;	{{detail.id}}</p>
+    <p>机构编号&nbsp; : &nbsp;	{{detail.id}}</p>
     <p>名称&nbsp; : &nbsp;	{{detail.name}}</p>
     <p>机构编码&nbsp; : &nbsp;	{{detail.code}}</p>
     <p>机构类型&nbsp; : &nbsp;	{{detail.otype}}</p>

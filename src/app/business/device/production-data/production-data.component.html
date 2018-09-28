@@ -20,7 +20,7 @@
           <thead>
           <tr>
             <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>设备id号</th>
+            <th>设备编号</th>
             <th>名称</th>
             <th>厂家编号</th>
             <th>生产厂家</th>
@@ -110,7 +110,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属模块id: &nbsp;</label>
+        <label>所属模块编号: &nbsp;</label>
         <select #a_modalId (change)="selectModalId(a_modalId.value, addForm)" class="form-control">
           <option value="">请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.mid">{{modal.name}}</option>
@@ -174,7 +174,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>所属模块id: &nbsp;</label>
+        <label>所属模块编号: &nbsp;</label>
         <select #m_modalId (change)="selectModalId(m_modalId.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.mid === detail.mid" [value]="modal.mid">{{modal.name}}</option>
         </select>
@@ -203,8 +203,8 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>设备id号: {{detail['did']}}</p>
-    <p>名称: {{detail['name']}}</p>
+    <p>设备编号: {{detail['did']}}</p>
+    <p>设备名称: {{detail['name']}}</p>
     <p>厂家编号: {{detail['fnum']}}</p>
     <p>生产厂家: {{detail['dvender']}}</p>
     <p>设备型号: {{detail['dmodule']}}</p>
@@ -224,7 +224,7 @@
     <span *ngIf="detail['dstatus'] === 1">设备运行状态: 运行中</span>
     <span *ngIf="detail['dstatus'] === 1">设备运行状态: 未运行</span>
     <p>
-      <span *ngFor="let modal of Fmodalid" [hidden]="!(modal.mid === detail.mid)">模块ID: {{detail['mid']}},&nbsp;&nbsp;模块名称: {{modal['name']}}</span>
+      <span *ngFor="let modal of Fmodalid" [hidden]="!(modal.mid === detail.mid)">模块编号: {{detail['mid']}},&nbsp;&nbsp;模块名称: {{modal['name']}}</span>
     </p>
     <p>插入时间 :{{detail['idt']}}</p>
     <p>更新时间 :{{detail['udt']}}</p>

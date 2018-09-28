@@ -28,37 +28,6 @@ export class CommonfunService {
     }
     return confirm('确定删除项：\n\n' + str);
   }
-  // 控制模态框的配置
-  public getOperateModalConfig(): any {
-    const operateModal = {
-      /**控制点击背景时会自动关闭模态框
-       */
-      backdrop: false,
-      /**当按下escape键时，关闭模态框
-       */
-      keyboard: true,
-      focus: true,
-      /**初始化时展示这个模态框
-       */
-      show: true,
-      /**忽略点击背景
-       */
-      ignoreBackdropClick: true,
-      /**
-       * Css class for opened modal 在打开模态框时加上css样式
-       */
-      class: null,
-      /**
-       * Toggle animation  切换动画
-       */
-      animated: true,
-      /**
-       * Modal data  模块数据
-       */
-      initialState: Object
-    };
-    return operateModal;
-  }
   // 时间格式化输出, 没有精确到秒
   public defineTimeFormat(time: any): string {
     const t = Number(time);

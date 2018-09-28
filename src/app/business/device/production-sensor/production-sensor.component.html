@@ -21,8 +21,8 @@
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
             <th>传感器编号</th>
-            <th>名称</th>
-            <th>类型</th>
+            <th>传感器名称</th>
+            <th>传感器类型</th>
             <th>数据类型</th>
             <th>变量地址</th>
             <th>状态</th>
@@ -97,7 +97,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>请选择设备ID: &nbsp;</label>
+        <label>请选择设备编号: &nbsp;</label>
         <select #a_device (change)="selectDeviceId(a_device.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.did">{{modal.name}}</option>
@@ -157,7 +157,7 @@
         </select>
       </div>
       <div class="form-group">
-        <label>设备ID: &nbsp;</label>
+        <label>设备编号: &nbsp;</label>
         <select #m_device (change)="selectDeviceId(m_device.value, modifyForm)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.did === detail.did" [value]="modal.did">{{modal.name}}</option>
         </select>
@@ -187,9 +187,9 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>SID	:&nbsp;{{detail.sid}}</p>
-    <p>名称:&nbsp;	{{detail.sname}}</p>
-    <p>类型:&nbsp;	{{detail.stype}}</p>
+    <p>传感器编号	:&nbsp;{{detail.sid}}</p>
+    <p>传感器名称:&nbsp;	{{detail.sname}}</p>
+    <p>传感器类型:&nbsp;	{{detail.stype}}</p>
     <p>数据类型:&nbsp;	{{detail.sdatatype}}</p>
     <p>变量地址:&nbsp;	{{detail.saddress}}</p>
     <p>
@@ -199,7 +199,7 @@
     <p>数值最大值:&nbsp;	{{detail.smax}}</p>
     <p>初始值:&nbsp;	{{detail.initialvalue}}</p>
     <p>
-      <span *ngFor="let f of Fmodalid" [hidden]="!(f.did === detail.did)">设备ID:&nbsp;	{{f.did}}, 设备名称: {{f.name}}</span>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f.did === detail.did)">设备编号:&nbsp;	{{f.did}}, 设备名称: {{f.name}}</span>
     </p>
     <p>插入时间:&nbsp;	{{detail.idt}}</p>
     <p>更新时间:&nbsp;	{{detail.udt}}</p>

@@ -5,6 +5,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalService} from 'ngx-bootstrap/modal';
 import {ReqService} from '../../shared/req.service';
 import {CommonfunService} from '../../shared/commonfun.service';
+import {digitAndLetterValidator, digitValidator} from '../../validator/Validators';
 
 @Component({
   selector: 'app-device-inspection',
@@ -66,11 +67,11 @@ export class DeviceInspectionComponent implements OnInit {
       new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
       new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -78,28 +79,28 @@ export class DeviceInspectionComponent implements OnInit {
     ];
     //  增加表单
     this.addForm = this.fb.group({
-      itemname: ['', Validators.required],
-      itemposition: ['', Validators.required],
-      // longitude: ['', Validators.required],
-      // latitude: ['', Validators.required],
-      itemdetail: ['', Validators.required],
-      unitcode: ['', Validators.required],
-      itemmembers: ['', Validators.required],
-      timecell: ['', Validators.required],
-      starttime: ['', Validators.required]
-      // starttime1: ['', Validators.required]
+      itemname: ['', [Validators.required]],
+      itemposition: ['', [Validators.required]],
+      // longitude: ['', [Validators.required],
+      // latitude: ['', [Validators.required],
+      itemdetail: ['', [Validators.required]],
+      unitcode: ['', [Validators.required]],
+      itemmembers: ['', [Validators.required]],
+      timecell: ['', [Validators.required]],
+      starttime: ['', [Validators.required]]
+      // starttime1: ['', [Validators.required]
     });
     this.modifyForm = this.fb.group({
-      itemcode: ['', Validators.required],
-      itemname: ['', Validators.required],
-      itemposition: ['', Validators.required],
-      longitude: ['', Validators.required],
-      latitude: ['', Validators.required],
-      itemdetail: ['', Validators.required],
-      unitcode: ['', Validators.required],
-      itemmembers: ['', Validators.required],
-      starttime: ['', Validators.required],
-      timecell: ['', Validators.required]
+      itemcode: ['', [Validators.required, digitAndLetterValidator]],
+      itemname: ['', [Validators.required]],
+      itemposition: ['', [Validators.required]],
+      longitude: ['', [Validators.required, digitValidator]],
+      latitude: ['', [Validators.required, digitValidator]],
+      itemdetail: ['', [Validators.required]],
+      unitcode: ['', [Validators.required]],
+      itemmembers: ['', [Validators.required]],
+      starttime: ['', [Validators.required]],
+      timecell: ['', [Validators.required]]
     });
     // 得到系统id
     this.req.FindsystemSysid().subscribe(value => {

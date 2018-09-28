@@ -43,3 +43,50 @@ export function faxValidator(control: FormControl) {
   const valid = Reg.test(control.value);
   return valid ? null : {fax: true};
 }
+
+
+// 不能包括中文
+export function chineseValidator(control: FormControl) {
+  const Reg = /[0-9][a-z][A-Z]/g;
+  const valid = Reg.test(control.value);
+  return valid ? null : {chinese: true};
+}
+
+// 只能包含小数
+export function decimalValidator(control: FormControl) {
+  const Reg = /^([0-9]{1,}[.][0-9]*)$/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {decimal: true};
+}
+// 只能包含整数
+export function integerValidator(control: FormControl) {
+  const Reg = /^([0-9]{1,})$/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {integer: true};
+}
+
+// 既可以是整数也可以是小数
+export function digitValidator(control: FormControl) {
+  const Reg = /(^([0-9]{1,})$)|(^([0-9]{1,}[.][0-9]*)$)/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {digit: true};
+}
+// 只能输入数字和字母(不分大小写)
+export function digitAndLetterValidator(control: FormControl) {
+  const Reg = /^[A-Za-z0-9]+$/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {digitAndLetter: true};
+}
+
+// 只能输入邮箱
+export function postCodeValidator(control: FormControl) {
+  const Reg = /[1-9]\d{5}(?!\d)/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {postCode: true};
+}
+// 验证密码，不能有中文的6-17位字符
+export function passwordValidator(control: FormControl) {
+  const Reg = /^[\w_-]{6,18}$/;
+  const valid = Reg.test(control.value);
+  return valid ? null : {password: true};
+}

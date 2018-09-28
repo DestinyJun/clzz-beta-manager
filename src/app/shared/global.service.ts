@@ -403,7 +403,6 @@ export class TechnologyTemperatureQueryList {
 ) {}
 }
 
-
 // 文本框数据增加和修改 字段构造器
 export class Field {
   constructor(

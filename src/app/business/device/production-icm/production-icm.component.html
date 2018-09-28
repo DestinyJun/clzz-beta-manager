@@ -20,9 +20,9 @@
           <thead>
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>模块id号</th>
+            <th>模块编号</th>
             <th>模块名称</th>
-            <th>系统id</th>
+            <th>生产线编号</th>
             <th>信息插入时间</th>
             <th>信息更新时间</th>
           </tr>
@@ -142,10 +142,10 @@
     </button>
   </div>
   <div class="modal-body">
-    <p>模块ID(唯一标识): {{detail['mid']}}</p>
+    <p>模块编号(唯一标识): {{detail['mid']}}</p>
     <p>名称:{{detail['name']}}</p>
     <p>
-      <span *ngFor="let f of Fmodalid" [hidden]="!(f['sid'] === detail.sid)">生产线ID: {{f.sid}}, &nbsp;&nbsp;生产线名称: {{f.name}}</span>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f['sid'] === detail.sid)">生产线编号: {{f.sid}}, &nbsp;&nbsp;生产线名称: {{f.name}}</span>
     </p>
     <p>插入时间 :{{detail['idt']}}</p>
     <p>更新时间 :{{detail['udt']}}</p>

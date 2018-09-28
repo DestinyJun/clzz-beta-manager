@@ -5,6 +5,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {AppManager} from '../../shared/global.service';
 import {ReqService} from '../../shared/req.service';
 import {CommonfunService} from '../../shared/commonfun.service';
+import {FileUploader} from 'ng2-file-upload';
 
 @Component({
   selector: 'app-mobile',
@@ -21,6 +22,7 @@ export class MobileComponent implements OnInit {
   public status: number;
   public openstatus: boolean;
   public QRcodeValue: string;
+  public uploader: FileUploader = new FileUploader({});
   constructor(
     public http: HttpClient,
     public fb: FormBuilder,
@@ -34,6 +36,7 @@ export class MobileComponent implements OnInit {
     });
   }
   ngOnInit() {
+    // this.uploader.
     this.formData = new FormData();
     this.openstatus = true;
     this.status = 0;
@@ -55,13 +58,16 @@ export class MobileComponent implements OnInit {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
       this.QRcodeValue = this.apps[i].url;
     }
-    this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+    this.modalRef = this.modalService.show(template);
   }
   // 选择文件
-  public getFile(event): void {
-    this.file = event.target.files[0];
-    this.formData.append('file', event.target.files[0]);
-    // console.log(this.file.size);
+  public getFile(e): void {
+    const myReg = /[.apk]$/i;
+    this.file = e.target.files[0];
+    this.formData.append('file', e.target.files[0]);
+    if (!myReg.test(this.file.name)) {
+      document.getElementById('reset').click();
+    }
   }
   // 选择文件类型
   public typeSelect(appType: any): void {
@@ -75,6 +81,7 @@ export class MobileComponent implements OnInit {
         this.formData.append('infomation', JSON.stringify(this.infoForm.value));
         this.req.AppUpload(this.formData)
               .subscribe(res => {
+                console.log(res);
                 // console.log(event.type === HttpEventType.UploadProgress);
                   this.status = Number(res.status);
                     setTimeout(() => {
@@ -93,7 +100,6 @@ export class MobileComponent implements OnInit {
   public downloadFile(downloadUrl): void {
     window.open(downloadUrl);
   }
-
 }
 
 

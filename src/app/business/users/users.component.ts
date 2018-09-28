@@ -3,7 +3,7 @@ import {Field, PageBody, UsersManager, ValidMsg} from '../../shared/global.servi
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
-import {emailValidator, idCardValidators, mobileValidators} from '../../validator/Validators';
+import {emailValidator, idCardValidators, mobileValidators, passwordValidator} from '../../validator/Validators';
 import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
@@ -62,7 +62,7 @@ export class UsersComponent implements OnInit {
       homeAddress: ['', Validators.required],
       homeTelephone: ['', [Validators.required, mobileValidators]],
       organizationId: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(16)]],
+      password: ['', [Validators.required, passwordValidator]],
       phone: ['', [Validators.required, mobileValidators]],
       email: ['', [Validators.required, emailValidator]],
       birthday: ['', Validators.required],
@@ -78,7 +78,7 @@ export class UsersComponent implements OnInit {
       homeAddress: ['', Validators.required],
       homeTelephone: ['', [Validators.required, mobileValidators]],
       organizationId: ['', Validators.required],
-      password: ['', [Validators.required, Validators.minLength(6), Validators.maxLength(16)]],
+      password: ['', [Validators.required, passwordValidator]],
       phone: ['', [Validators.required, mobileValidators]],
       email: ['', [Validators.required, emailValidator]],
       birthday: ['', Validators.required],
@@ -94,10 +94,10 @@ export class UsersComponent implements OnInit {
       new Field('家庭住址', 'homeAddress', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('家庭联系电话', 'homeTelephone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       // new Field('所属组织id',	'organizationId'),
-      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('password', '密码长度为6-18位，不包含中文')]),
       new Field('联系电话', 'phone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       new Field('邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
-      new Field('生日', 'birthday', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生日', 'birthday', 'date', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线列表', 'sysids', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
     ];
@@ -110,10 +110,10 @@ export class UsersComponent implements OnInit {
       new Field('家庭住址', 'homeAddress', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('家庭联系电话', 'homeTelephone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       // new Field('所属组织id',	'organizationId'),
-      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('密码', 'password', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('password', '密码长度为6-18位，不包含中文')]),
       new Field('联系电话', 'phone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       new Field('邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
-      new Field('生日', 'birthday', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生日', 'birthday', 'date', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线列表', 'sysids', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
     ];

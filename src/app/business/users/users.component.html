@@ -76,7 +76,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>所属组织编号: &nbsp;</label>
+        <label>所属组织: &nbsp;</label>
         <select #a_organization (change)="selectOrganization(a_organization.value, addForm)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let organization of organizationId.organizations" [value]="organization.id">{{organization.name}}</option>
@@ -144,7 +144,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label>所属组织编号: &nbsp;</label>
+        <label>所属组织: &nbsp;</label>
         <select #m_organization (change)="selectOrganization(m_organization.value)" class="form-control">
           <option *ngFor="let organization of organizationId.organizations" [selected]="organization.id === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
         </select>

@@ -4,6 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {PageBody, DeviceProductionIcmList, Field, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-icm',
@@ -47,22 +48,22 @@ export class ProductionIcmComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid')
     ];
     this.fieldsModify = [
-      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid'),
     ];
     this.addForm = this.fb.group({
-      mid: ['', Validators.required],
+      mid: ['', Validators.required, digitAndLetterValidator],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      mid: ['', Validators.required],
+      mid: ['', Validators.required, digitAndLetterValidator],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });

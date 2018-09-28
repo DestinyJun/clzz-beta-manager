@@ -1,3 +1,4 @@
+import {digitAndLetterValidator} from '../../../../validator/Validators';
 import {Component, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
@@ -55,16 +56,16 @@ export class CameraComponent implements OnInit {
     this.fieldsAdd = [];
     this.fieldsModify = [];
     this.addForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
+      id: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      creator: ['', [Validators.required]],
       innerUrl: [''],
-      outerUrl: ['', Validators.required],
-      gId: ['', Validators.required]
+      outerUrl: ['', [Validators.required]],
+      gId: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      id: [''],
-      Update_id: ['', Validators.required],
+      id: ['', [Validators.required, digitAndLetterValidator]],
+      Update_id: ['', [Validators.required]],
       name: [''],
       creator: [''],
       innerUrl: [''],
@@ -72,7 +73,7 @@ export class CameraComponent implements OnInit {
       gId: ['']
     });
     this.fieldsAdd = [
-      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -80,7 +81,7 @@ export class CameraComponent implements OnInit {
       new Field('所属摄像机组编号', 'gId', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),

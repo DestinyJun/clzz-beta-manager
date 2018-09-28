@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {Field, OrganizationList, PageBody, ValidMsg} from '../../../shared/global.service';
-import {emailValidator, faxValidator, mobileValidators} from '../../../validator/Validators';
+import {emailValidator, faxValidator, mobileValidators, postCodeValidator} from '../../../validator/Validators';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 
@@ -58,7 +58,7 @@ export class OrganizationManagementComponent implements OnInit {
       corpphone: ['', [Validators.required, mobileValidators]],
       corpname: ['', [Validators.required]],
       registerdate: ['', [Validators.required]],
-      zipcode: ['', [Validators.required]],
+      zipcode: ['', [Validators.required, postCodeValidator]],
       pid: ['-1', [Validators.required]]
     });
     // 修改表单信息
@@ -74,7 +74,7 @@ export class OrganizationManagementComponent implements OnInit {
       corpphone: ['', [Validators.required, mobileValidators]],
       corpname: ['', [Validators.required]],
       registerdate: ['', [Validators.required]],
-      zipcode: ['', [Validators.required]],
+      zipcode: ['', [Validators.required, postCodeValidator]],
       pid: ['', [Validators.required]]
     });
     this.fieldsAdd = [
@@ -87,9 +87,9 @@ export class OrganizationManagementComponent implements OnInit {
       new Field('单位邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
       new Field('法人电话', 'corpphone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       new Field('法人代表', 'corpname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('成立日期', 'registerdate', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('成立日期', 'registerdate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
+      // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
       // new Field('编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -102,9 +102,9 @@ export class OrganizationManagementComponent implements OnInit {
       new Field('单位邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
       new Field('法人电话', 'corpphone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       new Field('法人代表', 'corpname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('成立日期', 'registerdate', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('成立日期', 'registerdate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
+      // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     // 调用查看函数
     this.Update();
