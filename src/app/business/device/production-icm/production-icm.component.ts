@@ -58,12 +58,12 @@ export class ProductionIcmComponent implements OnInit {
       // new Field('父id',	'sid'),
     ];
     this.addForm = this.fb.group({
-      mid: ['', Validators.required, digitAndLetterValidator],
+      mid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      mid: ['', Validators.required, digitAndLetterValidator],
+      mid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });

@@ -99,7 +99,7 @@ export class ProductionDataComponent implements OnInit {
       mid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      did: ['', Validators.required, digitAndLetterValidator],
+      did: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       fnum: ['', Validators.required],
       dvender: ['', Validators.required],
@@ -127,13 +127,11 @@ export class ProductionDataComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
@@ -152,7 +150,6 @@ export class ProductionDataComponent implements OnInit {
         this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
-
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       this.modalRef = this.modalService.show(template);
