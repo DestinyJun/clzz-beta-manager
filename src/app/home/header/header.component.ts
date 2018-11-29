@@ -7,6 +7,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GlobalService, PersonInfo} from '../../shared/global.service';
 import {SelectLineIdsStatus} from '../../business/users/users.component';
 import 'rxjs/Rx';
+import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
   selector: 'app-header',
@@ -36,7 +37,7 @@ export class HeaderComponent implements OnInit {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    public localSessionStorage: GlobalService
+    public localSessionStorage: GlobalService,
   ) {
   }
 
@@ -89,7 +90,6 @@ export class HeaderComponent implements OnInit {
     } else {
       this.userLineIds[index].sys_status = 0;
     }
-    // this.updateLineShow('modify');
   }
 
   // 控制模态框
@@ -131,12 +131,10 @@ export class HeaderComponent implements OnInit {
           }
           this.modalRef = this.modalService.show(template);
         }
-        // this.updateLineShow('addLineId');
       });
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // 这里是增加生产线在模态框的显示
-      //   this.updateLineShow('modifyLineId');
       this.modalRef = this.modalService.show(template);
     }
 
@@ -175,23 +173,17 @@ export class HeaderComponent implements OnInit {
 
   // 退出请求
   public loginOut(): void {
+    this.route.navigate(['/login']);
     this.req.Logout({sid: sessionStorage.getItem('sid')})
       .subscribe(res => {
         if (Number(res.status) === 10) {
           alert('退出登录成功!');
         }
       });
-    this.route.navigate(['/login']);
   }
 
   public onToggleInfo(infoToggleValue): void {
     this.infoToggle = infoToggleValue;
-  }
-
-  // 选择组织
-  public selectOrganizationId(value): void {
-    console.log(value);
-    this.personInfoModifyForm.patchValue({'organizationId': value});
   }
 }
 

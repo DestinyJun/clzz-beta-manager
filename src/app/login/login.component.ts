@@ -24,7 +24,12 @@ export class LoginComponent implements OnInit {
       module: ['WEBS', Validators.required]
     });
   }
+
   ngOnInit() {
+    this.status = 0;
+    if (this.req.getCountValidator() > 600 ) {
+      this.status =  15;
+    }
   }
   public OnSubmitInfo(): void {
       if (this.userLoginInfoForm.valid) {
@@ -41,5 +46,10 @@ export class LoginComponent implements OnInit {
       } else {
         alert('账号或密码不能为空!');
       }
+  }
+
+  public cleanScreen(): void {
+    this.status = 0;
+    this.req.setCountValidator(0);
   }
 }

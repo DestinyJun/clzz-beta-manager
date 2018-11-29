@@ -14,9 +14,9 @@
                 <i class="fa fa-user-o" aria-hidden="true"></i>
                 <span >个人信息</span>
               </li>
-              <li class="list-group-item">
+              <li class="list-group-item" (click)="loginOut()">
                 <i class="fa fa-sign-out" aria-hidden="true"></i>
-                <span (click)="loginOut()">退出</span>
+                <span>退出</span>
               </li>
             </ul>
           </div>
@@ -40,7 +40,8 @@
     <p><span>身份证号</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.idCode}}</p><br>
     <p><span>密&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;码</span>: &nbsp;{{personInfo.password}}</p><br>
     <p>
-      <span *ngFor="let o of organization" [hidden]="!(''+o.id === ''+personInfo.organizationId)">所属组织ID: {{o.id}}, &nbsp;&nbsp; 所属组织名称: {{o.name}}</span>
+      <span *ngFor="let o of organization" [hidden]="!(''+o.id === ''+personInfo.organizationId)">所属组织编号: {{o.id}}, &nbsp;&nbsp; 所属组织名称: {{o.name}}</span>
+      <span *ngIf="!personInfo.organizationId">所属机构编号&nbsp; : &nbsp;空</span>
     </p><br>
     <p><span>联系电话</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.phone}}</p><br>
     <p><span>家庭住址</span>&nbsp;&nbsp;&nbsp;: &nbsp;{{personInfo.homeAddress}}</p><br>
@@ -111,11 +112,10 @@
         <input type="text" formControlName="homeTelephone" class="form-control">
       </div>
       <div class="form-group">
-        <label>所属组织机构: &nbsp;</label>
-        <select #organizationId (change)="selectOrganizationId(organizationId.value)" class="form-control">
-          <option [value]="null">默认值为空，请选择</option>
-          <option *ngFor="let o of organization" [selected]="o.id + '' === personInfo.organizationId+''" [value]="o.id">{{o.name}}</option>
-        </select>
+        <label>所属组织机构编号: &nbsp;</label>
+        <div *ngFor="let org of organization">
+          <input type="text" disabled *ngIf="(org.id + '') === personInfoModifyForm.get('organizationId').value" [value]="org.name" class="form-control">
+        </div>
       </div>
       <div class="form-group">
         <label>密码 &nbsp; : &nbsp;</label>

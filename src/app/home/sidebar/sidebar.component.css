@@ -13,9 +13,12 @@
 
 .menu .logo{
   height: 90px;
-  background: #292D30;
-  padding-top: 10px;
   text-align: center;
+}
+.menu .logo .logo_image {
+  height: 60px;
+  background: url("./../../../assets/logo.jpg");
+  background-size: 100% 100%;
 }
 .menu .logo>img{
   width: 50%;

@@ -87,7 +87,7 @@ export class UsersComponent implements OnInit {
     });
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('用户编码', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('工号', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('身份证', 'idCode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('真实姓名', 'realName', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('用户名', 'userName', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -102,8 +102,8 @@ export class UsersComponent implements OnInit {
       // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
     ];
     this.fieldsModify = [
-      new Field('用户数据ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('用户编码', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('用户数据库编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('工号', 'userCode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('身份证', 'idCode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('真实姓名', 'realName', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('用户名', 'userName', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -286,13 +286,13 @@ export class UsersComponent implements OnInit {
 //  修改表格内容
   public userModify(): void {
     // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
-    let sysidsStr = [];
+    const sySidsStr = [];
     for (let i = 0; i < this.userLineIds.length; ++i) {
       if (this.userLineIds[i].sys_status === 1) {
-        sysidsStr.push(this.userLineIds[i].sys_id);
+        sySidsStr.push(this.userLineIds[i].sys_id);
       }
     }
-    this.modifyForm.patchValue({sysids: sysidsStr.toString()});
+    this.modifyForm.patchValue({sysids: sySidsStr.toString()});
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;

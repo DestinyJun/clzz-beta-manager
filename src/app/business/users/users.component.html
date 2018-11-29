@@ -21,7 +21,7 @@
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/或全不选</th>
             <th>用户数据库编号</th>
-            <th>用户编码</th>
+            <th>工号</th>
             <th>真实姓名</th>
             <th>用户名</th>
             <th>所属组织编号</th>
@@ -145,8 +145,9 @@
       </div>
       <div class="form-group">
         <label>所属组织: &nbsp;</label>
-        <select #m_organization (change)="selectOrganization(m_organization.value)" class="form-control">
-          <option *ngFor="let organization of organizationId.organizations" [selected]="organization.id === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
+        <select #m_organization (change)="selectOrganization(m_organization.value, modifyForm)" class="form-control">
+          <option value="-1">为空</option>
+          <option *ngFor="let organization of organizationId.organizations" [selected]="organization.id+'' === detail['organizationId']" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <div class="form-group">
@@ -201,7 +202,7 @@
   </div>
   <div class="modal-body">
     <p>用户数据库编号	: &nbsp;{{detail.id}}</p>
-    <p>用户编码	: &nbsp;{{detail.userCode}}</p>
+    <p>工号	: &nbsp;{{detail.userCode}}</p>
     <p>身份证	: &nbsp;{{detail.idCode}}</p>
     <p>真实姓名	: &nbsp;{{detail.realName}}</p>
     <p>用户名	: &nbsp;{{detail.userName}}</p>
@@ -209,6 +210,7 @@
     <p>家庭联系电话	: &nbsp;{{detail.homeTelephone}}</p>
     <p>
       <span *ngFor="let organization of organizationId['organizations']" [hidden]="!('' + organization.id === ''+ detail.organizationId)">所属机构编号&nbsp; : &nbsp;	{{organization.id}},&nbsp;&nbsp;&nbsp;所属机构名称&nbsp;:&nbsp;{{organization.name}}</span>
+      <span *ngIf="!detail.organizationId">所属机构编号&nbsp; : &nbsp;空</span>
     </p>
     <p>密码	: &nbsp;{{detail.password}}</p>
     <p>联系电话	: &nbsp;{{detail.phone}}</p>
