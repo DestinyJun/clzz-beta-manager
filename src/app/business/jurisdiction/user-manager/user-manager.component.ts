@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Field, PageBody, UserPowerInfo, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -11,7 +11,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./user-manager.component.css']
 })
 
-export class UserManagerComponent implements OnInit {
+export class UserManagerComponent implements OnInit, OnDestroy {
   public datas: Array<UserPowerInfo>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -249,5 +249,11 @@ public userPowerAdd(): void {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

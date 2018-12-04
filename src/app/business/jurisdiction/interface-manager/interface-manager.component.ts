@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Field, JurisdictionInterface, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -10,7 +10,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './interface-manager.component.html',
   styleUrls: ['./interface-manager.component.css']
 })
-export class InterfaceManagerComponent implements OnInit {
+export class InterfaceManagerComponent implements OnInit, OnDestroy {
   public datas: Array<JurisdictionInterface>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -251,5 +251,11 @@ export class InterfaceManagerComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

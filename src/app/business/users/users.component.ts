@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Field, PageBody, UsersManager, ValidMsg} from '../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -12,7 +12,7 @@ import {CommonfunService} from '../../shared/commonfun.service';
   styleUrls: ['./users.component.css']
   // changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements OnInit, OnDestroy {
   public datas: Array<UsersManager>;
   public fieldsAdd: Array<Field> = [];
   public fieldsModify: Array<Field> = [];
@@ -382,6 +382,12 @@ export class UsersComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
 

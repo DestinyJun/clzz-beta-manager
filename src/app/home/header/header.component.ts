@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
@@ -7,14 +7,13 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GlobalService, PersonInfo} from '../../shared/global.service';
 import {SelectLineIdsStatus} from '../../business/users/users.component';
 import 'rxjs/Rx';
-import {CommonfunService} from '../../shared/commonfun.service';
 
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   public infoToggle: boolean;
   public modalRef: BsModalRef;
   public personInfo: PersonInfo;
@@ -184,6 +183,12 @@ export class HeaderComponent implements OnInit {
 
   public onToggleInfo(infoToggleValue): void {
     this.infoToggle = infoToggleValue;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
 

@@ -1,4 +1,4 @@
-import {Component, OnChanges, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
+import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Field, JurisdictionBtnManager, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
@@ -10,7 +10,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './btn-manager.component.html',
   styleUrls: ['./btn-manager.component.css']
 })
-export class BtnManagerComponent implements OnInit {
+export class BtnManagerComponent implements OnInit, OnDestroy {
   public datas: Array<JurisdictionBtnManager>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -252,5 +252,11 @@ export class BtnManagerComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

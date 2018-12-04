@@ -1,5 +1,5 @@
 import {digitAndLetterValidator} from '../../../../validator/Validators';
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {CommonfunService} from '../../../../shared/commonfun.service';
@@ -13,7 +13,7 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./camera.component.css']
 })
 
-export class CameraComponent implements OnInit {
+export class CameraComponent implements OnInit, OnDestroy {
   public datas: Array<Camera>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -275,5 +275,11 @@ export class CameraComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

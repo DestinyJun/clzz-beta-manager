@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {DeviceProductionSensorList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -11,7 +11,7 @@ import {digitAndLetterValidator, digitValidator} from '../../../validator/Valida
   templateUrl: './production-sensor.component.html',
   styleUrls: ['./production-sensor.component.css']
 })
-export class ProductionSensorComponent implements OnInit {
+export class ProductionSensorComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionSensorList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -301,6 +301,12 @@ export class ProductionSensorComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 
 }

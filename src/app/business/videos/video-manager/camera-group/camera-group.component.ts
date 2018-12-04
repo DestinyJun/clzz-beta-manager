@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {CommonfunService} from '../../../../shared/commonfun.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
@@ -12,7 +12,7 @@ import {digitAndLetterValidator} from '../../../../validator/Validators';
   templateUrl: './camera-group.component.html',
   styleUrls: ['./camera-group.component.css']
 })
-export class CameraGroupComponent implements OnInit {
+export class CameraGroupComponent implements OnInit, OnDestroy {
   public datas: Array<CameraGroup>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -297,6 +297,12 @@ export class CameraGroupComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
 

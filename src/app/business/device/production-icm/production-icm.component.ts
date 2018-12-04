@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
@@ -11,7 +11,7 @@ import {digitAndLetterValidator} from '../../../validator/Validators';
   templateUrl: './production-icm.component.html',
   styleUrls: ['./production-icm.component.css']
 })
-export class ProductionIcmComponent implements OnInit {
+export class ProductionIcmComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionIcmList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -268,5 +268,10 @@ export class ProductionIcmComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

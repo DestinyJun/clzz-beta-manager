@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
@@ -11,7 +11,7 @@ import {digitValidator} from '../../../validator/Validators';
   templateUrl: './technicspack-temperature.component.html',
   styleUrls: ['./technicspack-temperature.component.css']
 })
-export class TechnicspackTemperatureComponent implements OnInit {
+export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
   public datas: Array<TechnologyTemperatureQueryList>;
   public modalRef: BsModalRef;
@@ -308,5 +308,11 @@ export class TechnicspackTemperatureComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

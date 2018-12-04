@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Field, ItemList, PageBody, ValidMsg} from '../../shared/global.service';
 import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -12,7 +12,7 @@ import {digitAndLetterValidator, digitValidator} from '../../validator/Validator
   templateUrl: './device-inspection.component.html',
   styleUrls: ['./device-inspection.component.css']
 })
-export class DeviceInspectionComponent implements OnInit {
+export class DeviceInspectionComponent implements OnInit, OnDestroy {
   public datas: Array<ItemList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -453,8 +453,13 @@ export class DeviceInspectionComponent implements OnInit {
   }
 // 清除屏幕
   public cleanScreen(): void {
-    // this.controlSearchText = false;
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

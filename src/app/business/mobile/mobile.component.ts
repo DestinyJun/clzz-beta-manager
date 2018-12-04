@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
@@ -12,7 +12,7 @@ import {FileUploader} from 'ng2-file-upload';
   templateUrl: './mobile.component.html',
   styleUrls: ['./mobile.component.css']
 })
-export class MobileComponent implements OnInit {
+export class MobileComponent implements OnInit, OnDestroy {
   public apps: Array<AppManager>;
   public modalRef: BsModalRef;
   public formData: FormData;
@@ -41,7 +41,6 @@ export class MobileComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.uploader.
     this.formData = new FormData();
     this.openstatus = true;
     this.status = 0;
@@ -83,7 +82,6 @@ export class MobileComponent implements OnInit {
   // 选择文件类型
   public typeSelect(appType: any): void {
     this.infoForm.patchValue({appType: appType});
-    // console.log(appType);
   }
 
   // 上传文件
@@ -104,7 +102,6 @@ export class MobileComponent implements OnInit {
     } else {
       alert('请填写完整的信息!');
     }
-    // console.log(this.infoForm.value);
   }
 
 
@@ -118,6 +115,12 @@ export class MobileComponent implements OnInit {
     if (this.status !== 0) {
       this.openstatus = true;
       this.status = 0;
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
     }
   }
 }

@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {PageBody, DeviceProductionLineList, Field, ValidMsg} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
@@ -12,7 +12,7 @@ import {digitAndLetterValidator} from '../../../validator/Validators';
   styleUrls: ['./production-line.component.css']
 })
 
-export class ProductionLineComponent implements OnInit {
+export class ProductionLineComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionLineList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -247,6 +247,12 @@ export class ProductionLineComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
 

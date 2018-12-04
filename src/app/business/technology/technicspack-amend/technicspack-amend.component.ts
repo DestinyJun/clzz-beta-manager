@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
@@ -11,7 +11,7 @@ import {digitValidator} from '../../../validator/Validators';
   templateUrl: './technicspack-amend.component.html',
   styleUrls: ['./technicspack-amend.component.css']
 })
-export class TechnicspackAmendComponent implements OnInit {
+export class TechnicspackAmendComponent implements OnInit, OnDestroy {
   // technologyParamsPackWordList 用于显示增，修表单，不需要在模板上写太多 input 的 formControlName 控件
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
   public datas: Array<TechnologyAmendQueryList>;
@@ -319,5 +319,11 @@ export class TechnicspackAmendComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

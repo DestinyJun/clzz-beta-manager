@@ -1,4 +1,4 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {DeviceProductionDataList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
@@ -12,7 +12,7 @@ import {digitAndLetterValidator} from '../../../validator/Validators';
   templateUrl: './production-data.component.html',
   styleUrls: ['./production-data.component.css']
 })
-export class ProductionDataComponent implements OnInit {
+export class ProductionDataComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionDataList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -307,5 +307,11 @@ export class ProductionDataComponent implements OnInit {
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
