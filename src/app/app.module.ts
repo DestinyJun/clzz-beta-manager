@@ -10,6 +10,7 @@ import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 import {LoginGuard} from './guard/login.guard';
 import {TreeModule} from 'ng2-tree';
  import {CommonfunService} from './shared/commonfun.service';
+ import {BsModalService} from 'ngx-bootstrap';
 
 @NgModule({
   imports: [

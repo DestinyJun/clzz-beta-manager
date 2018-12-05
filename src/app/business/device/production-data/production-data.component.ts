@@ -1,17 +1,18 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import {DeviceProductionDataList, Field, PageBody} from '../../../shared/global.service';
+import {DeviceProductionDataList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-data',
   templateUrl: './production-data.component.html',
   styleUrls: ['./production-data.component.css']
 })
-export class ProductionDataComponent implements OnInit {
+export class ProductionDataComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionDataList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -47,42 +48,42 @@ export class ProductionDataComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.fieldsAdd = [
-      new Field('设备id号', 'did'),
-      new Field('名称', 'name'),
-      new Field('厂家编号', 'fnum'),
-      new Field('生产厂家', 'dvender'),
-      new Field('设备型号', 'dmodule'),
-      new Field('生产日期', 'dprodate'),
-      new Field('安装日期', 'dinstalldate'),
-      new Field('额定功率', 'power'),
-      new Field('额定电流', 'current'),
-      new Field('额定电压', 'voltage'),
-      new Field('使用状态', 'usestatus'),
-      new Field('设备类型', 'dtype'),
-      new Field('设备运行状态', 'dstatus'),
-      // new Field('模块id', 'mid'),
-    ];
+      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号', 'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家', 'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号', 'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期', 'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期', 'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)', 'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)', 'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)', 'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('使用状态', 'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备类型', 'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备运行状态', 'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id', 'mid', 'text), [{'required,: '* 必填项
+      ];
     this.fieldsModify = [
-      new Field('设备id号',	'did'),
-      new Field('名称',	'name'),
-      new Field('厂家编号',	'fnum'),
-      new Field('生产厂家',	'dvender'),
-      new Field('设备型号',	'dmodule'),
-      new Field('生产日期',	'dprodate'),
-      new Field('安装日期',	'dinstalldate'),
-      new Field('额定功率',	'power'),
-      new Field('额定电流',	'current'),
-      new Field('额定电压',	'voltage'),
-      new Field('使用状态',	'usestatus'),
-      new Field('设备类型',	'dtype'),
-      new Field('设备运行状态',	'dstatus'),
-      // new Field('模块id',	'mid')
+      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号',	'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家',	'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号',	'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期',	'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期',	'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)',	'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)',	'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)',	'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('使用状态',	'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备类型',	'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('设备运行状态',	'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id',	'mid', 'text), [{'required,: '* 必填项
     ];
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     //  增加表单
     this.addForm = this.fb.group({
-      did: ['', Validators.required],
+      did: ['', Validators.required, digitAndLetterValidator],
       name: ['', Validators.required],
       fnum: ['', Validators.required],
       dvender: ['', Validators.required],
@@ -98,7 +99,7 @@ export class ProductionDataComponent implements OnInit {
       mid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      did: ['', Validators.required],
+      did: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       fnum: ['', Validators.required],
       dvender: ['', Validators.required],
@@ -126,18 +127,16 @@ export class ProductionDataComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -148,14 +147,12 @@ export class ProductionDataComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
-
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -164,6 +161,19 @@ export class ProductionDataComponent implements OnInit {
   public closeModal(): void {
     this.listenDescModal = false;
     this.modalRef.hide();
+  }
+  //  下面的关于下拉框选择的操作
+  public selectUesStatus(value, form): void {
+      form.patchValue({'usestatus': value});
+  }
+  public selectDType(value, form): void {
+    form.patchValue({'dtype': value});
+  }
+  public selectDStatus(value, form): void {
+    form.patchValue({'dstatus': value});
+  }
+  public selectModalId(value, form): void {
+    form.patchValue({'mid': value});
   }
   // 选择增加设备id
   public SelectAddModalId(value): void {
@@ -231,6 +241,7 @@ export class ProductionDataComponent implements OnInit {
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public proDataAdd(): void {
+    console.log(this.addForm.value);
     if (this.addForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -290,10 +301,17 @@ export class ProductionDataComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
+  }
+
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

@@ -1,8 +1,8 @@
-<div class="productiondata">
+<div class="productiondata" (click)="cleanScreen()">
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
-        项目
+        <span>设备巡检</span>
       </div>
     </div>
     <div class="row options">
@@ -10,14 +10,14 @@
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <div class="numSearchDiv" [class.numSearch]="controlSearchText">
-           <!--这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查-->
-           <!--而hidden 仅仅只是掩藏 input ,但是要检查-->
-          <!--<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入项目编号">-->
-          <input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入项目编号">
-          <span class="fa fa-search" (click)="numSearch(search.value, lookdesc)" title="按编号查询"></span>
-        </div>
-        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <!--<div class="numSearchDiv" [class.numSearch]="controlSearchText">-->
+        <!--&lt;!&ndash;这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查&ndash;&gt;-->
+        <!--&lt;!&ndash;而hidden 仅仅只是掩藏 input ,但是要检查&ndash;&gt;-->
+        <!--&lt;!&ndash;<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入巡检编号">&ndash;&gt;-->
+        <!--<input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入巡检编号">-->
+        <!--&lt;!&ndash;<span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>&ndash;&gt;-->
+        <!--</div>-->
+        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
     </div>
@@ -27,11 +27,11 @@
           <thead>
           <tr>
             <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>项目编号</th>
-            <th>项目名称</th>
-            <th>项目位置</th>
-            <th>项目位置经度</th>
-            <th>项目位置纬度</th>
+            <th>巡检编号</th>
+            <th>巡检名称</th>
+            <th>巡检位置</th>
+            <th>位置经度</th>
+            <th>位置纬度</th>
             <th>打印二维码</th>
           </tr>
           </thead>
@@ -43,7 +43,7 @@
             <td>{{it.itemposition}}</td>
             <td>{{it.longitude}}</td>
             <td>{{it.latitude}}</td>
-            <td><button (click)="openModal(openQRcode, i)">打印二维码</button></td>
+            <td><button type="button" class="btn btn-default" (click)="openModal(openQRcode, i)">打印二维码</button></td>
           </tr>
           </tbody>
         </table>
@@ -60,7 +60,7 @@
 <!--模态框-->
 <ng-template #add>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据增加</h4>
+    <h4 class="modal-title pull-left">巡检数据增加</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -69,13 +69,22 @@
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
         <label>{{add.name}}</label>
-        <input [type]="add.field === 'starttime'?'date':'text'" [formControlName]="(add.field === 'starttime')?'starttime1':add.field" class="form-control">
-        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched">
-          <span [hidden]="!addForm.hasError('required', add.field)">必填</span>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label>巡检开始时间</label>
+        <label>请选择所属生产线: &nbsp;</label>
+        <select #a_lineId (change)="selectLine(a_lineId.value, addForm)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
+          <option *ngFor="let modal of Fmodalid" [value]="modal.sid">{{modal.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>开始时间</label>
         <div class="form-control">
           <p>
             <span contenteditable="true" id="addYear" class="year"></span>年
@@ -106,7 +115,7 @@
 </ng-template>
 <ng-template #modify>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据修改</h4>
+    <h4 class="modal-title pull-left">巡检数据修改</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
@@ -115,13 +124,22 @@
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
         <label>{{modify.name}}</label>
-        <input [type]="(modify.field === 'starttime')?'date':'text'" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
-        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched">
-          <span [hidden]="!modifyForm.hasError('required', modify.field)">必填</span>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label>巡检开始时间</label>
+        <label>所属生产线: &nbsp;</label>
+        <select #m_lineId (change)="selectLine(m_lineId.value, modifyForm)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
+          <option *ngFor="let modal of Fmodalid" [selected]="modifyForm.get('unitcode').value === modal.sid" [value]="modal.sid">{{modal.name}}</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>开始时间</label>
         <div class="form-control">
           <p>
             <span contenteditable="true" id="modifyYear" class="year"></span>年
@@ -152,24 +170,29 @@
 </ng-template>
 <ng-template #lookdesc>
   <div class="modal-header">
-    <h4 class="modal-title pull-left">项目数据查看详情</h4>
+    <h4 class="modal-title pull-left">巡检数据查看详情</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
   <div class="modal-body">
-    <p>项目编号	: &nbsp;{{detail.itemcode}}</p>
-    <p>项目名称	: &nbsp;{{detail.itemname}}</p>
-    <p>项目位置	: &nbsp;{{detail.itemposition}}</p>
-    <p>项目位置经度: &nbsp;	{{detail.longitude}}</p>
-    <p>项目位置纬度: &nbsp;	{{detail.latitude}}</p>
-    <p>项目明细项目: &nbsp;	{{detail.itemdetail}}</p>
-    <p>所属单位编号: &nbsp;	{{detail.unitcode}}</p>
-    <p>项目巡检成员: &nbsp;	{{detail.itemmembers}}</p>
+    <p>巡检编号	: &nbsp;{{detail.itemcode}}</p>
+    <p>巡检名称	: &nbsp;{{detail.itemname}}</p>
+    <p>巡检位置	: &nbsp;{{detail.itemposition}}</p>
+    <p>巡检位置经度: &nbsp;	{{detail.longitude}}</p>
+    <p>巡检位置纬度: &nbsp;	{{detail.latitude}}</p>
+    <p>巡检明细巡检: &nbsp;	{{detail.itemdetail}}</p>
+    <p>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f['sid'] === detail.unitcode)">所属生产线ID: {{f.sid}}, &nbsp;&nbsp;所属生产线名称: {{f.name}}</span>
+    </p>
+    <p>巡检巡检成员: &nbsp;	{{detail.itemmembers}}</p>
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
     <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
     <p>巡检结束时间: &nbsp;	{{detail.endtime}}</p>
-    <p>状态: &nbsp;	{{detail.status}}</p>
+    <p>是否巡检: &nbsp;
+      <span *ngIf="detail.status === 1">已巡检</span>
+      <span *ngIf="detail.status === 0">未巡检</span>
+    </p>
     <p>插入时间: &nbsp;	{{detail.idt}}</p>
     <p>更新时间: &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>

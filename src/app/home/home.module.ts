@@ -14,7 +14,8 @@ import {ModalModule} from 'ngx-bootstrap';
     HomeRoutersModule,
     FormsModule,
     ReactiveFormsModule,
-    ModalModule.forRoot()
+    ModalModule.forRoot(),
+    // BasedModule
   ],
   declarations: [
     HomeComponent,

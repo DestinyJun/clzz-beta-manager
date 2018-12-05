@@ -1,4 +1,4 @@
-<div class="container-fluid">
+<div class="container-fluid" (click)="cleanScreen()">
   <div class="main" style="border: 1px solid #acacac">
     <div class="row" style="padding: 0px 16px;">
       <div class="col-md-12 col-xs-12 title">摄像机管理</div>
@@ -6,11 +6,11 @@
     <div class="clearfix"></div>
     <div class="row" style="background-color: #efefef;margin: 0 1px;">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default"><span class="fa fa-reply-all"><a [routerLink]="['./../../']">返回</a></span></button>
+        <button type="button" class="btn btn-default" [routerLink]="['./../../']"><span class="fa fa-reply-all">返回</span></button>
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="fa fa-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="delete()"><span class="fa fa-trash-o" ></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
     </div>
@@ -20,12 +20,12 @@
           <thead>
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th>摄像机编号</th>
             <th>摄像机名称</th>
-            <th>摄像机id</th>
             <th>摄像机创建人</th>
-            <th>摄像机内网url</th>
-            <th>摄像机外网url</th>
-            <th>所属摄像机组ID</th>
+            <th>摄像机内网地址</th>
+            <th>摄像机外网地址</th>
+            <th>所属摄像机组编号</th>
           </tr>
           </thead>
           <tbody>
@@ -34,13 +34,13 @@
             <td>{{list.value}}</td>
             <td>{{list.id}}</td>
             <td>{{list.creator}}</td>
-            <td>{{list.inner_url}}</td>
-            <td>{{list.outer_url}}</td>
-            <td>{{list.g_id}}</td>
+            <td>{{list.innerUrl}}</td>
+            <td>{{list.outerUrl}}</td>
+            <td>{{list.gId}}</td>
           </tr>
           </tbody>
         </table>
-        <div *ngIf="num === 0" class="text-center">
+        <div *ngIf="!datas || !datas.length || datas.length === 0" class="text-center">
           <h3>此摄像机组没有摄像头</h3>
         </div>
       </div>
@@ -64,46 +64,13 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="addForm">
-      <div class="form-group">
-        <label>摄像机ID</label>
-        <input type="text" class="form-control" formControlName="id" [class.hasError]="addForm.get('id').invalid && addForm.get('id').touched">
-        <div [hidden]="addForm.get('id').valid || addForm.get('id').untouched">
-          <span [hidden]="!addForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>摄像机名称</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="addForm.get('name').invalid && addForm.get('name').touched">
-        <div [hidden]="addForm.get('name').valid || addForm.get('name').untouched">
-          <span [hidden]="!addForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >摄像机创建人</label>
-        <input type="text" class="form-control" formControlName="creator" [class.hasError]="addForm.get('creator').invalid && addForm.get('creator').touched">
-        <div [hidden]="addForm.get('creator').valid || addForm.get('creator').untouched">
-          <span [hidden]="!addForm.hasError('required', 'creator')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >摄像机内网url</label>
-        <input type="text" class="form-control" formControlName="inner_url"  [class.hasError]="addForm.get('inner_url').invalid && addForm.get('inner_url').touched">
-        <div [hidden]="addForm.get('inner_url').valid || addForm.get('inner_url').untouched">
-          <span [hidden]="!addForm.hasError('required', 'inner_url')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >摄像机外网url</label>
-        <input type="text" class="form-control" formControlName="outer_url" [class.hasError]="addForm.get('outer_url').invalid && addForm.get('outer_url').touched">
-        <div [hidden]="addForm.get('outer_url').valid || addForm.get('outer_url').untouched">
-          <span [hidden]="!addForm.hasError('required', 'outer_url')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >所属摄像机组ID</label>
-        <input type="text" class="form-control" formControlName="g_id" [class.hasError]="addForm.get('g_id').invalid && addForm.get('g_id').touched">
-        <div [hidden]="addForm.get('g_id').valid || addForm.get('g_id').untouched">
-          <span [hidden]="!addForm.hasError('required', 'g_id')">必填</span>
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}</label>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="clearfix"></div>
@@ -128,43 +95,13 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
-      <div class="form-group">
-        <label>修改摄像机后的id</label>
-        <input type="text" class="form-control" placeholder="选填" formControlName="id" [class.hasError]="modifyForm.get('id').invalid && modifyForm.get('id').touched">
-        <div [hidden]="modifyForm.get('id').valid || modifyForm.get('id').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'id')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>摄像机名称</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
-        <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >摄像机创建人</label>
-        <input type="text" class="form-control" formControlName="creator" [class.hasError]="modifyForm.get('creator').invalid && modifyForm.get('creator').touched">
-        <div [hidden]="modifyForm.get('creator').valid || modifyForm.get('creator').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'creator')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >摄像机内网url</label>
-        <input type="text" class="form-control" formControlName="inner_url">
-      </div>
-      <div class="form-group">
-        <label >摄像机外网url</label>
-        <input type="text" class="form-control" formControlName="outer_url" [class.hasError]="modifyForm.get('outer_url').invalid && modifyForm.get('outer_url').touched">
-        <div [hidden]="modifyForm.get('outer_url').valid || modifyForm.get('outer_url').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'outer_url')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label >所属摄像机组ID</label>
-        <input type="text" class="form-control" formControlName="g_id" [class.hasError]="modifyForm.get('g_id').invalid && modifyForm.get('g_id').touched">
-        <div [hidden]="modifyForm.get('g_id').valid || modifyForm.get('g_id').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'g_id')">必填</span>
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}</label>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="clearfix"></div>
@@ -192,9 +129,9 @@
       <p>摄像机id&nbsp;:&nbsp;	{{detail?.id}}</p>
       <p>摄像机名称&nbsp;:&nbsp;	{{detail?.value}}</p>
       <p>摄像机创建人&nbsp;:&nbsp;	{{detail?.creator}}</p>
-      <p>组id&nbsp;:&nbsp;	{{detail?.g_id}}</p>
-      <p>内网url&nbsp;:&nbsp;	{{detail?.inner_url}}</p>
-      <p>外网url&nbsp;:&nbsp;	{{detail?.outer_url}}</p>
+      <p>组id&nbsp;:&nbsp;	{{detail?.gId}}</p>
+      <p>内网url&nbsp;:&nbsp;	{{detail?.innerUrl}}</p>
+      <p>外网url&nbsp;:&nbsp;	{{detail?.outerUrl}}</p>
       <div class="clearfix"></div>
       <div class="btn-box text-center">
         <button type="submit" class="btn btn-info" (click)="modalRef.hide();openModal(modify, -1)">跳转到修改</button>

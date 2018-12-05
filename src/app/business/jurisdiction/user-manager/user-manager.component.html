@@ -1,4 +1,4 @@
-<div class="usermanager">
+<div class="usermanager" (click)="cleanScreen()">
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
@@ -10,7 +10,7 @@
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="deleteUserPower()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
     </div>
@@ -20,7 +20,7 @@
           <thead>
           <tr>
             <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
-            <th>id</th>
+            <th>编号</th>
             <th>用户姓名</th>
             <th>模块名称</th>
           </tr>
@@ -56,15 +56,15 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group">
-        <label>用户ID: &nbsp;</label>
+        <label>用户编号: &nbsp;</label>
         <select #addUserId (change)="selectAdduserid(addUserId.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
-          <option *ngFor="let modal of userid" [value]="modal.id">{{modal.realName}}</option>
+          <option *ngFor="let modal of userId" [value]="modal.id">{{modal.realName}}</option>
         </select>
       </div>
       <br />
       <div class="form-group">
-        <label>模块id: &nbsp;</label>
+        <label>请选择所属模块: &nbsp;</label>
         <select #addModalId (change)="selectAddModalId(addModalId.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let modal of Fmodalid" [value]="modal.id">{{modal.name}}</option>
@@ -92,14 +92,14 @@
   <div class="modal-body">
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group">
-        <label>用户ID: &nbsp;</label>
+        <label>用户编号: &nbsp;</label>
         <select #modifyUserId (change)="selectModifyuserid(modifyUserId.value)" class="form-control">
-          <option *ngFor="let modal of userid" [selected]="modal.id === detail.userid" [value]="modal.id">{{modal.realName}}</option>
+          <option *ngFor="let modal of userId" [selected]="modal.id === detail.userid" [value]="modal.id">{{modal.realName}}</option>
         </select>
       </div>
       <br />
       <div class="form-group">
-        <label>模块id: &nbsp;</label>
+        <label>所属模块: &nbsp;</label>
         <select #modifyModalId (change)="selectModifyModalId(modifyModalId.value)" class="form-control">
           <option *ngFor="let modal of Fmodalid" [selected]="modal.id === modifyForm.get('moduleid').value"  [value]="modal.id">{{modal.name}}</option>
         </select>
@@ -124,9 +124,13 @@
       </button>
     </div>
   <div class="modal-body">
-    <p>Id(唯一标识): {{detail['id']}}</p>
-    <p>用户id:{{detail['userid']}}</p>
-    <p>模块id :{{detail['moduleid']}}</p>
+    <p>编号(唯一标识): {{detail['id']}}</p>
+    <p>
+      <span *ngFor="let f of userId" [hidden]="!('' +f.id === '' + detail.userid)">用户ID :{{f['id']}}, &nbsp;&nbsp;用户名 :{{f.realName}}</span>
+    </p>
+    <p>
+      <span *ngFor="let f of Fmodalid" [hidden]="!(f.id === detail.moduleid)">模块ID :{{f['id']}}, &nbsp;&nbsp;模块名称 :{{f['name']}}</span>
+    </p>
     <p>level :{{detail['level']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">

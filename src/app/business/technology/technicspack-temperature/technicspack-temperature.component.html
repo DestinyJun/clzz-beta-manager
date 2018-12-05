@@ -1,4 +1,4 @@
-<div class="technicsamendtemperature">
+<div class="technicsamendtemperature" (click)="cleanScreen()">
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
@@ -10,7 +10,7 @@
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
         <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
       </div>
     </div>
@@ -61,10 +61,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-inline" [formGroup]="paramAddForm">
-      <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
-        <label>{{pa.chinese_variable_name}} <span *ngIf="pa.unit !== ''">({{pa.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
-        <input type="text" class="form-control" formControlName="{{pa?.word_variable_name}}">
+    <form class="form-inline" [formGroup]="addForm">
+      <div class="form-group" *ngFor="let add of technologyParamsPackWordList">
+        <label>{{add.chinese_variable_name}} <span *ngIf="add.unit !== ''">({{add.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" formControlName="{{add.word_variable_name}}"
+               [class.hasError]="addForm.get(add.word_variable_name).invalid && addForm.get(add.word_variable_name).touched">
+        <div class="validField" *ngIf="!(addForm.get(add.word_variable_name).valid || addForm.get(add.word_variable_name).untouched)">
+          <span *ngFor="let valid of add.validators"  [hidden]="!addForm.get(add.word_variable_name).hasError(valid.validField)">{{valid.msg}}</span>
+        </div>
       </div>
     </form>
     <div class="clearfix"></div>
@@ -90,10 +94,14 @@
     </button>
   </div>
   <div class="modal-body">
-    <form class="form-inline" [formGroup]="paramModifyForm">
-      <div class="form-group" *ngFor="let pa of technologyParamsPackWordList">
-        <label>{{pa.chinese_variable_name}}<span *ngIf="pa.unit !== ''">({{pa.unit}})</span>&nbsp;&nbsp;:&nbsp;&nbsp;</label>
-        <input type="text" class="form-control" formControlName="{{pa.word_variable_name}}">
+    <form class="form-inline" [formGroup]="modifyForm">
+      <div class="form-group" *ngFor="let modify of technologyParamsPackWordList">
+        <label>{{modify.chinese_variable_name}} <span *ngIf="modify.unit !== ''">({{modify.unit}})</span>  &nbsp;&nbsp;:&nbsp;&nbsp;</label>
+        <input type="text" class="form-control" formControlName="{{modify.word_variable_name}}"
+               [class.hasError]="modifyForm.get(modify.word_variable_name).invalid && modifyForm.get(modify.word_variable_name).touched">
+        <div class="validField" [hidden]="modifyForm.get(modify.word_variable_name).valid || modifyForm.get(modify.word_variable_name).untouched">
+          <span *ngFor="let valid of modify.validators"  [hidden]="!modifyForm.get(modify.word_variable_name).hasError(valid.validField)">{{valid.msg}}</span>
+        </div>
       </div>
     </form>
     <div class="clearfix"></div>

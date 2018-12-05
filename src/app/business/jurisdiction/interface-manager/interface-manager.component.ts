@@ -1,5 +1,5 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
-import {Field, JurisdictionInterface, PageBody} from '../../../shared/global.service';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {Field, JurisdictionInterface, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
@@ -10,7 +10,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './interface-manager.component.html',
   styleUrls: ['./interface-manager.component.css']
 })
-export class InterfaceManagerComponent implements OnInit {
+export class InterfaceManagerComponent implements OnInit, OnDestroy {
   public datas: Array<JurisdictionInterface>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -47,16 +47,16 @@ export class InterfaceManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('接口名称',	'iname'),
-      new Field('接口路径',	'path'),
-      new Field('权限编码',	'pcode')
+      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('模块id',	'mid'),
     ];
     this.fieldsModify = [
-      new Field('Id',	'id'),
-      new Field('接口名称',	'iname'),
-      new Field('接口路径',	'path'),
-      new Field('权限编码',	'pcode'),
+      new Field('接口编号',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('模块id',	'mid')
     ];
     //     增加模态框表单
@@ -75,7 +75,7 @@ export class InterfaceManagerComponent implements OnInit {
     });
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
-      this.Fmodalid = value.values
+      this.Fmodalid = value.values;
     });
   }
   // 控制模态框, 增，修，查
@@ -89,7 +89,7 @@ export class InterfaceManagerComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -97,7 +97,7 @@ export class InterfaceManagerComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -108,12 +108,12 @@ export class InterfaceManagerComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -244,12 +244,18 @@ export class InterfaceManagerComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

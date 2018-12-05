@@ -1,4 +1,4 @@
-<div class="container-fluid" style="padding-top: 10px;">
+<div class="container-fluid" style="padding-top: 10px;" (click)="cleanScreen()">
   <div class="main" style="border: 1px solid #acacac">
     <div class="row" style="padding: 0px 16px;">
       <div class="col-md-12 col-xs-12 title">部门管理</div>
@@ -9,7 +9,7 @@
           <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="fa fa-plus"></span>增加</button>
           <button type="button" class="btn btn-default"  (click)="delete()"><span class="fa fa-trash-o" ></span>删除</button>
           <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="fa fa-edit"></span>修改</button>
-          <span *ngIf="gtone" class="remind">请至少选着一项进行操作</span>
+          <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
           <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
         </div>
       </div>
@@ -20,12 +20,12 @@
           <thead>
           <tr>
             <th class="checkboxoption" ><input type="checkbox" (click)="checkAll()">全选/全不选</th>
-            <th>部门ID</th>
-            <th>部门名称</th>
             <th>部门编号</th>
+            <th>部门名称</th>
+            <th>部门编码</th>
             <th>部门电话</th>
-            <th>所属组织机构ID</th>
-            <th>部门父id</th>
+            <th>所属组织机构编号</th>
+            <th>部门父编号</th>
             <th>插入时间</th>
             <th>更新时间</th>
           </tr>
@@ -64,36 +64,24 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="addForm">
-      <div class="form-group">
-        <label for="name1">部门名称</label>
-        <input type="text" class="form-control" formControlName="name" [class.hasError]="addForm.get('name').invalid && addForm.get('name').touched">
-        <div [hidden]="addForm.get('name').valid || addForm.get('name').untouched">
-          <span [hidden]="!addForm.hasError('required', 'name')">必填</span>
+      <div class="form-group" *ngFor="let add of fieldsAdd">
+        <label>{{add.name}}</label>
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
+          <div *ngFor="let valid of add.validators">
+            <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label for="number1">部门编号</label>
-        <input type="text" class="form-control" formControlName="dcode" [class.hasError]="addForm.get('dcode').invalid && addForm.get('dcode').touched">
-        <div [hidden]="addForm.get('dcode').valid || addForm.get('dcode').untouched">
-          <span [hidden]="!addForm.hasError('required', 'dcode')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="tel1">部门电话</label>
-        <input type="text" class="form-control" formControlName="tel" [class.hasError]="addForm.get('tel').invalid && addForm.get('tel').touched">
-        <div [hidden]="addForm.get('tel').valid || addForm.get('tel').untouched">
-          <span [hidden]="!addForm.hasError('required', 'tel')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>所属组织机构ID: &nbsp;</label>
+        <label>请选择所属组织机构: &nbsp;</label>
         <select #addOid (change)="selectAddModalOrgaId(addOid.value)" class="form-control">
           <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let organization of Fmodalid.organizations" [value]="organization.id">{{organization.id}}, {{organization.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>部门父ID: &nbsp;</label>
+        <label>请选择所属父部门: &nbsp;</label>
         <select #addPid (change)="selectAddModalDeparId(addPid.value)" class="form-control">
           <option [value]="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [value]="department.id">{{department.name}}</option>
@@ -121,36 +109,24 @@
   </div>
   <div class="modal-body">
     <form class="forms" [formGroup]="modifyForm">
-      <div class="form-group">
-        <label for="name1">部门名称</label>
-        <input id="name1" type="text" class="form-control" formControlName="name" [class.hasError]="modifyForm.get('name').invalid && modifyForm.get('name').touched">
-        <div [hidden]="modifyForm.get('name').valid || modifyForm.get('name').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'name')">必填</span>
+      <div class="form-group" *ngFor="let modify of fieldsModify">
+        <label>{{modify.name}}</label>
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
+          <div *ngFor="let valid of modify.validators">
+            <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
+          </div>
         </div>
       </div>
       <div class="form-group">
-        <label for="number1">部门编号</label>
-        <input id="number1" type="text" class="form-control" formControlName="dcode" [class.hasError]="modifyForm.get('dcode').invalid && modifyForm.get('dcode').touched">
-        <div [hidden]="modifyForm.get('dcode').valid || modifyForm.get('dcode').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'dcode')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label for="tel1">部门电话</label>
-        <input id="tel1" type="text" class="form-control" formControlName="tel" [class.hasError]="modifyForm.get('tel').invalid && modifyForm.get('tel').touched">
-        <div [hidden]="modifyForm.get('tel').valid || modifyForm.get('tel').untouched">
-          <span [hidden]="!modifyForm.hasError('required', 'tel')">必填</span>
-        </div>
-      </div>
-      <div class="form-group">
-        <label>所属组织机构ID: &nbsp;</label>
-        <option [value]="null">默认值为空，请选择</option>
+        <label>所属组织机构: &nbsp;</label>
         <select #modifyOid (change)="selectModifyModalOrgaId(modifyOid.value)" class="form-control">
+          <option [value]="null">默认值为空，请选择</option>
           <option *ngFor="let organization of Fmodalid.organizations" [selected]="organization.id === modifyForm.get('oid').value" [value]="organization.id">{{organization.name}}</option>
         </select>
       </div>
       <div class="form-group">
-        <label>部门父ID: &nbsp;</label>
+        <label>所属部门父: &nbsp;</label>
         <select #modifyPid (change)="selectModifyModalDeparId(modifyPid.value)" class="form-control">
           <option [value]="-1">最高层</option>
           <option *ngFor="let department of Fmodalid.departments" [selected]="department.id === modifyForm.get('pid').value" [value]="department.id">{{department.name}}</option>
@@ -170,19 +146,23 @@
 
 <!--查看的模态框-->
 <ng-template #lookdesc>
-  <div class="modal-header">
+  <div class="modal-header" style="position: absolute;width: 100%;z-index: 1050;top: 0px;left: 0px;" (mousedown)="startDrop($event)">
     <h4 class="modal-title pull-left">部门查看详情</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
-  <div class="modal-body">
-    <p>部门ID &nbsp; : &nbsp; {{detail.id}}</p>
+  <div class="modal-body" style="margin-top: 50px;">
+    <p>部门编号 &nbsp; : &nbsp; {{detail.id}}</p>
     <p>部门名称&nbsp; : &nbsp;	{{detail.name}}</p>
-    <p>部门编号&nbsp; : &nbsp;	{{detail.dcode}}</p>
+    <p>部门编码&nbsp; : &nbsp;	{{detail.dcode}}</p>
     <p>部门电话&nbsp; : &nbsp;	{{detail.tel}}</p>
-    <p>机构id&nbsp; : &nbsp;	{{detail.oid}}</p>
-    <p>部门父id&nbsp; : &nbsp;	{{detail.pid}}</p>
+    <p>
+      <span *ngFor="let organization of Fmodalid['organizations']" [hidden]="!(organization.id === detail.oid)">机构编号&nbsp; : &nbsp;	{{organization.id}},&nbsp;&nbsp;&nbsp;机构名称&nbsp;:&nbsp;{{organization.name}}</span>
+    </p>
+    <p>
+      <span *ngFor="let department of Fmodalid['departments']" [hidden]="!(department.id === detail.oid)">部门父编号&nbsp;: &nbsp;{{department.pid}},&nbsp;&nbsp;&nbsp;部门名称&nbsp;:&nbsp;{{department.name}}</span>
+    </p>
     <p>插入时间&nbsp; : &nbsp;	{{detail.idt}}</p>
     <p>更新时间&nbsp; : &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>

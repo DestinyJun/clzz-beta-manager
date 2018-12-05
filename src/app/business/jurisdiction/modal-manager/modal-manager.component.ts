@@ -1,8 +1,8 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {Field, JurisdictionModalList, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionModalList, PageBody, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 @Component({
@@ -10,7 +10,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './modal-manager.component.html',
   styleUrls: ['./modal-manager.component.css']
 })
-export class ModalManagerComponent implements OnInit {
+export class ModalManagerComponent implements OnInit, OnDestroy {
   public datas: Array<JurisdictionModalList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -48,18 +48,18 @@ export class ModalManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('名称',	'name'),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'pid'),
-      new Field('描述',	'description'),
-      new Field('模块代号',	'mcode')
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('组织id',	'oid'),
     ];
     this.fieldsModify = [
-      new Field('模块数据Id',	'id'),
-      new Field('名称',	'name'),
-      // new Field('父id',	'pid'),
-      new Field('描述',	'description'),
-      new Field('模块代号',	'mcode')
+      new Field('模块数据Id',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('父id',	'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('组织id',	'oid')
     ];
     // 增加模态框表单
@@ -99,18 +99,16 @@ export class ModalManagerComponent implements OnInit {
     this.mustone = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -121,14 +119,13 @@ export class ModalManagerComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -227,7 +224,6 @@ export class ModalManagerComponent implements OnInit {
   }
 //  修改表格内容
   public modalModify(): void {
-    console.log(this.modifyForm.value);
     if (this.modifyForm.valid) {
       this.openstatus = false;
       this.inputvalid = false;
@@ -270,12 +266,18 @@ export class ModalManagerComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

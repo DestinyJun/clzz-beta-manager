@@ -1,16 +1,17 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {PageBody, DeviceProductionIcmList, Field} from '../../../shared/global.service';
+import {PageBody, DeviceProductionIcmList, Field, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-icm',
   templateUrl: './production-icm.component.html',
   styleUrls: ['./production-icm.component.css']
 })
-export class ProductionIcmComponent implements OnInit {
+export class ProductionIcmComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionIcmList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -47,22 +48,22 @@ export class ProductionIcmComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('模块id',	'mid'),
-      new Field('名称',	'name'),
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid')
     ];
     this.fieldsModify = [
-      new Field('模块id',	'mid'),
-      new Field('名称',	'name')
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'sid'),
     ];
     this.addForm = this.fb.group({
-      mid: ['', Validators.required],
+      mid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
     this.modifyForm = this.fb.group({
-      mid: ['', Validators.required],
+      mid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
@@ -84,7 +85,7 @@ export class ProductionIcmComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -92,7 +93,7 @@ export class ProductionIcmComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -103,14 +104,14 @@ export class ProductionIcmComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -119,13 +120,9 @@ export class ProductionIcmComponent implements OnInit {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
-// 选择增加设备id
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'sid': value});
-  }
 // 选择修改设备id
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'sid': value});
+  public selectLineId(value, form): void {
+    form.patchValue({'sid': value});
   }
   // 控制模态框
   public openProIcm(template: TemplateRef<any>): void {
@@ -137,7 +134,7 @@ export class ProductionIcmComponent implements OnInit {
       this.mustone = false;
       this.detail.sid = String(this.detail.sid);
       this.modifyForm.reset(this.detail);
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
   // 控制模态框增加
@@ -145,7 +142,7 @@ export class ProductionIcmComponent implements OnInit {
     this.mustone = false;
     this.gtone = false;
     this.inputvalid = false;
-    this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+    this.modalRef = this.modalService.show(template);
   }
   // 监控翻页事件
   public getPageBody(event): void {
@@ -263,12 +260,18 @@ export class ProductionIcmComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

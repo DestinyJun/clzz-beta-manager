@@ -5,6 +5,7 @@ import {MobileComponent} from './mobile.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ModalModule} from 'ngx-bootstrap';
 import {NgxQRCodeModule} from 'ngx-qrcode3';
+import {FileUploadModule} from 'ng2-file-upload';
 
 @NgModule({
   imports: [
@@ -13,7 +14,8 @@ import {NgxQRCodeModule} from 'ngx-qrcode3';
     ModalModule.forRoot(),
     FormsModule,
     ReactiveFormsModule,
-    NgxQRCodeModule
+    NgxQRCodeModule,
+    FileUploadModule
   ],
   declarations: [
     MobileComponent

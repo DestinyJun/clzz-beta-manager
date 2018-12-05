@@ -1,9 +1,10 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {digitAndLetterValidator} from '../../../../validator/Validators';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {CommonfunService} from '../../../../shared/commonfun.service';
 import {ReqService} from '../../../../shared/req.service';
-import {Camera, Field, PageBody} from '../../../../shared/global.service';
+import {Camera, Field, PageBody, ValidMsg} from '../../../../shared/global.service';
 import {ActivatedRoute} from '@angular/router';
 
 @Component({
@@ -12,7 +13,7 @@ import {ActivatedRoute} from '@angular/router';
   styleUrls: ['./camera.component.css']
 })
 
-export class CameraComponent implements OnInit {
+export class CameraComponent implements OnInit, OnDestroy {
   public datas: Array<Camera>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -43,10 +44,6 @@ export class CameraComponent implements OnInit {
     private routerInfo: ActivatedRoute
   ) {}
   ngOnInit() {
-    // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
-    this.routerInfo.params.subscribe((value) => {
-      this.gid = value.id;
-    });
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
@@ -59,21 +56,42 @@ export class CameraComponent implements OnInit {
     this.fieldsAdd = [];
     this.fieldsModify = [];
     this.addForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      creator: ['', Validators.required],
-      inner_url: [''],
-      outer_url: ['', Validators.required],
-      g_id: ['', Validators.required]
+      id: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      creator: ['', [Validators.required]],
+      innerUrl: [''],
+      outerUrl: ['', [Validators.required]],
+      gId: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      id: [''],
-      Update_id: ['', Validators.required],
+      id: ['', [Validators.required, digitAndLetterValidator]],
+      Update_id: ['', [Validators.required]],
       name: [''],
       creator: [''],
-      inner_url: [''],
-      outer_url: [''],
-      g_id: ['']
+      innerUrl: [''],
+      outerUrl: [''],
+      gId: ['']
+    });
+    this.fieldsAdd = [
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机外网地址', 'outerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('所属摄像机组编号', 'gId', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('摄像机编号', 'id', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('摄像机名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('摄像机创建人', 'creator', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机内网地址', 'innerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('摄像机外网地址', 'outerUrl', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('所属摄像机组编号', 'gId', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
+    this.routerInfo.params.subscribe((value) => {
+      this.gid = value.id;
+      this.addForm.patchValue({gId: this.gid});
     });
     this.Update();
   }
@@ -85,19 +103,17 @@ export class CameraComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
           this.modifyForm.patchValue({Update_id: this.detail.id, id: '', name: this.detail.value});
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -109,14 +125,14 @@ export class CameraComponent implements OnInit {
         this.mustone = false;
         this.modifyForm.reset(this.detail);
         this.modifyForm.patchValue({Update_id: this.detail.id, id: '', name: this.detail.value});
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -175,10 +191,9 @@ export class CameraComponent implements OnInit {
       if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          const body = 'id=' + this.datas[j].id + '&creator=' + this.datas[j].creator;
+          const body = 'id=' + this.datas[this.hasChecked[j]].id + '&creator=' + this.datas[this.hasChecked[j]].creator;
           this.req.deleteVideo(body)
             .subscribe(res => {
-              console.log(res);
               this.resMessage = res.message;
               this.status = Number(res.status);
               if (j === haschecklen - 1) {
@@ -197,6 +212,7 @@ export class CameraComponent implements OnInit {
       this.modalRef.hide();
       this.req.addVideo(this.commonfun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
+          console.log(res);
           this.resMessage = res.message;
           this.status = Number(res.status);
           this.Update();
@@ -227,10 +243,11 @@ export class CameraComponent implements OnInit {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findVideos('gid=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
+    this.req.findVideos('gId=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
-        this.num = Math.ceil(value.values.number / 10);
-        this.datas = value.values.datas;
+        console.log(value);
+        this.num = value.values.totalPage;
+        this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框
         const setinter = setInterval(() => {
           const trs = document.getElementsByTagName('tr');
@@ -249,12 +266,20 @@ export class CameraComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+
+  // 清除屏幕
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

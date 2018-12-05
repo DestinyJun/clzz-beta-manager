@@ -14,7 +14,7 @@ const homeRoutes: Routes = [
       {path: 'technology', loadChildren: 'app/business/technology/technology.module#TechnologyModule'},
       {path: 'users', loadChildren: 'app/business/users/users.module#UsersModule'},
       {path: 'videos', loadChildren: 'app/business/videos/videos.module#VideosModule'},
-      {path: 'item', loadChildren: 'app/business/item/item.module#ItemModule'},
+      {path: 'deviceInspection', loadChildren: 'app/business/device-inspection/device-inspection.module#DeviceInspectionModule'},
     ]
   },
 ];

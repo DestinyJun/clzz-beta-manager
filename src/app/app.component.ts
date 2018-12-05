@@ -10,4 +10,7 @@ export class AppComponent {
   constructor() {
   }
 
+  add(): void {
+  }
+
 }

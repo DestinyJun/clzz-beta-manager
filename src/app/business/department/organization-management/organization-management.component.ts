@@ -1,9 +1,9 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {Field, OrganizationList, PageBody} from '../../../shared/global.service';
-import {mobileValidators} from '../../../validator/Validators';
+import {Field, OrganizationList, PageBody, ValidMsg} from '../../../shared/global.service';
+import {emailValidator, faxValidator, mobileValidators, postCodeValidator} from '../../../validator/Validators';
 import {CommonfunService} from '../../../shared/commonfun.service';
 
 
@@ -12,7 +12,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './organization-management.component.html',
   styleUrls: ['./organization-management.component.css']
 })
-export class OrganizationManagementComponent implements OnInit {
+export class OrganizationManagementComponent implements OnInit, OnDestroy {
   public datas: Array<OrganizationList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -52,13 +52,13 @@ export class OrganizationManagementComponent implements OnInit {
       code: ['', [Validators.required]],
       otype: ['', [Validators.required]],
       tel: ['', [Validators.required, mobileValidators]],
-      fax: ['', [Validators.required]],
+      fax: ['', [Validators.required, faxValidator]],
       address: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, emailValidator]],
       corpphone: ['', [Validators.required, mobileValidators]],
       corpname: ['', [Validators.required]],
       registerdate: ['', [Validators.required]],
-      zipcode: ['', [Validators.required]],
+      zipcode: ['', [Validators.required, postCodeValidator]],
       pid: ['-1', [Validators.required]]
     });
     // 修改表单信息
@@ -68,20 +68,48 @@ export class OrganizationManagementComponent implements OnInit {
       code: ['', [Validators.required]],
       otype: ['', [Validators.required]],
       tel: ['', [Validators.required, mobileValidators]],
-      fax: ['', [Validators.required]],
+      fax: ['', [Validators.required, faxValidator]],
       address: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: ['', [Validators.required, emailValidator]],
       corpphone: ['', [Validators.required, mobileValidators]],
       corpname: ['', [Validators.required]],
       registerdate: ['', [Validators.required]],
-      zipcode: ['', [Validators.required]],
+      zipcode: ['', [Validators.required, postCodeValidator]],
       pid: ['', [Validators.required]]
     });
+    this.fieldsAdd = [
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('编码', 'code', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('机构类型', 'otype', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('联系电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('传真号码', 'fax', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('fax', '请输入正确的传真号码')]),
+      new Field('机构地址', 'address', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('单位邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
+      new Field('法人电话', 'corpphone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('法人代表', 'corpname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('成立日期', 'registerdate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
+      // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      // new Field('编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('编码', 'code', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('机构类型', 'otype', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('联系电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('传真号码', 'fax', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('fax', '请输入正确的传真号码')]),
+      new Field('机构地址', 'address', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('单位邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
+      new Field('法人电话', 'corpphone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      new Field('法人代表', 'corpname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('成立日期', 'registerdate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
+      // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 调用查看函数
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values.organizations;
-      // this.addForm.patchValue({'pid': this.Fmodalid[0].id});
     });
   }
   // 控制模态框, 增，修，查
@@ -92,18 +120,16 @@ export class OrganizationManagementComponent implements OnInit {
     // this.controlSearchText = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -114,14 +140,13 @@ export class OrganizationManagementComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -253,10 +278,16 @@ export class OrganizationManagementComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

@@ -1,4 +1,4 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../shared/req.service';
 import {Router} from '@angular/router';
@@ -24,7 +24,9 @@ export class LoginComponent implements OnInit {
       module: ['WEBS', Validators.required]
     });
   }
+
   ngOnInit() {
+    this.status = 0;
   }
   public OnSubmitInfo(): void {
       if (this.userLoginInfoForm.valid) {
@@ -34,6 +36,9 @@ export class LoginComponent implements OnInit {
             if (Number(res.status) === 10) {
               this.localSessionStorage.set('realName', res.realName);
               this.localSessionStorage.set('sid', res.sid);
+              this.localSessionStorage.set('uname', this.userLoginInfoForm.get('uname').value);
+              this.localSessionStorage.set('upwd', this.userLoginInfoForm.get('upwd').value);
+              this.localSessionStorage.set('module', this.userLoginInfoForm.get('module').value);
               this.localSessionStorage.set('logstatus', '10');
               this.router.navigate(['/home']);
             }
@@ -41,5 +46,9 @@ export class LoginComponent implements OnInit {
       } else {
         alert('账号或密码不能为空!');
       }
+  }
+
+  public cleanScreen(): void {
+    this.status = 0;
   }
 }

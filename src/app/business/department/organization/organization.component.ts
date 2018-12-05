@@ -1,9 +1,10 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {DeparmentList, Field, PageBody} from '../../../shared/global.service';
+import {DeparmentList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator, mobileValidators} from '../../../validator/Validators';
 
 
 @Component({
@@ -11,7 +12,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './organization.component.html',
   styleUrls: ['./organization.component.css']
 })
-export class OrganizationComponent implements OnInit {
+export class OrganizationComponent implements OnInit, OnDestroy {
   public datas: Array<DeparmentList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -31,6 +32,10 @@ export class OrganizationComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   public listenDescModal: boolean;
+  public mouseCurrentX;
+  public mouseCurrentY;
+  public moveX = 0;
+  public moveY = 0;
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
@@ -49,8 +54,8 @@ export class OrganizationComponent implements OnInit {
     // 增加表单信息
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
-      dcode: ['', [Validators.required]],
-      tel: ['', [Validators.required]],
+      dcode: ['', [Validators.required, digitAndLetterValidator]],
+      tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['-1', [Validators.required]]
     });
@@ -58,11 +63,26 @@ export class OrganizationComponent implements OnInit {
     this.modifyForm = this.fb.group({
       id: ['', [Validators.required]],
       name: ['', [Validators.required]],
-      dcode: ['', [Validators.required]],
-      tel: ['', [Validators.required]],
+      dcode: ['', [Validators.required, digitAndLetterValidator]],
+      tel: ['', [Validators.required, mobileValidators]],
       oid: ['', [Validators.required]],
       pid: ['', [Validators.required]]
     });
+    this.fieldsAdd = [
+      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('部门ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
+      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 调用查看函数
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
@@ -79,7 +99,7 @@ export class OrganizationComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = data;
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -87,23 +107,23 @@ export class OrganizationComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
         }
       } else {
         if (!this.listenDescModal) {
-          // this.detail = this.datas[this.hasChecked[0]];
+          this.detail = this.datas[this.datas.indexOf(this.hasChecked[0])];
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
   // 关闭模态框, 增，修，查
@@ -160,7 +180,7 @@ export class OrganizationComponent implements OnInit {
       this.mustone = false;
       this.gtone = true;
     } else {
-      let bb = [];
+      const bb = [];
       this.hasChecked.forEach(value => {
         bb.push(value.id);
       });
@@ -169,6 +189,7 @@ export class OrganizationComponent implements OnInit {
         for (let j = 0; j < haschecklen; j++) {
           this.req.deleteDepartment('id=' +  this.hasChecked[j].id)
             .subscribe(res => {
+              console.log(res);
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
                 this.status = Number(res.status);
@@ -240,10 +261,17 @@ export class OrganizationComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
+  }
+
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

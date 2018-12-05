@@ -1,6 +1,6 @@
-import {Component, OnChanges, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
+import {Component, OnChanges, OnDestroy, OnInit, SimpleChanges, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {Field, JurisdictionBtnManager, PageBody} from '../../../shared/global.service';
+import {Field, JurisdictionBtnManager, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {ReqService} from '../../../shared/req.service';
 import {CommonfunService} from '../../../shared/commonfun.service';
@@ -10,7 +10,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   templateUrl: './btn-manager.component.html',
   styleUrls: ['./btn-manager.component.css']
 })
-export class BtnManagerComponent implements OnInit {
+export class BtnManagerComponent implements OnInit, OnDestroy {
   public datas: Array<JurisdictionBtnManager>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -47,32 +47,32 @@ export class BtnManagerComponent implements OnInit {
     this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [
-      new Field('名称',	'name'),
-      new Field('描述',	'decription'),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'decription', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('模块id',	'midnew Field')
     ];
     this.fieldsModify = [
-      new Field('按钮id', 'id'),
-      new Field('名称', 'name'),
-      new Field('描述', 'decription')
-      // new Field('模块id', 'mid'),
+      new Field('按钮编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述', 'decription', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块编号', 'mid'),
     ];
     // 增加模态框表单
     this.addForm = this.fb.group({
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
+      name: ['', [Validators.required]],
+      decription: ['', [Validators.required]],
+      mid: ['', [Validators.required]]
     });
     this.modifyForm = this.fb.group({
-      id: ['', Validators.required],
-      name: ['', Validators.required],
-      decription: ['', Validators.required],
-      mid: ['', Validators.required]
+      id: ['', [Validators.required]],
+      name: ['', [Validators.required]],
+      decription: ['', [Validators.required]],
+      mid: ['', [Validators.required]]
     });
     this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
-      if (this.Fmodalid !== undefined) {
+      if (this.Fmodalid) {
         // this.btnmanagerAddForm.patchValue({'mid': this.Fmodalid[0].id});
       }
     });
@@ -88,7 +88,7 @@ export class BtnManagerComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -96,7 +96,7 @@ export class BtnManagerComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -107,14 +107,14 @@ export class BtnManagerComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
@@ -245,12 +245,18 @@ export class BtnManagerComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }

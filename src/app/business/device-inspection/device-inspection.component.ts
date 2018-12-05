@@ -1,17 +1,18 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
-import {CommonfunService} from '../../shared/commonfun.service';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ReqService} from '../../shared/req.service';
-import {BsModalService} from 'ngx-bootstrap/modal';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
+import {Field, ItemList, PageBody, ValidMsg} from '../../shared/global.service';
 import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
-import {Field, ItemList, PageBody} from '../../shared/global.service';
+import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {BsModalService} from 'ngx-bootstrap/modal';
+import {ReqService} from '../../shared/req.service';
+import {CommonfunService} from '../../shared/commonfun.service';
+import {digitAndLetterValidator, digitValidator} from '../../validator/Validators';
 
 @Component({
-  selector: 'app-item',
-  templateUrl: './item.component.html',
-  styleUrls: ['./item.component.css']
+  selector: 'app-device-inspection',
+  templateUrl: './device-inspection.component.html',
+  styleUrls: ['./device-inspection.component.css']
 })
-export class ItemComponent implements OnInit {
+export class DeviceInspectionComponent implements OnInit, OnDestroy {
   public datas: Array<ItemList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -31,7 +32,7 @@ export class ItemComponent implements OnInit {
   public gtone: boolean;
   public resMessage: string;
   public validTimeFormat: boolean;
-  public controlSearchText: boolean;
+  // public controlSearchText: boolean;
   // 用来监听模态框 是否 是从查看详情 跳转到 修改模态框
   public listenDescModal: boolean;
   public QRcodeValue: string;
@@ -44,63 +45,71 @@ export class ItemComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.detail = new ItemList(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.validTimeFormat = false;
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
     this.listenDescModal = false;
     // 对表格的初始化
     this.pageBody = new PageBody(1, 10);
     this.fieldsAdd = [
-      new Field('项目名称',	'itemname'),
-      new Field('项目位置',	'itemposition'),
-      // new Field('项目位置经度',	'longitude'),
-      // new Field('项目位置纬度',	'latitude'),
-      new Field('项目明细',	'itemdetail'),
-      new Field('单位编号',	'unitcode'),
-      new Field('项目巡检成员',	'itemmembers'),
-      new Field('巡检时间间隔（单位：小时）',	'timecell')
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('巡检位置经度',	'longitude'),
+      // new Field('巡检位置纬度',	'latitude'),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线编号',	'unitcode'),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
-      new Field('项目编号',	'itemcode'),
-      new Field('项目名称',	'itemname'),
-      new Field('项目位置',	'itemposition'),
-      new Field('经度',	'longitude'),
-      new Field('纬度',	'latitude'),
-      new Field('项目明细',	'itemdetail'),
-      new Field('生产线编号',	'unitcode'),
-      new Field('项目巡检成员',	'itemmembers'),
-      new Field('巡检时间间隔（单位：小时）',	'timecell')
+      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     //  增加表单
     this.addForm = this.fb.group({
-      itemname: ['', Validators.required],
-      itemposition: ['', Validators.required],
-      // longitude: ['', Validators.required],
-      // latitude: ['', Validators.required],
-      itemdetail: ['', Validators.required],
-      unitcode: ['', Validators.required],
-      itemmembers: ['', Validators.required],
-      timecell: ['', Validators.required],
-      starttime: ['', Validators.required]
-      // starttime1: ['', Validators.required]
+      itemname: ['', [Validators.required]],
+      itemposition: ['', [Validators.required]],
+      // longitude: ['', [Validators.required],
+      // latitude: ['', [Validators.required],
+      itemdetail: ['', [Validators.required]],
+      unitcode: ['', [Validators.required]],
+      itemmembers: ['', [Validators.required]],
+      timecell: ['', [Validators.required]],
+      starttime: ['', [Validators.required]]
+      // starttime1: ['', [Validators.required]
     });
     this.modifyForm = this.fb.group({
-      itemcode: ['', Validators.required],
-      itemname: ['', Validators.required],
-      itemposition: ['', Validators.required],
-      longitude: ['', Validators.required],
-      latitude: ['', Validators.required],
-      itemdetail: ['', Validators.required],
-      unitcode: ['', Validators.required],
-      itemmembers: ['', Validators.required],
-      starttime: ['', Validators.required],
-      timecell: ['', Validators.required]
+      itemcode: ['', [Validators.required, digitAndLetterValidator]],
+      itemname: ['', [Validators.required]],
+      itemposition: ['', [Validators.required]],
+      longitude: ['', [Validators.required, digitValidator]],
+      latitude: ['', [Validators.required, digitValidator]],
+      itemdetail: ['', [Validators.required]],
+      unitcode: ['', [Validators.required]],
+      itemmembers: ['', [Validators.required]],
+      starttime: ['', [Validators.required]],
+      timecell: ['', [Validators.required]]
+    });
+    // 得到系统id
+    this.req.FindsystemSysid().subscribe(value => {
+      this.Fmodalid = value.values;
     });
     this.Update();
+  }
+  public selectLine(value, form): void {
+    form.patchValue({'unitcode': value});
   }
 // 控制模态框, 增，修，查，二维码
   public openModal(template: TemplateRef<any>, i): void {
@@ -109,21 +118,19 @@ export class ItemComponent implements OnInit {
     this.mustone = false;
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
-      this.detail = this.datas[i];
+      this.commonfun.objDeepCopy(this.datas[i], this.detail);
       this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
       this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
       if (this.hasChecked.length !== 1) {
         if (this.listenDescModal) {
           this.mustone = false;
           const date = new Date(this.detail.starttime);
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
           document.getElementById('modifyYear').innerHTML = String(date.getFullYear());
           document.getElementById('modifyMonth').innerHTML = String(date.getMonth() + 1);
@@ -140,19 +147,18 @@ export class ItemComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
       // 打印二维码
       this.QRcodeValue = this.datas[i].itemcode;
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
   // 关闭模态框, 增，修，查
@@ -178,22 +184,23 @@ export class ItemComponent implements OnInit {
     }
   }
   // 按编号查找
-  public numSearch(searchContext, template: TemplateRef<any>): void {
-    if (this.controlSearchText) {
-      this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
-        if (String(res.values) !== 'null') {
-          this.detail = res.values;
-          this.modalRef = this.modalService.show(template);
-          this.controlSearchText = false;
-        }else {
-          this.status = 13;
-          this.resMessage = '项目编号不存在';
-        }
-      });
-    }else {
-      this.controlSearchText = true;
-    }
-  }
+  // public numSearch(searchContext, template: TemplateRef<any>, e): void {
+  //   e.stopPropagation();
+  //   if (this.controlSearchText) {
+  //     this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
+  //       if (String(res.values) !== 'null') {
+  //         this.detail = res.values;
+  //         this.modalRef = this.modalService.show(template);
+  //         this.controlSearchText = false;
+  //       }else {
+  //         this.status = 13;
+  //         this.resMessage = '巡检编号不存在';
+  //       }
+  //     });
+  //   }else {
+  //     this.controlSearchText = true;
+  //   }
+  // }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
     const haschecklen = this.hasChecked.length;
@@ -207,33 +214,33 @@ export class ItemComponent implements OnInit {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.detail = this.datas[this.hasChecked[0]];
+      this.commonfun.objDeepCopy(this.datas[this.hasChecked[0]], this.detail);
     } else {
       this.detail = null;
     }
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public deleteItem(): void {
-    this.controlSearchText = false;
+    // this.controlSearchText = false;
     const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
       this.gtone = true;
     } else {
-        if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
-          this.mustone = false;
-          this.openstatus = false;
-          for (let j = 0; j < haschecklen; j++) {
-            this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
-              .subscribe(res => {
-                if (j === haschecklen - 1) {
-                  this.resMessage = res.message;
-                  this.status = Number(res.status);
-                  this.Update();
-                }
-              });
-          }
+      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
+        this.mustone = false;
+        this.openstatus = false;
+        for (let j = 0; j < haschecklen; j++) {
+          this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
+            .subscribe(res => {
+              if (j === haschecklen - 1) {
+                this.resMessage = res.message;
+                this.status = Number(res.status);
+                this.Update();
+              }
+            });
         }
+      }
     }
   }
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
@@ -308,10 +315,6 @@ export class ItemComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
       });
   }
 
@@ -379,12 +382,12 @@ export class ItemComponent implements OnInit {
           }
         }
       }else if (Number(isCorrectMouth) === 0 && Number(isCorrectMouth)  === 2 && Number(isCorrectMouth)  === 4 && Number(isCorrectMouth)  === 6 && Number(isCorrectMouth)  === 7 && Number(isCorrectMouth)  === 9 && Number(isCorrectMouth)  === 11) {
-          if (Number(day) >= 0 && Number(day) <= 31) {
-            date.setDate(Number(day));
-            isCorrectDay = true;
-          }else {
-            isCorrectDay = false;
-          }
+        if (Number(day) >= 0 && Number(day) <= 31) {
+          date.setDate(Number(day));
+          isCorrectDay = true;
+        }else {
+          isCorrectDay = false;
+        }
       }else {
         if (Number(day) >= 0 && Number(day) <= 30) {
           date.setDate(Number(day));
@@ -427,7 +430,6 @@ export class ItemComponent implements OnInit {
       form.patchValue({starttime: date.getTime()});
     }else {
       this.validTimeFormat = false;
-      form.patchValue({starttime: ''});
     }
   }
 
@@ -449,5 +451,15 @@ export class ItemComponent implements OnInit {
       document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
     }
   }
+// 清除屏幕
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
 
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
+  }
 }

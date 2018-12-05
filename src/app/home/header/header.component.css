@@ -33,8 +33,9 @@
   position: absolute;
   width: 150px;
   color: #2B404E;
-  top: 45px;
+  top: 40px;
   left: -42px;
+  padding-top: 5px;
 }
 
 .user>.user-remind,.user-photo,.user-set{
@@ -125,6 +126,9 @@
   border-bottom: 2px solid #CCCCCC;
   padding: 5px 15px;
 }
+.list-group > li:hover{
+  background-color: #e8e8e7;
+}
 .user-remind-scroll .list-group .text-timer{
   display: inline-block;
   position: absolute;
@@ -167,6 +171,7 @@
   margin-left: 180px;
 }
 .navbar-header{
+  min-width: 420px;
   float: none;
 }
 .list-group-item{

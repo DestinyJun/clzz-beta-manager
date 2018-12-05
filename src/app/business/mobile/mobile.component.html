@@ -1,4 +1,4 @@
-<div class="appmanager">
+<div class="appmanager" (click)="cleanScreen()">
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
@@ -68,7 +68,7 @@
     </div>
     <div class="row text-center">
       <button class="btn btn-primary" (click)="openModal(openUploadFile, -1)">
-        <span>上传更新版本文件</span>
+        <span>上传App文件</span>
         <span class="fa fa-upload"></span>
       </button>
     </div>
@@ -86,12 +86,13 @@
     </div>
   </div>
   <div class="modal-body">
-    <form class="form-horizontal" [formGroup]="infoForm" (submit)="uploadfile();modalRef.hide()">
+    <form class="form-horizontal" [formGroup]="infoForm" (submit)="uploadfile()">
       <div class="form-group">
         <label>上传文件:</label>
         <div>
           <input type="file" (change)="getFile($event)" class="form-control">
-          <!--<span *ngIf="event.target.files[0] != undefined">请选择上传文件</span>-->
+          <input type="reset" id="reset" [hidden]="true">
+          <span *ngIf="uploadHint" class="uploadHint">请选择APK文件</span>
         </div>
       </div>
       <div class="form-group">
@@ -104,7 +105,7 @@
         <label>版本描述: </label>
         <textarea name="description" id="versiondesc" cols="15" rows="5" formControlName="description" class="form-control"></textarea>
       </div>
-      <input type="submit" class="btn btn-success" value="上传">
+      <input [disabled]="isUpload" type="submit" class="btn btn-success" [value]="submitMsg">
     </form>
   </div>
 </ng-template>
@@ -123,9 +124,9 @@
   </div>
 </ng-template>
 
-<div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="(status !== 0 && status === 10) || status === 0" [class.fail]="status !== 0 && (status === 11 || status === 13)">
-    <span *ngIf="status === 0">文件正在上传,请稍后......</span>
+<div [hidden]="openstatus" class="status">
+  <span *ngIf="status === 0" class="fa fa-spinner fa-pulse" [ngStyle]="{fontSize: '30px'}"></span>
+  <div class="text-center hint"  [class.success]="(status !== 0 && status === 10)" [class.fail]="status !== 0 && (status === 11 || status === 13)">
     <span *ngIf="status === 10">文件上传成功</span>
     <span *ngIf="status === 11 || status === 13" >文件上传失败</span>
   </div>

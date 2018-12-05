@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnInit, Output, TemplateRef} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpClient} from '@angular/common/http';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
@@ -7,12 +7,13 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GlobalService, PersonInfo} from '../../shared/global.service';
 import {SelectLineIdsStatus} from '../../business/users/users.component';
 import 'rxjs/Rx';
+
 @Component({
   selector: 'app-header',
   templateUrl: './header.component.html',
   styleUrls: ['./header.component.css']
 })
-export class HeaderComponent implements OnInit {
+export class HeaderComponent implements OnInit, OnDestroy {
   public infoToggle: boolean;
   public modalRef: BsModalRef;
   public personInfo: PersonInfo;
@@ -20,23 +21,25 @@ export class HeaderComponent implements OnInit {
   public genderm: string;
   public genderw: string;
   @Output()
-  public cisMenuChange: EventEmitter<boolean> = new EventEmitter;
+  public cisMenuChange = new EventEmitter();
   @Input()
   public cisMenu: boolean;
   public userLineIds: Array<SelectLineIdsStatus>;
   public userName: string;
   public openstatus: boolean;
   public status: number;
-  // public bool: boolean;
+  public organization: any;
+
   constructor(
     private route: Router,
     private http: HttpClient,
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    public localSessionStorage: GlobalService
-    ) {
-    }
+    public localSessionStorage: GlobalService,
+  ) {
+  }
+
   ngOnInit() {
     this.openstatus = true;
     this.userName = this.localSessionStorage.get('realName');
@@ -62,29 +65,36 @@ export class HeaderComponent implements OnInit {
       idt: [{value: '', disabled: true}, Validators.required],
       udt: [{value: '', disabled: true}, Validators.required]
     });
+    // 查找机构
+    this.req.FindDepartOrgani().subscribe(value => {
+      this.organization = value.values.organizations;
+    });
     // 查找系统所有id
     this.req.FindsystemSysid().subscribe(value => {
-      // 再初始化 userLineIds 并向里面增加所有生产线，sys_status 为 0 时，没有该权限，反之为1时，有权限。
-      for (let i = 0; i < value.values.length; ++i) {
-        this.userLineIds.push(new SelectLineIdsStatus(value.values[i].sid, value.values[i].name, 0));
+      if (value.values) {
+        // 再初始化 userLineIds 并向里面增加所有生产线，sys_status 为 0 时，没有该权限，反之为1时，有权限。
+        for (let i = 0; i < value.values.length; ++i) {
+          this.userLineIds.push(new SelectLineIdsStatus(value.values[i].sid, value.values[i].name, 0));
+        }
       }
     });
   }
+
   // 选择生产线 ID 并保存在 userLineIds 数组里面，增，修，查 共用
   public selectProLineId(id, e): void {
     // 不需要考虑到 index = -1 的情况
     const index = this.userLineIds.indexOf(id);
     if (e.srcElement.checked) {
       this.userLineIds[index].sys_status = 1;
-    }else {
+    } else {
       this.userLineIds[index].sys_status = 0;
     }
-    // this.updateLineShow('modify');
   }
+
   // 控制模态框
   public openModal(template: TemplateRef<any>): void {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      this.req.getUserInfo({'sid' : this.localSessionStorage.get('sid')}).subscribe(value => {
+      this.req.getUserInfo({'sid': this.localSessionStorage.get('sid')}).subscribe(value => {
         this.personInfo = value.data;
         // modifyIds 用来保存用户的生产线权限id
         let sysids = this.personInfo['sysids'];
@@ -120,84 +130,65 @@ export class HeaderComponent implements OnInit {
           }
           this.modalRef = this.modalService.show(template);
         }
-        // this.updateLineShow('addLineId');
       });
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // 这里是增加生产线在模态框的显示
-      //   this.updateLineShow('modifyLineId');
-        this.modalRef = this.modalService.show(template);
+      this.modalRef = this.modalService.show(template);
     }
 
   }
+
   // 修改性别
   public selectGender(gender: string): void {
-      this.personInfoModifyForm.patchValue({gender : gender});
+    this.personInfoModifyForm.patchValue({gender: gender});
   }
+
   // 个人信息修改
   public personInfoModify() {
     this.openstatus = false;
     // 在增加之前把 生产线 id 转换成字符串放到增加表单的 sysids 中
-    let sysidsStr = [];
+    const sysIdsStr = [];
     for (let i = 0; i < this.userLineIds.length; ++i) {
       if (this.userLineIds[i].sys_status === 1) {
-        sysidsStr.push(this.userLineIds[i].sys_id);
+        sysIdsStr.push(this.userLineIds[i].sys_id);
       }
     }
-    this.personInfoModifyForm.patchValue({sysids: sysidsStr.toString()});
-        this.req.UserInfoModify(this.personInfoModifyForm.value)
-          .subscribe(res => {
-            this.status = Number(res.status);
-            setTimeout(() => {
-              this.openstatus = true;
-            }, 2000);
-          });
+    this.personInfoModifyForm.patchValue({sysids: sysIdsStr.toString()});
+    this.req.UserInfoModify(this.personInfoModifyForm.value)
+      .subscribe(res => {
+        this.status = Number(res.status);
+        setTimeout(() => {
+          this.openstatus = true;
+        }, 2000);
+      });
   }
+
   // 控制左边导航栏
   public controlMenu(): void {
-      this.cisMenuChange.emit(this.cisMenu);
-      this.cisMenu = !this.cisMenu;
+    this.cisMenuChange.emit(this.cisMenu);
+    this.cisMenu = !this.cisMenu;
   }
+
   // 退出请求
   public loginOut(): void {
-    this.req.Logout({sid: sessionStorage.getItem('sid')})
-                  .subscribe(res => {
-                      if (Number(res.status) === 10) {
-                        alert('退出登录成功!');
-                      }
-                  });
     this.route.navigate(['/login']);
+    this.req.Logout({sid: sessionStorage.getItem('sid')})
+      .subscribe(res => {
+        if (Number(res.status) === 10) {
+          alert('退出登录成功!');
+        }
+      });
   }
-  public onToggleInfo(): void {
-    this.infoToggle = !this.infoToggle;
+
+  public onToggleInfo(infoToggleValue): void {
+    this.infoToggle = infoToggleValue;
   }
-  // // 更新生产线显示
-  // public updateLineShow(key: string): void {
-  //   console.log(1234);
-  //   // 这里是增加生产线在模态框的显示
-  //   const cancelInetr = setInterval(() => {
-  //     const ele = document.getElementById(key);
-  //     if (ele.children.length !== 0) {
-  //       this.userLineIds.map((value, index) => {
-  //         if (this.userLineIds[index].sys_status === 1) {
-  //           ele.children[index].children[0]['checked'] = true;
-  //           ele.children[index].children[1]['style'].color = '#646464';
-  //         }else {
-  //           ele.children[index].children[0]['checked'] = false;
-  //           ele.children[index].children[1]['style'].color = 'red';
-  //         }
-  //       });
-  //       clearInterval(cancelInetr);
-  //     }
-  //   });
-  // }
-}
-export class UserRemind {
-  constructor(
-    public classFlag: string,
-    public userPhoto: string,
-    public userMessage: string,
-    public userTime: Date
-  ) {}
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
+  }
 }
 

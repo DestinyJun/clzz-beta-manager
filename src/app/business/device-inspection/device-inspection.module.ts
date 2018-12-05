@@ -1,21 +1,23 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-import { ItemRoutingModule } from './item-routing.module';
-import { ItemComponent } from './item.component';
+import { DeviceInspectionRoutingModule } from './device-inspection-routing.module';
 import {BasedModule} from '../../based/based.module';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {NgxQRCodeModule} from 'ngx-qrcode3';
+import {DeviceInspectionComponent} from './device-inspection.component';
 
 @NgModule({
   imports: [
     CommonModule,
-    ItemRoutingModule,
     BasedModule,
     FormsModule,
     ReactiveFormsModule,
-    NgxQRCodeModule
+    NgxQRCodeModule,
+    DeviceInspectionRoutingModule
   ],
-  declarations: [ItemComponent]
+  declarations: [
+    DeviceInspectionComponent
+  ]
 })
-export class ItemModule { }
+export class DeviceInspectionModule { }

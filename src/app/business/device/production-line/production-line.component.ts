@@ -1,9 +1,10 @@
-import {Component, OnInit, TemplateRef} from '@angular/core';
+import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {PageBody, DeviceProductionLineList, Field} from '../../../shared/global.service';
+import {PageBody, DeviceProductionLineList, Field, ValidMsg} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {CommonfunService} from '../../../shared/commonfun.service';
+import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
   selector: 'app-production-line',
@@ -11,7 +12,7 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./production-line.component.css']
 })
 
-export class ProductionLineComponent implements OnInit {
+export class ProductionLineComponent implements OnInit, OnDestroy {
   public datas: Array<DeviceProductionLineList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
@@ -46,28 +47,28 @@ export class ProductionLineComponent implements OnInit {
     this.gtone = false;
     this.listenDescModal = false;
     this.pageBody = new PageBody(1, 10);
+    // 增加模态框表单
+    this.addForm = this.fb.group({
+      sid: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      did: ['', [Validators.required]]
+    });
+    this.modifyForm = this.fb.group({
+      sid: ['', [Validators.required, digitAndLetterValidator]],
+      name: ['', [Validators.required]],
+      did: ['', [Validators.required]]
+    });
     // 只要是需要选择的下拉框，另放在后面
     this.fieldsAdd = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
+      new Field('生产线编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];
     this.fieldsModify = [
-      new Field('生产线id',	'sid'),
-      new Field('名称',	'name')
+      new Field('生产线编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('父id',	'did')
     ];
-    // 增加模态框表单
-    this.addForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
-    this.modifyForm = this.fb.group({
-      sid: ['', Validators.required],
-      name: ['', Validators.required],
-      did: ['', Validators.required]
-    });
     this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values['departments'];
@@ -84,7 +85,7 @@ export class ProductionLineComponent implements OnInit {
       // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
       // console.log('这是修改');
@@ -92,7 +93,7 @@ export class ProductionLineComponent implements OnInit {
         if (this.listenDescModal) {
           this.mustone = false;
           this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+          this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
         }else {
           this.mustone = true;
@@ -103,22 +104,19 @@ export class ProductionLineComponent implements OnInit {
         }
         this.mustone = false;
         this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+        this.modalRef = this.modalService.show(template);
         this.listenDescModal = false;
       }
 
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
       // console.log('增加');
-      this.modalRef = this.modalService.show(template, this.commonfun.getOperateModalConfig());
+      this.modalRef = this.modalService.show(template);
     }
   }
 
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'did': value});
-  }
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'did': value});
+  public selectDepartments(value, form): void {
+    form.patchValue({'did': value});
   }
 
   // 关闭模态框, 增，修，查
@@ -242,13 +240,19 @@ export class ProductionLineComponent implements OnInit {
             clearInterval(setinter);
           }
         });
-        setTimeout(() => {
-          this.openstatus = true;
-          this.status = 0;
-        }, 2500);
         this.hasChecked = [];
         this.checked = '';
       });
+  }
+  public cleanScreen(): void {
+    this.openstatus = true;
+    this.status = 0;
+  }
+
+  ngOnDestroy(): void {
+    if (this.modalRef !== undefined) {
+      this.modalRef.hide();
+    }
   }
 }
 
