@@ -5,7 +5,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve --port 8999 -open",
-    "build": "ng build --prod --aot  --base-href /RBI/",
+    "build": "ng build --prod --base-href /RBI/",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"
