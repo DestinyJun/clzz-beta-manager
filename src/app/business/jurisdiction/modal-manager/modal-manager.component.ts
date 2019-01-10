@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {Field, JurisdictionModalList, PageBody, ValidMsg} from '../../../shared/global.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 @Component({
   selector: 'app-modal-manager',
@@ -35,33 +35,16 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('ModalManagerComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('父id',	'pid'),
-      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('组织id',	'oid'),
-    ];
-    this.fieldsModify = [
-      new Field('模块数据Id',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('父id',	'pid', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('组织id',	'oid')
-    ];
     // 增加模态框表单
     this.addForm = this.fb.group({
       name: ['', Validators.required],
@@ -78,17 +61,27 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
       mcode: ['', Validators.required],
       oid: ['', Validators.required]
     });
-    this.Update();
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('模块数据Id',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('父id',	'pid', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'description', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('模块代号',	'mcode', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values.organizations;
-      if (this.Fmodalid !== undefined) {
-        // this.modalAddForm.patchValue({'pid': this.Fmodalid[0].id});
+        if (this.Fmodalid !== undefined) {
       }
     });
     this.req.FindmoduleIdname().subscribe(value => {
       this.FmodalFid = value.values;
       if (this.FmodalFid !== undefined) {
-        // this.modalAddForm.patchValue({'oid': this.FmodalFid[0].id});
       }
     });
   }
@@ -191,7 +184,7 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionModalManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
@@ -212,7 +205,7 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionModalManagerAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.JurisdictionModalManagerAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -228,7 +221,7 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionModalManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.JurisdictionModalManagerModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -244,7 +237,7 @@ export class ModalManagerComponent implements OnInit, OnDestroy {
     this.addForm.reset({pid: '-1'});
     this.gtone = false;
     this.mustone = false;
-    this.req.getJurisdictionModalManagerQuery(this.commonfun.parameterSerialization(this.pageBody))
+    this.req.getJurisdictionModalManagerQuery(this.commonFun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

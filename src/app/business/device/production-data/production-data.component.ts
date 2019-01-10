@@ -4,7 +4,7 @@ import { BsModalRef } from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {DeviceProductionDataList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
@@ -36,51 +36,18 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('ProductionDataComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.fieldsAdd = [
-      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
-      new Field('设备名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('厂家编号', 'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('生产厂家', 'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('设备型号', 'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('生产日期', 'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
-      new Field('安装日期', 'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定功率(W)', 'power', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定电流(A)', 'current', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定电压(V)', 'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('使用状态', 'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('设备类型', 'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('设备运行状态', 'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块id', 'mid', 'text), [{'required,: '* 必填项
-      ];
-    this.fieldsModify = [
-      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
-      new Field('设备名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('厂家编号',	'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('生产厂家',	'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('设备型号',	'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('生产日期',	'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
-      new Field('安装日期',	'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定功率(W)',	'power', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定电流(A)',	'current', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('额定电压(V)',	'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('使用状态',	'usestatus', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('设备类型',	'dtype', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('设备运行状态',	'dstatus', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块id',	'mid', 'text), [{'required,: '* 必填项
-    ];
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
     //  增加表单
     this.addForm = this.fb.group({
       did: ['', Validators.required, digitAndLetterValidator],
@@ -114,7 +81,30 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
       dstatus: ['', Validators.required],
       mid: ['', Validators.required]
     });
-    this.Update();
+    this.fieldsAdd = [
+      new Field('编号', 'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号', 'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家', 'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号', 'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期', 'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期', 'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)', 'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)', 'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)', 'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+      ];
+    this.fieldsModify = [
+      new Field('编号',	'did', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('设备名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('厂家编号',	'fnum', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产厂家',	'dvender', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('设备型号',	'dmodule', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('生产日期',	'dprodate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('安装日期',	'dinstalldate', 'date', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定功率(W)',	'power', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电流(A)',	'current', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('额定电压(V)',	'voltage', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     this.req.FindmodularMid().subscribe(value => {
       this.Fmodalid = value.values;
     });
@@ -224,7 +214,7 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionDataDelete('did=' +  this.datas[this.hasChecked[j]].did)
@@ -246,7 +236,7 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionDataAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.DeviceProductionDataAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -262,7 +252,7 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
         this.openstatus = false;
         this.inputvalid = false;
         this.modalRef.hide();
-        this.req.DeviceProductionDataModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+        this.req.DeviceProductionDataModify(this.commonFun.parameterSerialization(this.modifyForm.value))
           .subscribe(res => {
             this.resMessage = res.message;
             this.status = Number(res.status);
@@ -277,7 +267,7 @@ export class ProductionDataComponent implements OnInit, OnDestroy {
     this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionData(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionData(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];
         this.checked = '';

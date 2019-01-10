@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {PageBody, DeviceProductionIcmList, Field, ValidMsg} from '../../../shared/global.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
@@ -35,28 +35,17 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
 
   ngOnInit(): void {
+    this.commonFun.setCurrentComponentName('ProductionIcmComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
-    // 只要是需要选择的下拉框，另放在后面
-    this.fieldsAdd = [
-      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
-      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('父id',	'sid')
-    ];
-    this.fieldsModify = [
-      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
-      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('父id',	'sid'),
-    ];
     this.addForm = this.fb.group({
       mid: ['', [Validators.required, digitAndLetterValidator]],
       name: ['', Validators.required],
@@ -67,7 +56,16 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
       name: ['', Validators.required],
       sid: ['', Validators.required]
     });
-    this.Update();
+    // 只要是需要选择的下拉框，另放在后面
+    this.fieldsAdd = [
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('父id',	'sid')
+    ];
+    this.fieldsModify = [
+      new Field('模块编号',	'mid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('模块名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 得到系统id
     this.req.FindsystemSysid().subscribe(value => {
       this.Fmodalid = value.values;
@@ -162,7 +160,7 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
   }
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
@@ -180,12 +178,12 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
   }
 //  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public deleteProIcm(): void {
-    let haschecklen = this.hasChecked.length;
+    const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionIcmDelete('mid=' + this.datas[this.hasChecked[j]].mid)
@@ -207,7 +205,7 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionIcmAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.DeviceProductionIcmAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -223,7 +221,7 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
     this.inputvalid = false;
     this.modalRef.hide();
     if (this.modifyForm.valid) {
-      this.req.DeviceProductionIcmModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.DeviceProductionIcmModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -238,7 +236,7 @@ export class ProductionIcmComponent implements OnInit, OnDestroy {
     this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionIcm(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionIcm(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

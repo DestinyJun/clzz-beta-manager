@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {DeviceProductionSensorList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitAndLetterValidator, digitValidator} from '../../../validator/Validators';
 
 @Component({
@@ -38,19 +38,18 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('ProductionSensorComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
     // 模态框表单
     this.addForm = this.fb.group({
       sid: ['', [Validators.required, digitAndLetterValidator]],
@@ -112,10 +111,8 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
       {value: 'BOOL', note: 'BOOL'},
       {value: 'REAL', note: 'REAL'},
     ];
-    this.Update();
     this.req.FindDeviceDeviceid().subscribe(value => {
       this.Fmodalid = value.values;
-      // this.proSensorAddForm.patchValue({'did': this.Fmodalid[0].did});
     });
   }
 // 控制模态框, 增，修，查
@@ -216,7 +213,7 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.DeviceProductionSensorAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -233,7 +230,7 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'sname')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'sname')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.DeviceProductionSensorDelete('sid=' + this.datas[this.hasChecked[j]].sid)
@@ -255,7 +252,7 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionSensorModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.DeviceProductionSensorModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -271,7 +268,7 @@ export class ProductionSensorComponent implements OnInit, OnDestroy {
     this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionSensor(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionSensor(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

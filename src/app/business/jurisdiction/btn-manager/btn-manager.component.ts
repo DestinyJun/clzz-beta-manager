@@ -3,7 +3,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Field, JurisdictionBtnManager, PageBody, ValidMsg} from '../../../shared/global.service';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 @Component({
   selector: 'app-btn-manager',
@@ -34,29 +34,16 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('BtnManagerComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('描述',	'decription', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块id',	'midnew Field')
-    ];
-    this.fieldsModify = [
-      new Field('按钮编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('描述', 'decription', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块编号', 'mid'),
-    ];
     // 增加模态框表单
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -69,7 +56,18 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
       decription: ['', [Validators.required]],
       mid: ['', [Validators.required]]
     });
-    this.Update();
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述',	'decription', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id',	'midnew Field')
+    ];
+    this.fieldsModify = [
+      new Field('按钮编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('描述', 'decription', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块编号', 'mid'),
+    ];
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
       if (this.Fmodalid) {
@@ -172,7 +170,7 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
       this.gtone = true;
       this.mustone = false;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionBtnManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
@@ -193,7 +191,7 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.JurisdictionBtnManagerAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -209,7 +207,7 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionBtnManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.JurisdictionBtnManagerModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -223,7 +221,7 @@ export class BtnManagerComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getJurisdictionBtnManager(this.commonfun.parameterSerialization(this.pageBody))
+    this.req.getJurisdictionBtnManager(this.commonFun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

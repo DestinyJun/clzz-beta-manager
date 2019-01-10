@@ -4,7 +4,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../shared/req.service';
 import {emailValidator, idCardValidators, mobileValidators, passwordValidator} from '../../validator/Validators';
-import {CommonfunService} from '../../shared/commonfun.service';
+import {CommonFunService} from '../../shared/common-fun.service';
 
 @Component({
   selector: 'app-users',
@@ -39,10 +39,11 @@ export class UsersComponent implements OnInit, OnDestroy {
   constructor(private modalService: BsModalService,
               private req: ReqService,
               private fb: FormBuilder,
-              private commonfun: CommonfunService) {
+              private commonFun: CommonFunService) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('UsersComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
@@ -52,7 +53,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     // userLineIds 先初始化为空
     this.userLineIds = [];
     // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
     //  增加模态框表单
     this.addForm = this.fb.group({
       userCode: ['', Validators.required],
@@ -114,10 +114,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       new Field('联系电话', 'phone', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
       new Field('邮箱', 'email', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('email', '请输入正确的邮箱')]),
       new Field('生日', 'birthday', 'date', [new ValidMsg('required', '* 必填项')]),
-      // new Field('生产线列表', 'sysids', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('性别', 'gendernew', 'text', [new ValidMsg('required', '* 必填项')])
     ];
-    this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.organizationId = value.values;
     });
@@ -199,6 +196,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   public getPageBody(event): void {
+    console.log('page');
     this.pageBody = event;
     this.Update();
   }
@@ -241,7 +239,7 @@ export class UsersComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'realName')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'realName')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.UsersManagerDelete({id: this.datas[this.hasChecked[j]].id})
@@ -310,6 +308,7 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   // 在增加， 删除，修改后即时刷新
   public Update(): void {
+    console.log('update');
     this.gtone = false;
     this.mustone = false;
     this.req.getUsersManager(this.pageBody)
@@ -385,9 +384,7 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.modalRef !== undefined) {
-      this.modalRef.hide();
-    }
+    if (this.modalRef !== undefined) {this.modalRef.hide(); }
   }
 }
 

@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {PageBody, DeviceProductionLineList, Field, ValidMsg} from '../../../shared/global.service';
 import {ReqService} from '../../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitAndLetterValidator} from '../../../validator/Validators';
 
 @Component({
@@ -36,17 +36,17 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('ProductionLineComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
     // 增加模态框表单
     this.addForm = this.fb.group({
       sid: ['', [Validators.required, digitAndLetterValidator]],
@@ -67,9 +67,7 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
     this.fieldsModify = [
       new Field('生产线编号',	'sid', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('名称',	'name', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('父id',	'did')
     ];
-    this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values['departments'];
     });
@@ -165,7 +163,7 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
         this.mustone = false;
         this.gtone = true;
       } else {
-        if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+        if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
           this.openstatus = false;
           for (let j = 0; j < haschecklen; j++) {
             this.req.DeviceProductionLineDelete('sid=' +  this.datas[this.hasChecked[j]].sid)
@@ -186,7 +184,7 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.DeviceProductionLineAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           console.log(res);
           this.resMessage = res.message;
@@ -203,7 +201,7 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.DeviceProductionLineModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.DeviceProductionLineModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -218,7 +216,7 @@ export class ProductionLineComponent implements OnInit, OnDestroy {
     this.addForm.reset();
     this.gtone = false;
     this.mustone = false;
-    this.req.getDeviceProductionLine(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.getDeviceProductionLine(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

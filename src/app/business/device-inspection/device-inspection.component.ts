@@ -4,7 +4,7 @@ import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalService} from 'ngx-bootstrap/modal';
 import {ReqService} from '../../shared/req.service';
-import {CommonfunService} from '../../shared/commonfun.service';
+import {CommonFunService} from '../../shared/common-fun.service';
 import {digitAndLetterValidator, digitValidator} from '../../validator/Validators';
 
 @Component({
@@ -40,11 +40,12 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('DeviceInspectionComponent');
     this.detail = new ItemList(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.status = 0;
     this.openstatus = true;
@@ -52,31 +53,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
     this.mustone = false;
     this.gtone = false;
     this.validTimeFormat = false;
-    // this.controlSearchText = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
-    this.fieldsAdd = [
-      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('巡检位置经度',	'longitude'),
-      // new Field('巡检位置纬度',	'latitude'),
-      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('生产线编号',	'unitcode'),
-      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
-    ];
-    this.fieldsModify = [
-      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
-      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
-      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
-      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
-    ];
     //  增加表单
     this.addForm = this.fb.group({
       itemname: ['', [Validators.required]],
@@ -102,11 +79,31 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       starttime: ['', [Validators.required]],
       timecell: ['', [Validators.required]]
     });
+    this.fieldsAdd = [
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('巡检位置经度',	'longitude'),
+      // new Field('巡检位置纬度',	'latitude'),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线编号',	'unitcode'),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
+    this.fieldsModify = [
+      new Field('巡检编号',	'itemcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
+      new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检位置',	'itemposition', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('位置经度',	'longitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('位置纬度',	'latitude', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '只能为数字')]),
+      new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('生产线编号',	'unitcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     // 得到系统id
     this.req.FindsystemSysid().subscribe(value => {
       this.Fmodalid = value.values;
     });
-    this.Update();
   }
   public selectLine(value, form): void {
     form.patchValue({'unitcode': value});
@@ -119,9 +116,9 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
       this.listenDescModal = true;
-      this.commonfun.objDeepCopy(this.datas[i], this.detail);
-      this.detail.starttime = this.commonfun.defineTimeFormat(this.detail.starttime);
-      this.detail.endtime = this.commonfun.defineTimeFormat(this.detail.endtime);
+      this.commonFun.objDeepCopy(this.datas[i], this.detail);
+      this.detail.starttime = this.commonFun.defineTimeFormat(this.detail.starttime);
+      this.detail.endtime = this.commonFun.defineTimeFormat(this.detail.endtime);
       this.modalRef = this.modalService.show(template);
     }
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
@@ -187,7 +184,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
   // public numSearch(searchContext, template: TemplateRef<any>, e): void {
   //   e.stopPropagation();
   //   if (this.controlSearchText) {
-  //     this.req.ItemFindInNumber(this.commonfun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
+  //     this.req.ItemFindInNumber(this.commonFun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
   //       if (String(res.values) !== 'null') {
   //         this.detail = res.values;
   //         this.modalRef = this.modalService.show(template);
@@ -214,7 +211,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       }
     }
     if (this.hasChecked.length === 1) {
-      this.commonfun.objDeepCopy(this.datas[this.hasChecked[0]], this.detail);
+      this.commonFun.objDeepCopy(this.datas[this.hasChecked[0]], this.detail);
     } else {
       this.detail = null;
     }
@@ -227,7 +224,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
         this.mustone = false;
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
@@ -250,7 +247,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.ItemAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.ItemAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -267,7 +264,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.ItemModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.ItemModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -281,7 +278,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.ItemFind(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.ItemFind(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];
         this.checked = '';

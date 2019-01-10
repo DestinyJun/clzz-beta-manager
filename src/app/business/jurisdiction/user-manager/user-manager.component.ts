@@ -3,7 +3,7 @@ import {Field, PageBody, UserPowerInfo, ValidMsg} from '../../../shared/global.s
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 @Component({
   selector: 'app-user-manager',
@@ -36,26 +36,16 @@ export class UserManagerComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
 ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('UserManagerComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      // new Field('用户ID',	'userid'),
-      // new Field('模块ID',	'dcode')
-    ];
-    this.fieldsModify = [
-      new Field('用户权限ID', 'id', 'text', [new ValidMsg('required', '* 必填项')])
-    ];
-    this.fieldsModify = this.fieldsAdd;
     this.addForm = this.fb.group({
       userid: ['', Validators.required],
       moduleid: ['', Validators.required]
@@ -65,7 +55,6 @@ export class UserManagerComponent implements OnInit, OnDestroy {
       userid: ['', Validators.required],
       moduleid: ['', Validators.required]
     });
-    this.Update();
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
     });
@@ -169,7 +158,7 @@ export class UserManagerComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'realname')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'realname')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionuUserPowerDelete('id=' + this.datas[this.hasChecked[j]].id)
@@ -190,7 +179,7 @@ public userPowerAdd(): void {
     this.openstatus = false;
     this.inputvalid = false;
     this.modalRef.hide();
-    this.req.JurisdictionuUserPowerAdd(this.commonfun.parameterSerialization(this.addForm.value))
+    this.req.JurisdictionuUserPowerAdd(this.commonFun.parameterSerialization(this.addForm.value))
       .subscribe(res => {
         this.resMessage = res.message;
         this.status = Number(res.status);
@@ -206,7 +195,7 @@ public userPowerAdd(): void {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionuUserPowerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.JurisdictionuUserPowerModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -220,7 +209,7 @@ public userPowerAdd(): void {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.getJurisdictionuUserPower(this.commonfun.parameterSerialization(this.pageBody))
+    this.req.getJurisdictionuUserPower(this.commonFun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

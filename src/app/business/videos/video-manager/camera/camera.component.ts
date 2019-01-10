@@ -2,7 +2,7 @@ import {digitAndLetterValidator} from '../../../../validator/Validators';
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {CommonfunService} from '../../../../shared/commonfun.service';
+import {CommonFunService} from '../../../../shared/common-fun.service';
 import {ReqService} from '../../../../shared/req.service';
 import {Camera, Field, PageBody, ValidMsg} from '../../../../shared/global.service';
 import {ActivatedRoute} from '@angular/router';
@@ -34,13 +34,11 @@ export class CameraComponent implements OnInit, OnDestroy {
   public mustone: boolean;
   public gtone: boolean;
   public resMessage: string;
-  // gid 用来保存要查询的摄像机组的id
-  public gid: string;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService,
+    private commonFun: CommonFunService,
     private routerInfo: ActivatedRoute
   ) {}
   ngOnInit() {
@@ -50,8 +48,6 @@ export class CameraComponent implements OnInit, OnDestroy {
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [];
     this.fieldsModify = [];
@@ -90,10 +86,9 @@ export class CameraComponent implements OnInit, OnDestroy {
     ];
     // 拿到从摄像机组传过来的摄像组的id 值，用来查询该组下面的摄像机
     this.routerInfo.params.subscribe((value) => {
-      this.gid = value.id;
-      this.addForm.patchValue({gId: this.gid});
+      this.addForm.patchValue({gId: value.id});
+      this.commonFun.setCurrentComponentName('CameraComponent' + value.id);
     });
-    this.Update();
   }
   // 控制模态框, 增，修，查
   public openModal(template: TemplateRef<any>, i): void {
@@ -141,13 +136,6 @@ export class CameraComponent implements OnInit, OnDestroy {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
-  public SelectAddModalId(value): void {
-    this.addForm.patchValue({'p_id': value});
-  }
-
-  public SelectModifyModalId(value): void {
-    this.modifyForm.patchValue({'p_id': value});
-  }
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
@@ -188,7 +176,7 @@ export class CameraComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'value')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           const body = 'id=' + this.datas[this.hasChecked[j]].id + '&creator=' + this.datas[this.hasChecked[j]].creator;
@@ -210,7 +198,7 @@ export class CameraComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addVideo(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addVideo(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           console.log(res);
           this.resMessage = res.message;
@@ -228,7 +216,7 @@ export class CameraComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateVideo(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateVideo(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           console.log(res);
           this.resMessage = res.message;
@@ -243,9 +231,8 @@ export class CameraComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findVideos('gId=' + this.gid + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
+    this.req.findVideos('gId=' + this.addForm.get('gId').value + '&page=' + this.pageBody.page + '&row=' + this.pageBody.row)
       .subscribe(value => {
-        console.log(value);
         this.num = value.values.totalPage;
         this.datas = value.values.contents;
         // 阻止用户点击 复选框时，会弹出查看模态框

@@ -3,8 +3,8 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {DeparmentList, Field, PageBody, ValidMsg} from '../../../shared/global.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
 import {digitAndLetterValidator, mobileValidators} from '../../../validator/Validators';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 
 @Component({
@@ -32,17 +32,14 @@ export class OrganizationComponent implements OnInit, OnDestroy {
   public gtone: boolean;
   public resMessage: string;
   public listenDescModal: boolean;
-  public mouseCurrentX;
-  public mouseCurrentY;
-  public moveX = 0;
-  public moveY = 0;
   constructor(
     private req: ReqService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('OrganizationComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
@@ -50,7 +47,6 @@ export class OrganizationComponent implements OnInit, OnDestroy {
     this.gtone = false;
     this.listenDescModal = false;
     this.hasChecked = [];
-    this.pageBody = new PageBody(1, 10);
     // 增加表单信息
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -72,19 +68,13 @@ export class OrganizationComponent implements OnInit, OnDestroy {
       new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('digitAndLetter', '编号只能为数字和字母')]),
       new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
-      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
       new Field('部门ID', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门名称', 'name', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门编号', 'dcode', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('部门电话', 'tel', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('mobile', '请输入正确的手机号码')]),
-      // new Field('所属组织机构ID', 'oid', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('部门父id', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
-    // 调用查看函数
-    this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values;
     });
@@ -189,7 +179,6 @@ export class OrganizationComponent implements OnInit, OnDestroy {
         for (let j = 0; j < haschecklen; j++) {
           this.req.deleteDepartment('id=' +  this.hasChecked[j].id)
             .subscribe(res => {
-              console.log(res);
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
                 this.status = Number(res.status);
@@ -206,7 +195,7 @@ export class OrganizationComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addDepartment(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addDepartment(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -222,7 +211,7 @@ export class OrganizationComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateDepartment(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateDepartment(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -237,7 +226,7 @@ export class OrganizationComponent implements OnInit, OnDestroy {
     this.gtone = false;
     this.mustone = false;
     this.addForm.reset({pid: '-1'});
-    this.req.findDepartment(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.findDepartment(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];
         this.checked = '';
@@ -270,8 +259,7 @@ export class OrganizationComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    if (this.modalRef !== undefined) {
-      this.modalRef.hide();
-    }
+    this.commonFun.rememberMark('OrganizationComponent', this.pageBody);
+    if (this.modalRef !== undefined) {this.modalRef.hide(); }
   }
 }

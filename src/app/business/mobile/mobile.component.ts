@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {AppManager} from '../../shared/global.service';
 import {ReqService} from '../../shared/req.service';
-import {CommonfunService} from '../../shared/commonfun.service';
+import {CommonFunService} from '../../shared/common-fun.service';
 import {FileUploader} from 'ng2-file-upload';
 
 @Component({
@@ -32,7 +32,7 @@ export class MobileComponent implements OnInit, OnDestroy {
     public fb: FormBuilder,
     public modalService: BsModalService,
     public req: ReqService,
-    public commonfun: CommonfunService
+    public commonFun: CommonFunService
   ) {
     this.infoForm = fb.group({
       appType: ['APP01', Validators.required],

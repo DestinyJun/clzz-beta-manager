@@ -3,7 +3,7 @@ import {Field, JurisdictionInterface, PageBody, ValidMsg} from '../../../shared/
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 @Component({
   selector: 'app-interface-manager',
@@ -34,31 +34,16 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('InterfaceManagerComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    // 对表格的初始化
-    this.pageBody = new PageBody(1, 10);
-    // 显示页面增，修表单控件
-    this.fieldsAdd = [
-      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块id',	'mid'),
-    ];
-    this.fieldsModify = [
-      new Field('接口编号',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
-      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
-      // new Field('模块id',	'mid')
-    ];
     //     增加模态框表单
     this.addForm = this.fb.group({
       iname: ['', Validators.required],
@@ -73,7 +58,19 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
       pcode: ['', Validators.required],
       mid: ['', Validators.required]
     });
-    this.Update();
+    // 显示页面增，修表单控件
+    this.fieldsAdd = [
+      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('模块id',	'mid'),
+    ];
+    this.fieldsModify = [
+      new Field('接口编号',	'id', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口名称',	'iname', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('接口路径',	'path', 'text', [new ValidMsg('required', '* 必填项')]),
+      new Field('权限编码',	'pcode', 'text', [new ValidMsg('required', '* 必填项')]),
+    ];
     this.req.FindmoduleIdname().subscribe(value => {
       this.Fmodalid = value.values;
     });
@@ -171,7 +168,7 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'iname')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'iname')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.JurisdictionInterfaceManagerDelete('id=' + this.datas[this.hasChecked[j]].id)
@@ -192,7 +189,7 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionInterfaceManagerAdd(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.JurisdictionInterfaceManagerAdd(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -208,7 +205,7 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.JurisdictionInterfaceManagerModify(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.JurisdictionInterfaceManagerModify(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -222,7 +219,7 @@ export class InterfaceManagerComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.JurisdictionInterfaceManager(this.commonfun.parameterSerialization(this.pageBody))
+    this.req.JurisdictionInterfaceManager(this.commonFun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.datas;

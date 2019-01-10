@@ -3,7 +3,7 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {PageBody, TechnologyParamsPackWord, TechnologyTemperatureQueryList, ValidMsg} from '../../../shared/global.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitValidator} from '../../../validator/Validators';
 
 @Component({
@@ -33,17 +33,17 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
   constructor(private modalService: BsModalService,
               private req: ReqService,
               private fb: FormBuilder,
-              private commonfun: CommonfunService) {
+              private commonFun: CommonFunService) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('TechnicspackTemperatureComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
     this.addForm = this.fb.group({
       name: ['', [Validators.required, digitValidator]],
       al_thickness: ['', [Validators.required, digitValidator]],
@@ -119,7 +119,6 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
       new TechnologyParamsPackWord('二涂五区温度', 'temperature_2_5', '	摄氏度', '二涂五区温度设定', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
       new TechnologyParamsPackWord('二涂五区温度差值', 'temperature_2_5_d', '	摄氏度', '二涂五区温度安全值设定', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
     ];
-    this.Update();
   }
 
   // 控制模态框, 增，修，查
@@ -220,7 +219,7 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           const body = 'al_thickness=' + this.datas[this.hasChecked[j]]['althickness'] + '&&al_width=' + this.datas[this.hasChecked[j]]['alwidth'];
@@ -275,7 +274,7 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.FindTechnicsPackTemperature(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.FindTechnicsPackTemperature(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.amenddata;

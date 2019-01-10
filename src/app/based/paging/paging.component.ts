@@ -1,13 +1,14 @@
-import {Component, EventEmitter, Input, OnInit, Output} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit, Output} from '@angular/core';
 import {ReqService} from '../../shared/req.service';
 import {PageBody} from '../../shared/global.service';
+import {CommonFunService} from '../../shared/common-fun.service';
 
 @Component({
   selector: 'app-paging',
   templateUrl: './paging.component.html',
   styleUrls: ['./paging.component.css']
 })
-export class PagingComponent implements OnInit {
+export class PagingComponent implements OnInit, OnDestroy {
   @Input()
   public pageBody: PageBody;
   @Output()
@@ -18,12 +19,13 @@ export class PagingComponent implements OnInit {
   public skpPage: string;
   constructor(
     public req: ReqService,
-  ) {
-    this.skpPage = '1';
-    this.pageBody = new PageBody(1, 10);
-    this.nowPage = this.pageBody.page;
-  }
+    public commonFun: CommonFunService
+  ) {}
   ngOnInit() {
+    this.skpPage = '1';
+    this.pageBody = this.commonFun.readMark(this.commonFun.getCurrentComponentName()) || new PageBody(1, 10);
+    this.nowPage = this.pageBody.page;
+    this.pageBodyChange.emit(this.pageBody);
   }
 
   //  首页页
@@ -73,5 +75,9 @@ export class PagingComponent implements OnInit {
         this.pageBodyChange.emit(this.pageBody);
       }
     }
+  }
+
+  ngOnDestroy(): void {
+    this.commonFun.rememberMark(this.commonFun.getCurrentComponentName(), this.pageBody);
   }
 }

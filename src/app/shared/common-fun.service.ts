@@ -1,14 +1,13 @@
 import { Injectable } from '@angular/core';
-import {ReqService} from './req.service';
 import {Map, PageBody} from './global.service';
 
 @Injectable()
-export class CommonfunService {
+export class CommonFunService {
+  // 记录当前活动的组件名
+  private currentComponentName: string;
+  // 存放已经被浏览过的组件，并把上次的会话保存。下次再打开组件的时候还原上次会话的界面
   private list = Map.getMap();
-  constructor(
-    private req: ReqService
-  ) {}
-
+  constructor() {}
   /**
    *
    * @param object 需要参数序列化的对象
@@ -75,11 +74,16 @@ export class CommonfunService {
   /**
    * @description 对每个组件进行浏览记忆功能
    */
-  public rememeberMark(component: string, data: PageBody): void {
-    this.list.put(component, data);
+  public rememberMark(componentName: string, data: PageBody): void {
+    this.list.put(componentName, data);
   }
   public readMark(componentName: string): PageBody {
     return this.list.get(componentName);
   }
-
+  public getCurrentComponentName(): string {
+    return this.currentComponentName;
+  }
+  public setCurrentComponentName(currentComponentName: string): void {
+    this.currentComponentName = currentComponentName;
+  }
 }

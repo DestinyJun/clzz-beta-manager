@@ -4,7 +4,7 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
 import {Field, OrganizationList, PageBody, ValidMsg} from '../../../shared/global.service';
 import {emailValidator, faxValidator, mobileValidators, postCodeValidator} from '../../../validator/Validators';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 
 
 @Component({
@@ -36,16 +36,16 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
     private req: ReqService,
     private modalService: BsModalService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {}
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('OrganizationComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
     // 增加表单信息
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
@@ -89,7 +89,6 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
       new Field('法人代表', 'corpname', 'text', [new ValidMsg('required', '* 必填项')]),
       new Field('成立日期', 'registerdate', 'date', [new ValidMsg('required', '* 必填项')]),
       new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
-      // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
       // new Field('编号', 'id', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -106,8 +105,6 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
       new Field('邮编', 'zipcode', 'text', [new ValidMsg('required', '* 必填项'), new ValidMsg('postCode', '请输入正确的邮编号')]),
       // new Field('父机构', 'pid', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
-    // 调用查看函数
-    this.Update();
     this.req.FindDepartOrgani().subscribe(value => {
       this.Fmodalid = value.values.organizations;
     });
@@ -203,7 +200,7 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           this.req.deleteOrganization('id=' +  this.datas[this.hasChecked[j]].id)
@@ -224,7 +221,7 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addOrganization(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addOrganization(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -240,7 +237,7 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateOrganization(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateOrganization(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -254,7 +251,7 @@ export class OrganizationManagementComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findOrganization(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.findOrganization(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.hasChecked = [];
         this.checked = '';

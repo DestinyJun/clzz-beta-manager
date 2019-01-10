@@ -1,6 +1,6 @@
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {CommonfunService} from '../../../../shared/commonfun.service';
+import {CommonFunService} from '../../../../shared/common-fun.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../../shared/req.service';
 import 'rxjs/Rx';
@@ -41,18 +41,18 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('CameraGroupComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
     // 显示页面增，修表单控件
     this.fieldsAdd = [];
     this.fieldsModify = [];
@@ -106,7 +106,6 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
       {status: 1, msg: '开启'},
       {status: 0, msg: '停用'},
     ];
-    this.Update();
   }
 
   // 选择状态
@@ -169,7 +168,7 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
 
   // 翻页
   public getPageBody(event): void {
-    this.pageBody.page = event.page;
+    this.pageBody = event;
     this.Update();
   }
 
@@ -211,7 +210,7 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
       this.gtone = true;
       this.mustone = false;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'value')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'value')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
           const body = 'id=' + this.datas[this.hasChecked[j]].id + '&creator=' + this.datas[this.hasChecked[j]].creator;
@@ -234,7 +233,7 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.addVideomanager(this.commonfun.parameterSerialization(this.addForm.value))
+      this.req.addVideomanager(this.commonFun.parameterSerialization(this.addForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -251,7 +250,7 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
       this.openstatus = false;
       this.inputvalid = false;
       this.modalRef.hide();
-      this.req.updateVideomanager(this.commonfun.parameterSerialization(this.modifyForm.value))
+      this.req.updateVideomanager(this.commonFun.parameterSerialization(this.modifyForm.value))
         .subscribe(res => {
           this.resMessage = res.message;
           this.status = Number(res.status);
@@ -266,7 +265,7 @@ export class CameraGroupComponent implements OnInit, OnDestroy {
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
+    this.req.findVideomanager(this.commonFun.parameterSerialization(this.pageBody))
       .subscribe(value => {
         this.num = value.values.totalPage;
         this.datas = value.values.contents;

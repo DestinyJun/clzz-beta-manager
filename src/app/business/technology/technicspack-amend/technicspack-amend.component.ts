@@ -3,7 +3,7 @@ import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord, ValidMsg} 
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitValidator} from '../../../validator/Validators';
 
 @Component({
@@ -30,21 +30,23 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
   public gtone: boolean;
   public resMessage: string;
   public listenDescModal: boolean;
+
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
-    private commonfun: CommonfunService
+    private commonFun: CommonFunService
   ) {
   }
+
   ngOnInit() {
+    this.commonFun.setCurrentComponentName('TechnicspackAmendComponent');
     this.status = 0;
     this.openstatus = true;
     this.inputvalid = false;
     this.mustone = false;
     this.gtone = false;
     this.listenDescModal = false;
-    this.pageBody = new PageBody(1, 10);
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
       finish_type: ['', [Validators.required]],
@@ -112,34 +114,34 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
     this.technologyParamsPackWordList = [
       new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项')]),
       new TechnologyParamsPackWord('面 漆 类 型', 'finish_type', '', '', [new ValidMsg('required', '* 必填项')]),
-      new TechnologyParamsPackWord('底漆干膜厚度',	'bottom_dry_thickness',	'微米', '	float	1000.00 	模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆干膜厚度误差',	'bottom_dry_thickness_d', '微米'	, '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆干膜厚度修正左',	'bottom_dry_thickness_d_l', '微米', '	模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆干膜厚度修正右',	'bottom_dry_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆湿膜厚度',	'bottom_wet_thickness', '微米'	, '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆湿膜厚度误差',	'bottom_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆湿膜厚度修正左',	'bottom_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('底漆湿膜厚度修正右',	'bottom_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆干膜厚度',	'back_dry_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆干膜厚度误差',	'back_dry_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆干膜厚度修正左',	'back_dry_thickness_d_l', '微米'	, '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆干膜厚度修正右',	'back_dry_thickness_d_r', '微米'	, '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆湿膜厚度',	'back_wet_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆湿膜厚度误差',	'back_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆湿膜厚度修正左',	'back_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('背漆湿膜厚度修正右',	'back_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆干膜厚度',	'surface_dry_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆干膜厚度误差',	'surface_dry_thickness_d', '	微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆干膜厚度修正左',	'surface_dry_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆干膜厚度修正右',	'surface_dry_thickness_d_r', '微米	', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆湿膜厚度',	'surface_wet_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆干膜厚度', 'bottom_dry_thickness', '微米', '	float	1000.00 	模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆干膜厚度误差', 'bottom_dry_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆干膜厚度修正左', 'bottom_dry_thickness_d_l', '微米', '	模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆干膜厚度修正右', 'bottom_dry_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度', 'bottom_wet_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度误差', 'bottom_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度修正左', 'bottom_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('底漆湿膜厚度修正右', 'bottom_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆干膜厚度', 'back_dry_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆干膜厚度误差', 'back_dry_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆干膜厚度修正左', 'back_dry_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆干膜厚度修正右', 'back_dry_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度', 'back_wet_thickness', '微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度误差', 'back_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度修正左', 'back_wet_thickness_d_l', '微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('背漆湿膜厚度修正右', 'back_wet_thickness_d_r', '微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆干膜厚度', 'surface_dry_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆干膜厚度误差', 'surface_dry_thickness_d', '	微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆干膜厚度修正左', 'surface_dry_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆干膜厚度修正右', 'surface_dry_thickness_d_r', '微米	', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度', 'surface_wet_thickness', '	微米', '模板厚度', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
       new TechnologyParamsPackWord('面漆湿膜厚度误差', 'surface_wet_thickness_d', '微米', '模板厚度误差（厚度安全值）', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆湿膜厚度修正左',	'surface_wet_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('面漆湿膜厚度修正右',	'surface_wet_thickness_d_r', '	微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('一涂排气风量',	'exhaust_air_volume_1', 'CMH	', '一涂排气风量设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('一涂排气风量差值',	'exhaust_air_volume_1_d', 'CMH	', '一涂排气风量安全值设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('二涂排气风量',	'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
-      new TechnologyParamsPackWord('二涂排气风量差值',	'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度修正左', 'surface_wet_thickness_d_l', '	微米', '模板厚度测量仪（左侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('面漆湿膜厚度修正右', 'surface_wet_thickness_d_r', '	微米', '模板厚度测量仪（右侧）参数矫正值', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('一涂排气风量', 'exhaust_air_volume_1', 'CMH	', '一涂排气风量设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('一涂排气风量差值', 'exhaust_air_volume_1_d', 'CMH	', '一涂排气风量安全值设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('二涂排气风量', 'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('二涂排气风量差值', 'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
     ];
     this.Update();
   }
@@ -168,7 +170,7 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
           this.modifyForm.reset(this.detail.amenddata);
           this.modalRef = this.modalService.show(template);
           this.listenDescModal = false;
-        }else {
+        } else {
           this.mustone = true;
         }
       } else {
@@ -195,11 +197,13 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
     this.listenDescModal = false;
     this.modalRef.hide();
   }
+
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
     this.Update();
   }
+
   // 全选 或 全不选
   public getAllCheckBoxStatus(e): void {
     if (e.srcElement.checked === true) {
@@ -211,13 +215,14 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       this.checked = '';
     }
   }
+
   // 得到已选择的checkBox
   public getCheckBoxStatus(e, i): void {
     const haschecklen = this.hasChecked.length;
     if (e.srcElement.checked === true) {
       this.hasChecked.push(i);
     } else {
-      for (let j = 0; j < haschecklen; j++ ) {
+      for (let j = 0; j < haschecklen; j++) {
         if (this.hasChecked[j] === i) {
           this.hasChecked.splice(j, 1);
         }
@@ -229,17 +234,18 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       this.detail = null;
     }
   }
- // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
+
+  // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
   public delete(): void {
     const haschecklen = this.hasChecked.length;
     if (haschecklen === 0) {
       this.mustone = false;
       this.gtone = true;
     } else {
-      if (this.commonfun.deleteChecked(this.datas, this.hasChecked, 'name')) {
+      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
         this.openstatus = false;
         for (let j = 0; j < haschecklen; j++) {
-          this.req.DeleteTechnicsPackAmend('finish_type=' +  this.datas[this.hasChecked[j]].finishtype)
+          this.req.DeleteTechnicsPackAmend('finish_type=' + this.datas[this.hasChecked[j]].finishtype)
             .subscribe(res => {
               if (j === haschecklen - 1) {
                 this.resMessage = res.message;
@@ -251,6 +257,7 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       }
     }
   }
+
   // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
   public paramsAdd(): void {
     if (this.addForm.valid) {
@@ -267,6 +274,7 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       this.inputvalid = true;
     }
   }
+
 //  修改表格内容
   public paramsModify(): void {
     if (1) {
@@ -283,11 +291,12 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       this.inputvalid = true;
     }
   }
+
   // 刷新
   public Update(): void {
     this.gtone = false;
     this.mustone = false;
-    this.req.FindTechnicsPackAmend(this.commonfun.parameterSerialization(this.pageBody)).subscribe(
+    this.req.FindTechnicsPackAmend(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
       (value) => {
         this.num = Math.ceil(value.values.num / 10);
         this.datas = value.values.amenddata;
@@ -316,6 +325,7 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
         this.checked = '';
       });
   }
+
   public cleanScreen(): void {
     this.openstatus = true;
     this.status = 0;

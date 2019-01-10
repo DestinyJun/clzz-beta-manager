@@ -454,3 +454,38 @@ export class ValidMsg {
     public msg: string
   ) {}
 }
+
+// Map
+export class Map {
+  private dataMap: Array<MapType> = [];
+  private constructor() {}
+
+  // 我靠，静态方法必须放在最前面
+  static getMap(): Map {
+    return new Map();
+  }
+
+  public put(key: string, object: PageBody): void {
+    if (key === '' || key === null) {return; }
+    for (let i = 0; i < this.dataMap.length; i++) {
+      if (this.dataMap[i].key === key) {
+        this.dataMap[i].object = object;
+      }
+    }
+    this.dataMap.push(new MapType(key, object));
+  }
+
+  public get(key: string): PageBody {
+    console.log(this.dataMap);
+    if (key === '' || key === null) {return null; }
+    for (let i = 0; i < this.dataMap.length; i++) {if (this.dataMap[i].key === key) {return this.dataMap[i].object; }}
+    return null;
+  }
+}
+
+export class MapType {
+  constructor(
+    public key: string,
+    public object: PageBody
+  ) {}
+}
