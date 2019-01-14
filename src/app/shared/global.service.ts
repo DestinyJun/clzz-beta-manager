@@ -476,7 +476,6 @@ export class Map {
   }
 
   public get(key: string): PageBody {
-    console.log(this.dataMap);
     if (key === '' || key === null) {return null; }
     for (let i = 0; i < this.dataMap.length; i++) {if (this.dataMap[i].key === key) {return this.dataMap[i].object; }}
     return null;

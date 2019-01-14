@@ -136,7 +136,6 @@ export class UsersComponent implements OnInit, OnDestroy {
     this.reset_userLineIds();
     // 先判断要打开的是 哪个 模态框
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
       this.listenDescModal = true;
       this.detail = this.datas[i];
       this.userLineIds = this.change_userLineIds(this.detail, this.userLineIds);
@@ -196,7 +195,6 @@ export class UsersComponent implements OnInit, OnDestroy {
   }
 
   public getPageBody(event): void {
-    console.log('page');
     this.pageBody = event;
     this.Update();
   }
@@ -308,7 +306,6 @@ export class UsersComponent implements OnInit, OnDestroy {
 
   // 在增加， 删除，修改后即时刷新
   public Update(): void {
-    console.log('update');
     this.gtone = false;
     this.mustone = false;
     this.req.getUsersManager(this.pageBody)

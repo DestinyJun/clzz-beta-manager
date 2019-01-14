@@ -3,16 +3,16 @@ import {Observable} from 'rxjs';
 
 // 自定义校验器之校验手机号码是否合法
 export function mobileValidators (control: FormControl): any {
-  const myreg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
-  const valid = myreg.test(control.value);
+  const myReg = /^(((13[0-9]{1})|(14[0-9]{1})|(15[0-9]{1})|(17[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+  const valid = myReg.test(control.value);
   return valid ? null : {mobile: true};
 }
 
 // 异步校验器
 export function mobileAsyncValidators (control: FormControl): any {
   // 定义正则表达式起到筛选字段的作用
-  const myreg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
-  const valid = myreg.test(control.value);
+  const myReg = /^(((13[0-9]{1})|(15[0-9]{1})|(18[0-9]{1}))+\d{8})$/;
+  const valid = myReg.test(control.value);
   return Observable.of (valid ? null : {mobile: true}).delay(5000);
 }
 
