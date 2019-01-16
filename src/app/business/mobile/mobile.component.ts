@@ -22,10 +22,9 @@ export class MobileComponent implements OnInit, OnDestroy {
   public status: number;
   public openstatus: boolean;
   public QRcodeValue: string;
-  public uploader: FileUploader = new FileUploader({});
   public uploadHint = false;
   public submitMsg = '上传';
-  public isUpload = false;
+  public loaded: number;
 
   constructor(
     public http: HttpClient,
@@ -41,6 +40,7 @@ export class MobileComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loaded = 0;
     this.formData = new FormData();
     this.openstatus = true;
     this.status = 0;
@@ -85,38 +85,40 @@ export class MobileComponent implements OnInit, OnDestroy {
   }
 
   // 上传文件
-  public uploadfile(): void {
+  public uploadFile(): void {
     if (this.infoForm.valid && (this.file !== undefined || this.file.length >= 1)) {
       this.openstatus = false;
       this.submitMsg = '正在上传.....';
-      this.isUpload = true;
       this.formData.append('infomation', JSON.stringify(this.infoForm.value));
-      this.req.AppUpload(this.formData)
-        .subscribe(res => {
-          // console.log(res);
-          // console.log(event.type === HttpEventType.UploadProgress);
-          this.status = Number(res.status);
-          this.submitMsg = '上传';
-          this.isUpload = false;
-        });
+      this.loaded = 0;
+      const xml = new XMLHttpRequest();
+      xml.open('POST', 'http://119.23.219.22:80/element-admin/version/an-upload', true);
+      xml.upload.onprogress = (e => {
+        if (e.lengthComputable) {
+          this.loaded = Math.ceil(100 * (e.loaded / e.total));
+          document.getElementsByClassName('progress-bar')[0].setAttribute('aria-valuenow', String(this.loaded));
+          console.log(this.loaded);
+          if (this.loaded === 100) {
+            this.submitMsg = '上传';
+          }
+        }
+      });
+      this.send(xml);
     } else {
       alert('请填写完整的信息!');
     }
   }
 
+public send(xml: XMLHttpRequest): void {
+    this.status = 14;
+    xml.send(this.formData);
+}
 
   // 下载文件
   public downloadFile(downloadUrl): void {
     window.open(downloadUrl);
   }
 
-  // 清屏
-  public cleanScreen(): void {
-    if (this.status !== 0) {
-      this.openstatus = true;
-      this.status = 0;
-    }
-  }
 
   ngOnDestroy(): void {
     if (this.modalRef !== undefined) {
