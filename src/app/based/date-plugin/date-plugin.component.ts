@@ -7,7 +7,7 @@ import {FormBuilder, FormGroup} from '@angular/forms';
   styleUrls: ['./date-plugin.component.css']
 })
 export class DatePluginComponent implements OnInit {
-  private dateForm: FormGroup;
+  public dateForm: FormGroup;
   @Input()
   private timeStamp: string;
   @Output()
