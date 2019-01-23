@@ -1,4 +1,4 @@
-<div class="btnmanager" (click)="cleanScreen()">
+<div class="data" (click)="cleanScreen()">
   <div class="container-fluid">
     <div class="row">
       <div class="col-xs-12 index">
@@ -8,10 +8,10 @@
     <div class="row options">
       <div class="col-xs-12">
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
-        <button type="button" class="btn btn-default" (click)="deleteBtnmanager()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
-        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        <span *ngIf="baseVar.gtOne" class="remind">请至少选择一项进行操作</span>
+        <span *ngIf="baseVar.mustOne" class="remind">请选择一项进行操作</span>
       </div>
     </div>
     <div class="row content">
@@ -19,7 +19,7 @@
         <table class="table table-responsive table-bordered">
           <thead>
           <tr>
-            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th class="checkboxoption"><input type="checkbox" (click)="checkAll($event)">全选/全不选</th>
             <th>按钮编号</th>
             <th>按钮名称</th>
             <th>描述</th>
@@ -29,14 +29,14 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let btnmanager of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{btnmanager['id']}}</td>
-            <td>{{btnmanager['name']}}</td>
-            <td>{{btnmanager['decription']}}</td>
-            <td>{{btnmanager['mid']}}</td>
-            <td>{{btnmanager['idt']}}</td>
-            <td>{{btnmanager['udt']}}</td>
+          <tr *ngFor="let data of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox"(click)="checkOne($event, data)"></td>
+            <td>{{data['id']}}</td>
+            <td>{{data['name']}}</td>
+            <td>{{data['decription']}}</td>
+            <td>{{data['mid']}}</td>
+            <td>{{data['idt']}}</td>
+            <td>{{data['udt']}}</td>
           </tr>
           </tbody>
         </table>
@@ -44,7 +44,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
+        <app-paging  [num]="baseVar.totalPage" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -80,10 +80,10 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="btnmanagerAdd()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="save()">
         确定增加
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -121,10 +121,10 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="btnmanagerModify()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="update()">
         确定修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -152,7 +152,7 @@
     <p>更新时间 :{{detail['udt']}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="closeModal();openModal(modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -163,8 +163,8 @@
   </div>
 </ng-template>
 
-<div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span>{{resMessage}}</span>
+<div [hidden]="baseVar.openStatus">
+  <div class="status text-center"  [class.success]="baseVar.state === 10" [class.fail]="baseVar.state === 11 || baseVar.state === 13 || baseVar.state === 12">
+    <span>{{baseVar.resMsg}}</span>
   </div>
 </div>

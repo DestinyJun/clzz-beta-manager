@@ -7,18 +7,18 @@
     </div>
     <div class="row options">
       <div class="col-xs-12">
-        <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
-        <button type="button" class="btn btn-default" (click)="deleteItem()"><span class="glyphicon glyphicon-trash"></span>删除</button>
-        <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
+        <button type="button" class="btn btn-default" (click)="openModal($event, add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
+        <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="openModal($event, modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
         <!--<div class="numSearchDiv" [class.numSearch]="controlSearchText">-->
         <!--&lt;!&ndash;这里不能用 ngIf ,因为 当 ngIf = false 会把input 视为不检查&ndash;&gt;-->
         <!--&lt;!&ndash;而hidden 仅仅只是掩藏 input ,但是要检查&ndash;&gt;-->
-        <!--&lt;!&ndash;<input #searchContext type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入巡检编号">&ndash;&gt;-->
-        <!--<input #search type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入巡检编号">-->
+        <!--&lt;!&ndash;<input #searchContext id=self_defined_year type="text" class="numSearchText" *ngIf="controlSearchText" placeholder="请输入巡检编号">&ndash;&gt;-->
+        <!--<input #search id=self_defined_year type="text" class="numSearchText" [hidden]="!controlSearchText" placeholder="请输入巡检编号">-->
         <!--&lt;!&ndash;<span class="fa fa-search" (click)="numSearch(search.value, lookdesc, $event)" title="按编号查询"></span>&ndash;&gt;-->
         <!--</div>-->
-        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
-        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        <span *ngIf="baseVar.gtOne" class="remind">请至少选择一项进行操作</span>
+        <span *ngIf="baseVar.mustOne" class="remind">请选择一项进行操作</span>
       </div>
     </div>
     <div class="row content">
@@ -26,7 +26,7 @@
         <table class="table table-responsive table-bordered">
           <thead>
           <tr>
-            <th class="checkboxoption" ><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th class="checkboxoption" ><input type="checkbox" (click)="checkAll($event)">全选/全不选</th>
             <th>巡检编号</th>
             <th>巡检名称</th>
             <th>巡检位置</th>
@@ -36,14 +36,14 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let it of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{it.itemcode}}</td>
-            <td>{{it.itemname}}</td>
-            <td>{{it.itemposition}}</td>
-            <td>{{it.longitude}}</td>
-            <td>{{it.latitude}}</td>
-            <td><button type="button" class="btn btn-default" (click)="openModal(openQRcode, i)">打印二维码</button></td>
+          <tr *ngFor="let data of datas; let i = index" (click)="openModal($event, lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox" (click)="checkOne($event, data)"></td>
+            <td>{{data.itemcode}}</td>
+            <td>{{data.itemname}}</td>
+            <td>{{data.itemposition}}</td>
+            <td>{{data.longitude}}</td>
+            <td>{{data.latitude}}</td>
+            <td><button type="button" class="btn btn-default" (click)="openModal($event, openQRcode, i)">打印二维码</button></td>
           </tr>
           </tbody>
         </table>
@@ -51,7 +51,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
+        <app-paging  [num]="baseVar.totalPage" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -69,7 +69,8 @@
     <form class="form-horizontal" [formGroup]="addForm">
       <div class="form-group" *ngFor="let add of fieldsAdd">
         <label>{{add.name}}</label>
-        <input [type]="add.type" class="form-control" formControlName="{{add.field}}" [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
+        <input [type]="add.type" class="form-control" formControlName="{{add.field}}"
+               [class.hasError]="addForm.get(add.field).invalid && addForm.get(add.field).touched">
         <div [hidden]="addForm.get(add.field).valid || addForm.get(add.field).untouched"  class="validField">
           <div *ngFor="let valid of add.validators">
             <span *ngIf="addForm.get(add.field).hasError(valid.validField)">{{valid.msg}}</span>
@@ -83,27 +84,14 @@
           <option *ngFor="let modal of Fmodalid" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>开始时间</label>
-        <div class="form-control">
-          <p>
-            <span contenteditable="true" id="addYear" class="year"></span>年
-            <span contenteditable="true" id="addMonth" class="mouth"></span>月
-            <span contenteditable="true" id="addDay" class="day"></span>日
-            <span contenteditable="true" id="addHour" class="hour"></span>时
-            <span contenteditable="true" id="addMinutes" class="minutes"></span>分
-            <span *ngIf="validTimeFormat" style="color: red;margin-left: 10px;">时间格式不正确，请检查</span>
-            <button type="button" (click)="getLocalTime('add')">获取本地当前时间</button>
-          </p>
-        </div>
-      </div>
+      <app-date-plugin (datePluginChange)="getDateData($event, addForm)"></app-date-plugin>
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="itemAdd()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="save()">
         确定增加
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -124,7 +112,8 @@
     <form class="form-horizontal" [formGroup]="modifyForm">
       <div class="form-group" *ngFor="let modify of fieldsModify">
         <label>{{modify.name}}</label>
-        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}" [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
+        <input [type]="modify.type" class="form-control" formControlName="{{modify.field}}"
+               [class.hasError]="modifyForm.get(modify.field).invalid && modifyForm.get(modify.field).touched">
         <div [hidden]="modifyForm.get(modify.field).valid || modifyForm.get(modify.field).untouched"  class="validField">
           <div *ngFor="let valid of modify.validators">
             <span *ngIf="modifyForm.get(modify.field).hasError(valid.validField)">{{valid.msg}}</span>
@@ -138,27 +127,14 @@
           <option *ngFor="let modal of Fmodalid" [selected]="modifyForm.get('unitcode').value === modal.sid" [value]="modal.sid">{{modal.name}}</option>
         </select>
       </div>
-      <div class="form-group">
-        <label>开始时间</label>
-        <div class="form-control">
-          <p>
-            <span contenteditable="true" id="modifyYear" class="year"></span>年
-            <span contenteditable="true" id="modifyMonth" class="mouth"></span>月
-            <span contenteditable="true" id="modifyDay" class="day"></span>日
-            <span contenteditable="true" id="modifyHour" class="hour"></span>时
-            <span contenteditable="true" id="modifyMinutes" class="minutes"></span>分
-            <span *ngIf="validTimeFormat" style="color: red;margin-left: 10px;">时间格式不正确，请检查</span>
-            <button type="button" (click)="getLocalTime('modify')">获取本地当前时间</button>
-          </p>
-        </div>
-      </div>
+      <app-date-plugin (datePluginChange)="getDateData($event, modifyForm)" [timeStamp]="timeStamp"></app-date-plugin>
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="itemModify()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="update()">
         确定修改
       </button>
       <button type="button" class="btn  btn-danger" aria-label="Close" (click)="closeModal()">
@@ -187,17 +163,17 @@
     </p>
     <p>巡检巡检成员: &nbsp;	{{detail.itemmembers}}</p>
     <p>巡检时间间隔: &nbsp;	{{detail.timecell}}</p>
-    <p>巡检起始时间: &nbsp;	{{detail.starttime}}</p>
-    <p>巡检结束时间: &nbsp;	{{detail.endtime}}</p>
+    <p>巡检起始时间: &nbsp;	{{detail.start_time}}</p>
+    <p>巡检结束时间: &nbsp;	{{detail.end_time}}</p>
     <p>是否巡检: &nbsp;
-      <span *ngIf="detail.status === 1">已巡检</span>
-      <span *ngIf="detail.status === 0">未巡检</span>
+      <span class="btn-primary" *ngIf="detail['status'] === 1">已巡检</span>
+      <span class="btn-primary" *ngIf="detail['status'] === 0">未巡检</span>
     </p>
     <p>插入时间: &nbsp;	{{detail.idt}}</p>
     <p>更新时间: &nbsp;	{{detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="closeModal();openModal($event, modify, -1)">
         跳转到修改
       </button>
       <button type="button" class="btn  btn-danger" aria-label="Close" (click)="closeModal()">
@@ -223,8 +199,9 @@
     </div>
   </div>
 </ng-template>
-<div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status !== 0 && status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span>{{resMessage}}</span>
+<div [hidden]="baseVar.openStatus">
+  <div class="status text-center"  [class.success]="baseVar.state !== 0 && baseVar.state === 10"
+       [class.fail]="baseVar.state === 11 || baseVar.state === 13 || baseVar.state === 12">
+    <span>{{baseVar.resMsg}}</span>
   </div>
 </div>

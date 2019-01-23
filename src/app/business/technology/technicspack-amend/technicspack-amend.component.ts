@@ -1,10 +1,11 @@
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {PageBody, TechnologyAmendQueryList, TechnologyParamsPackWord, ValidMsg} from '../../../shared/global.service';
-import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ReqService} from '../../../shared/req.service';
 import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitValidator} from '../../../validator/Validators';
+import {Url} from '../../../user-defined-service/Url';
+import {BaseVar, CommonOperation} from '../../../user-defined-service/CommonOperation';
+import {PostRequest} from '../../../user-defined-service/PostRequest';
 
 @Component({
   selector: 'app-technicspack-amend',
@@ -15,38 +16,28 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
   // technologyParamsPackWordList 用于显示增，修表单，不需要在模板上写太多 input 的 formControlName 控件
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
   public datas: Array<TechnologyAmendQueryList>;
-  public modalRef: BsModalRef;
   public pageBody: PageBody;
-  public num: number;
   public detail: any;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
-  public hasChecked: Array<number> = [];
-  public checked: string;
-  public openstatus: boolean;
-  public status: number;
-  public inputvalid: boolean;
-  public mustone: boolean;
-  public gtone: boolean;
-  public resMessage: string;
-  public listenDescModal: boolean;
+  public baseVar: BaseVar;
+  private componentName: string;
+  private deleteForm: FormGroup;
+  private queryForm: FormGroup;
 
   constructor(
-    private modalService: BsModalService,
-    private req: ReqService,
+    private commonOperation: CommonOperation<TechnologyAmendQueryList>,
+    private req: PostRequest,
     private fb: FormBuilder,
     private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
-    this.commonFun.setCurrentComponentName('TechnicspackAmendComponent');
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    this.listenDescModal = false;
+    this.baseVar = new BaseVar();
+    this.componentName = 'TechnicspackAmendComponent';
+    this.commonFun.setCurrentComponentName(this.componentName);
+    this.commonOperation.setOperator(this);
     this.addForm = this.fb.group({
       name: ['', [Validators.required]],
       finish_type: ['', [Validators.required]],
@@ -111,6 +102,13 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       exhaust_air_volume_2: ['', [Validators.required, digitValidator]],
       exhaust_air_volume_2_d: ['', [Validators.required, digitValidator]]
     });
+    this.deleteForm = this.fb.group({
+      finish_type: ['']
+    });
+    this.queryForm = this.fb.group({
+      page: [''],
+      row: ['']
+    });
     this.technologyParamsPackWordList = [
       new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项')]),
       new TechnologyParamsPackWord('面 漆 类 型', 'finish_type', '', '', [new ValidMsg('required', '* 必填项')]),
@@ -143,197 +141,69 @@ export class TechnicspackAmendComponent implements OnInit, OnDestroy {
       new TechnologyParamsPackWord('二涂排气风量', 'exhaust_air_volume_2', 'CMH	', '二涂排气风量设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
       new TechnologyParamsPackWord('二涂排气风量差值', 'exhaust_air_volume_2_d', 'CMH', '二涂排气风量安全值设定', [new ValidMsg('required', '* 必填项, '), new ValidMsg('digit', '请输入数字')]),
     ];
-    this.Update();
-  }
-
-  // 控制模态框, 增，修，查
-  public openModal(template: TemplateRef<any>, i): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    this.mustone = false;
-    // this.controlSearchText = false;
-    // 先判断要打开的是 哪个 模态框
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
-      this.listenDescModal = true;
-      this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
-      if (this.hasChecked.length !== 1) {
-        if (this.listenDescModal) {
-          this.mustone = false;
-          // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
-          this.detail.amenddata['name'] = this.detail.name;
-          this.detail.amenddata['finish_type'] = this.detail.finishtype;
-          this.modifyForm.reset(this.detail.amenddata);
-          this.modalRef = this.modalService.show(template);
-          this.listenDescModal = false;
-        } else {
-          this.mustone = true;
-        }
-      } else {
-        if (!this.listenDescModal) {
-          this.detail = this.datas[this.hasChecked[0]];
-        }
-        this.mustone = false;
-        // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
-        this.detail.amenddata['name'] = this.detail.name;
-        this.detail.amenddata['finish_type'] = this.detail.finishtype;
-        this.modifyForm.reset(this.detail.amenddata);
-        this.modalRef = this.modalService.show(template);
-        this.listenDescModal = false;
-      }
-
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-
-  // 关闭模态框, 增，修，查
-  public closeModal(): void {
-    this.listenDescModal = false;
-    this.modalRef.hide();
   }
 
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
-    this.Update();
+    this.foundByPage();
   }
 
-  // 全选 或 全不选
-  public getAllCheckBoxStatus(e): void {
-    if (e.srcElement.checked === true) {
-      this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.datas.length, 10);
-      this.checked = 'checked';
-    } else {
-      this.hasChecked = [];
-      this.checked = '';
-    }
+  public openModal(template: TemplateRef<any>, i): void {
+    this.commonOperation.openModal(template, i);
   }
 
-  // 得到已选择的checkBox
-  public getCheckBoxStatus(e, i): void {
-    const haschecklen = this.hasChecked.length;
-    if (e.srcElement.checked === true) {
-      this.hasChecked.push(i);
-    } else {
-      for (let j = 0; j < haschecklen; j++) {
-        if (this.hasChecked[j] === i) {
-          this.hasChecked.splice(j, 1);
-        }
-      }
-    }
-    if (this.hasChecked.length === 1) {
-      this.detail = this.datas[this.hasChecked[0]];
-    } else {
-      this.detail = null;
-    }
+  public closeModal(): void {
+    this.commonOperation.closeModal();
   }
 
-  // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
+  public checkAll(e): void {
+    this.commonOperation.checkAll(e);
+  }
+
+  public checkOne(e, data): void {
+    this.commonOperation.checkOne(e, data);
+  }
+
   public delete(): void {
-    const haschecklen = this.hasChecked.length;
-    if (haschecklen === 0) {
-      this.mustone = false;
-      this.gtone = true;
-    } else {
-      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
-          this.req.DeleteTechnicsPackAmend('finish_type=' + this.datas[this.hasChecked[j]].finishtype)
-            .subscribe(res => {
-              if (j === haschecklen - 1) {
-                this.resMessage = res.message;
-                this.status = Number(res.status);
-                this.Update();
-              }
-            });
-        }
-      }
-    }
+    this.commonOperation.delete(this.deleteForm, Url.Data.defaultTechnologyPackage.delete, true);
   }
 
-  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
-  public paramsAdd(): void {
-    if (this.addForm.valid) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.AddTechnicsPackAmend(this.addForm.value)
-        .subscribe(res => {
-          this.resMessage = res.message;
-          this.status = Number(res.status);
-          this.Update();
-        });
-    } else {
-      this.inputvalid = true;
-    }
+  public save(): void {
+    this.commonOperation.save(this.addForm, Url.Data.defaultTechnologyPackage.save, true);
   }
 
-//  修改表格内容
-  public paramsModify(): void {
-    if (1) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.UpdateTechnicsPackAmend(this.modifyForm.value)
-        .subscribe(res => {
-          this.resMessage = res.message;
-          this.status = Number(res.status);
-          this.Update();
-        });
-    } else {
-      this.inputvalid = true;
-    }
+  public update(): void {
+    this.commonOperation.update(this.modifyForm, Url.Data.defaultTechnologyPackage.update, true);
   }
 
-  // 刷新
-  public Update(): void {
-    this.gtone = false;
-    this.mustone = false;
-    this.req.FindTechnicsPackAmend(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
-      (value) => {
-        this.num = Math.ceil(value.values.num / 10);
-        this.datas = value.values.amenddata;
-        for (let i = 0; i < this.datas.length; i++) {
-          this.datas[i]['amenddata'] = JSON.parse(this.datas[i]['amenddata']);
-        }
-        // 阻止用户点击 复选框时，会弹出查看模态框
-        const setinter = setInterval(() => {
-          const trs = document.getElementsByTagName('tr');
-          // trs 长度大于 1时， 取消setInterval
-          if (trs.length > 1) {
-            for (let i = 1; i < trs.length; ++i) {
-              const check = trs[i].children[0];
-              // 移除勾选框的title属性
-              check.setAttribute('title', '');
-              // check.removeAttribute('title');
-              // 取消勾选框冒泡默认行为
-              check.addEventListener('click', (e) => {
-                e.stopImmediatePropagation();
-              });
-            }
-            clearInterval(setinter);
-          }
-        });
-        this.hasChecked = [];
-        this.checked = '';
-      });
-  }
-
-  public cleanScreen(): void {
-    this.openstatus = true;
-    this.status = 0;
+  public foundByPage(): void {
+    this.queryForm.patchValue(this.pageBody);
+    this.commonOperation.foundByPage(this.queryForm, Url.Data.defaultTechnologyPackage.foundByPage, true);
   }
 
   ngOnDestroy(): void {
-    if (this.modalRef !== undefined) {
-      this.modalRef.hide();
+    this.commonFun.rememberMark(this.componentName, this.pageBody);
+    this.commonOperation.initBaseVar();
+    this.commonOperation.closeModal();
+  }
+
+  public cleanScreen(): void {
+    this.baseVar.openStatus = true;
+    this.baseVar.state = 0;
+  }
+
+  public setData(data: Array<TechnologyAmendQueryList>): void {
+    this.datas = data;
+    for (let i = 0; i < this.datas.length; i++) {
+      this.datas[i]['finish_type'] = this.datas[i].finishtype;
+      this.datas[i].amenddata = JSON.parse(String(this.datas[i].amenddata));
     }
+    this.commonOperation.setData(this.datas);
+  }
+
+  public setBaseVar(baseVar: BaseVar): void {
+    this.baseVar = baseVar;
   }
 }
+

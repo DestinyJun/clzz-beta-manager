@@ -291,6 +291,11 @@ export class TechnologyAmendQueryList {
   constructor(
     public name: number,
     public finishtype: number,
+    public amenddata: Amenddata
+) {}
+}
+export class Amenddata {
+  constructor(
     public data_pack_tim: number,
     public plate_thickne: number,
     public plate_width: number,
@@ -343,15 +348,20 @@ export class TechnologyAmendQueryList {
     public exhaust_air_volume_1_d: number,
     public exhaust_air_volume_2: number,
     public exhaust_air_volume_2_d: number
-) {}
+  ) {}
 }
 // 温度
 export class TechnologyTemperatureQueryList {
   constructor(
     public name: number,
-    public finishtype: number,
     public althickness: number,
     public alwidth: number,
+    public temperaturedata: Temperaturedata
+) {}
+}
+
+export class Temperaturedata {
+  constructor(
     public bottom_dry_thickness: number,
     public bottom_dry_thickness_d: number,
     public bottom_dry_thickness_d_l: number,
@@ -400,7 +410,7 @@ export class TechnologyTemperatureQueryList {
     public exhaust_air_volume_1_d: number,
     public exhaust_air_volume_2: number,
     public exhaust_air_volume_2_d: number
-) {}
+  ) {}
 }
 
 // 文本框数据增加和修改 字段构造器
@@ -424,8 +434,10 @@ export class ItemList {
   public unitcode:	string,
   public itemmembers:	string,
   public timecell:	string,
-  public starttime:	string,
-  public endtime: string,
+  public starttime:	any,
+  public start_time:	string,
+  public endtime: any,
+  public end_time: string,
   public status: string,
   public idt:	Date,
   public udt:	Date

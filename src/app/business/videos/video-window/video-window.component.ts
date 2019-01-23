@@ -1,10 +1,11 @@
 import {Component, OnInit} from '@angular/core';
-import {HttpClient} from '@angular/common/http';
 import {NodeEvent, NodeMenuItemAction, TreeModel} from 'ng2-tree';
-import {DomSanitizer, SafeUrl} from '@angular/platform-browser';
 import {PageBody} from '../../../shared/global.service';
-import {ReqService} from '../../../shared/req.service';
-import {CommonfunService} from '../../../shared/commonfun.service';
+import {Url} from '../../../user-defined-service/Url';
+import {FormBuilder, FormGroup} from '@angular/forms';
+import {DMLOperationImpl} from '../../../user-defined-service/DMLOperationImpl';
+import {PostRequest} from '../../../user-defined-service/PostRequest';
+import {HttpHeaders} from '@angular/common/http';
 
 
 @Component({
@@ -13,27 +14,28 @@ import {CommonfunService} from '../../../shared/commonfun.service';
   styleUrls: ['./video-window.component.css']
 })
 export class VideoWindowComponent implements OnInit {
+  public queryFormGroup: FormGroup;
   public videoLocation1: any;
   public videoLocation2: any;
   public videoLocation3: any;
   public videoLocation4: any;
   public pageBody: PageBody;
+  public totalCameraCount: number;
   public c1: Array<any>;
   public c2: Array<any>;
   public c3: Array<any>;
   public c4: Array<any>;
   public treeScrollH: number;
   public catalogH: number;
-  // 当它为true的时候为外网，默认为外网。false的时候为内网
   public controlRoute = true;
   /**************  ng2-tree ************/
   public tree: TreeModel;
+  private queryForm: FormGroup;
 
   constructor(
-              private http: HttpClient,
-              public html: DomSanitizer,
-              private req: ReqService,
-              private commonfun: CommonfunService
+              private dMLOperationImpl: DMLOperationImpl,
+              private req: PostRequest,
+              private fb: FormBuilder,
   ) {}
   ngOnInit() {
     // 初始化树的高度
@@ -45,6 +47,15 @@ export class VideoWindowComponent implements OnInit {
     this.c3 = [];
     this.c4 = [];
     this.pageBody = new PageBody(1, 4);
+    this.queryFormGroup = this.fb.group({
+      page: ['1'],
+      row: ['1']
+    });
+    this.queryForm = this.fb.group({
+      gId: [''],
+      page: ['1'],
+      row: ['1']
+    });
     this.Request();
   }
   // 控制滚动条
@@ -84,7 +95,7 @@ export class VideoWindowComponent implements OnInit {
                 <param name='loop' value='false' />
                 <param value="transparent" name="wmode">
             </object>
-`
+`;
     return html;
   }
   // 切换内外网
@@ -94,24 +105,31 @@ export class VideoWindowComponent implements OnInit {
 
   public Request(): void {
     // 发送请求拿到 摄像机组的id, 用来获取该组的全部摄像机
-    this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
+    this.totalCameraCount = 0;
+    this.dMLOperationImpl.foundByPage(this.queryFormGroup, Url.Data.videosManager.foundByPage, true)
       .subscribe((gvalue) => {
-        this.pageBody.row = gvalue.values.totalRecord;
-        this.req.findVideomanager(this.commonfun.parameterSerialization(this.pageBody))
-          .subscribe(gvalueAll => {
-            for (let i = 0; i < gvalueAll.values.contents.length; ++i) {
+        this.queryFormGroup.patchValue({
+          row: gvalue.values.totalRecord
+        });
+        this.dMLOperationImpl.foundByPage(this.queryFormGroup, Url.Data.videosManager.foundByPage, true)
+          .subscribe(cameraGroup => {
+            for (let i = 0; i < cameraGroup.values.totalRecord; ++i) {
+              this.queryForm.patchValue({
+                gId: cameraGroup.values.contents[i].id
+              });
+              const gId = cameraGroup.values.contents[i].id;
               // 发送请求拿到摄像机组的摄像机数量
-              this.req.findVideos('gId=' + gvalueAll.values.contents[i].id + '&page=1' + '&row=1')
-                .subscribe(cvalue => {
-                  this.req.findVideos('gId=' + gvalueAll.values.contents[i].id +
-                                              '&page=' + this.pageBody.page +
-                                              '&row=' + cvalue.values.totalRecord)
-                    .subscribe(ccvalue => {
+              const header = { headers: new HttpHeaders({'Content-Type': 'application/x-www-form-urlencoded'})};
+              this.req.post(Url.Data.videoManager.foundByPage,  'gId=' + gId + '&page=1&row=1', header)
+                .subscribe(camera => {
+                  this.req.post(Url.Data.videoManager.foundByPage, 'gId=' + gId + '&page=1&row=' + camera.values.totalRecord, header)
+                    .subscribe(camera1 => {
                       // 用 values  拿到该组全部的摄像机
-                      const values = ccvalue;
-                      if (ccvalue.values) {
-                        values.values.contents.map((value, index) => {
-                          switch (index % 4) {
+                      const values = camera1;
+                      if (camera1.values) {
+                        values.values.contents.forEach((value) => {
+                          this.totalCameraCount++;
+                          switch (this.totalCameraCount % 4) {
                             case 0: this.c1.push(value);
                               break;
                             case 1: this.c2.push(value);

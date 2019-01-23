@@ -1,0 +1,21 @@
+.date > div {
+  display: inline;
+  overflow: hidden;
+  position: relative;
+  cursor: pointer;
+}
+.date > div::-webkit-scrollbar {
+  display: -webkit-box;
+}
+.ddd {
+  position: absolute;
+  top: 20px;
+  left: 10px;
+}
+.date > div > input {
+  width: 2em;
+  text-align: center;
+}
+.date > #self_defined_year > input{
+  width: 4em;
+}

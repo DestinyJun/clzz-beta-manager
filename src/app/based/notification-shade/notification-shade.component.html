@@ -1,0 +1,7 @@
+<div [hidden]="baseVar.openStatus">
+  <div class="status text-center"
+       [class.success]="baseVar.state !== 0 && baseVar.state === 10"
+       [class.fail]="baseVar.state === 11 || baseVar.state === 13 || baseVar.state === 12">
+    <span>{{baseVar.resMsg}}</span>
+  </div>
+</div>

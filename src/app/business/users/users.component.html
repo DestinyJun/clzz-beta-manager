@@ -8,10 +8,10 @@
     <div class="row options">
       <div class="col-xs-12">
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
-        <button type="button" class="btn btn-default" (click)="deleteuser()"><span class="glyphicon glyphicon-trash"></span>删除</button>
+        <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
-        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        <span *ngIf="baseVar.gtOne" class="remind">请至少选择一项进行操作</span>
+        <span *ngIf="baseVar.mustOne" class="remind">请选择一项进行操作</span>
       </div>
     </div>
     <div class="row content">
@@ -19,7 +19,7 @@
         <table class="table table-responsive table-bordered">
           <thead>
           <tr>
-            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/或全不选</th>
+            <th class="checkboxoption"><input type="checkbox" (click)="checkAll($event)">全选/或全不选</th>
             <th>用户数据库编号</th>
             <th>工号</th>
             <th>真实姓名</th>
@@ -30,18 +30,18 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let user of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{user['id']}}</td>
-            <td>{{user['userCode']}}</td>
-            <td>{{user['realName']}}</td>
-            <td>{{user['userName']}}</td>
-            <td>{{user['organizationId']}}</td>
-            <td>{{user['password']}}</td>
+          <tr *ngFor="let data of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox" (click)="checkOne($event, data)"></td>
+            <td>{{data['id']}}</td>
+            <td>{{data['userCode']}}</td>
+            <td>{{data['realName']}}</td>
+            <td>{{data['userName']}}</td>
+            <td>{{data['organizationId']}}</td>
+            <td>{{data['password']}}</td>
             <td>
-                <span *ngIf="user['gender'] === 'm' || user['gender'] === '男'">男</span>
-                <span *ngIf="user['gender'] === 'w' || user['gender'] === '女'">女</span>
-                <span *ngIf="user['gender'] !== 'w' && user['gender'] !== '女' && user['gender'] !== 'm' && user['gender'] !== '男'">无</span>
+              <span *ngIf="data['gender'] === 'm' || data['gender'] === '男'">男</span>
+              <span *ngIf="data['gender'] === 'w' || data['gender'] === '女'">女</span>
+              <span *ngIf="data['gender'] !== 'w' && data['gender'] !== '女' && data['gender'] !== 'm' && data['gender'] !== '男'">无</span>
             </td>
           </tr>
           </tbody>
@@ -50,7 +50,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
+        <app-paging  [num]="baseVar.totalPage" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -93,7 +93,7 @@
                       lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
-              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
+              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId($event, lineId)">
               <span class="lineColor">{{lineId.sys_name}}</span>
             </div>
           </div>
@@ -111,13 +111,13 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="userAdd()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="save()">
         确定增加
       </button>
-      <button type="button" class="btn btn-danger" aria-label="Close" (click)="listenDescModal = false;modalRef.hide()">
+      <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
         返回
       </button>
     </div>
@@ -128,7 +128,7 @@
 <ng-template #modify>
   <div class="modal-header">
     <h4 class="modal-title pull-left">用户信息修改</h4>
-    <button type="button" class="close pull-right" aria-label="Close" (click)="listenDescModal = false;modalRef.hide()">
+    <button type="button" class="close pull-right" aria-label="Close" (click)="closeModal()">
       <span aria-hidden="true">&times;</span>
     </button>
   </div>
@@ -161,7 +161,7 @@
                       lineId['sys_id']) 用来记录当前点击的是哪个生产线的
                       $event: 用来判断当前被点击生产线的checkbox 是否被选中
               -->
-              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId(lineId, $event)">
+              <input type="checkbox" [checked]="lineId['sys_status'] === 1" (click)="selectProLineId($event, lineId)">
               <span [ngStyle]="{color: lineId['sys_status']===1?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
             </div>
           </div>
@@ -179,10 +179,10 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">无效输入,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">无效输入,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="userModify()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="update()">
         确定修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -217,22 +217,22 @@
     <p>邮箱	: &nbsp;{{detail.email}}</p>
     <p>生日	: &nbsp;{{detail.birthday}}</p>
     <div class="form-group">
-    <label>生产线列表: &nbsp;</label>
-    <div class="container-fluid">
-      <div class="row">
-        <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
-          <!--
-              参数介绍：
-                  lineId['sys_id']) 用来记录当前点击的是哪个生产线的
-                  $event: 用来判断当前被点击生产线的checkbox 是否被选中
-          -->
-          <input [checked]="lineId['sys_status'] === 1" type="checkbox" disabled>
-          <!--<span class="lineColor">{{lineId.sys_name}}</span>-->
-          <span [ngStyle]="{color: lineId['sys_status']===1?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
+      <label>生产线列表: &nbsp;</label>
+      <div class="container-fluid">
+        <div class="row">
+          <div *ngFor="let lineId of userLineIds" class="col-sx-3 col-sm-3">
+            <!--
+                参数介绍：
+                    lineId['sys_id']) 用来记录当前点击的是哪个生产线的
+                    $event: 用来判断当前被点击生产线的checkbox 是否被选中
+            -->
+            <input [checked]="lineId['sys_status'] === 1" type="checkbox" disabled>
+            <!--<span class="lineColor">{{lineId.sys_name}}</span>-->
+            <span [ngStyle]="{color: lineId['sys_status']===1?'#646464':'#FE0000'}">{{lineId.sys_name}}</span>
+          </div>
         </div>
       </div>
     </div>
-  </div>
     <p>性别	: &nbsp;
       <span *ngIf="detail.gender === 'm' || detail.gender === '男'">男</span>
       <span *ngIf="detail.gender === 'w' || detail.gender === '女'">女</span>
@@ -241,7 +241,7 @@
     <p>更新时间	: &nbsp;{{detail.udt}}</p>
     <div class="clearfix"></div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide();openModal(modify, -1)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="closeModal();openModal(modify, -1)">
         修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -252,11 +252,9 @@
   </div>
 </ng-template>
 
-
-<div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span>{{resMessage}}</span>
+<div [hidden]="baseVar.openStatus">
+  <div class="status text-center"  [class.success]="baseVar.state !== 0 && baseVar.state === 10" [class.fail]="baseVar.state === 11 || baseVar.state === 13 || baseVar.state === 12">
+    <span>{{baseVar.resMsg}}</span>
   </div>
 </div>
-
 

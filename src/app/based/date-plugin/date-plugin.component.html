@@ -1,0 +1,12 @@
+<div class="form-group">
+  <label>开始时间：(点击数字可选择)</label>
+  <form class="date form-control" [formGroup]="dateForm">
+    <div id="self_defined_year" (click)="selectDate($event, 'year', 2000, 3000)"><input formControlName="year" type="text">年</div>
+    <div id="self_defined_mouth" (click)="selectDate($event, 'mouth', 1, 12)"><input formControlName="mouth" type="text">月</div>
+    <div id="self_defined_day" (click)="selectDay($event, 'day')"><input formControlName="day" type="text">日</div>
+    <div id="self_defined_hour" (click)="selectDate($event, 'hour', 0, 23)"><input formControlName="hour" type="text">时</div>
+    <div id="self_defined_minutes" (click)="selectDate($event, 'minutes', 0, 59)"><input formControlName="minutes" type="text">分</div>
+    <div id="self_defined_second" (click)="selectDate($event, 'second', 0, 59)"><input formControlName="second" type="text">秒</div>
+    <button type="button" (click)="getLocalTime()">获取本地当前时间</button>
+  </form>
+</div>

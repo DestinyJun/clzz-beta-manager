@@ -1,10 +1,16 @@
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
-import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {ReqService} from '../../../shared/req.service';
-import {PageBody, TechnologyParamsPackWord, TechnologyTemperatureQueryList, ValidMsg} from '../../../shared/global.service';
+import {
+  PageBody,
+  TechnologyParamsPackWord,
+  TechnologyTemperatureQueryList,
+  ValidMsg
+} from '../../../shared/global.service';
 import {CommonFunService} from '../../../shared/common-fun.service';
 import {digitValidator} from '../../../validator/Validators';
+import {Url} from '../../../user-defined-service/Url';
+import {BaseVar, CommonOperation} from '../../../user-defined-service/CommonOperation';
+import {PostRequest} from '../../../user-defined-service/PostRequest';
 
 @Component({
   selector: 'app-technicspack-temperature',
@@ -13,39 +19,30 @@ import {digitValidator} from '../../../validator/Validators';
 })
 export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
   public technologyParamsPackWordList: Array<TechnologyParamsPackWord>;
-  public datas: Array<TechnologyTemperatureQueryList>;
-  public modalRef: BsModalRef;
+  public datas: Array<TechnologyTemperatureQueryList> = [];
   public pageBody: PageBody;
-  public num: number;
   public detail: any;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
-  public hasChecked: Array<number> = [];
-  public checked: string;
-  public openstatus: boolean;
-  public status: number;
-  public inputvalid: boolean;
-  public mustone: boolean;
-  public gtone: boolean;
-  public resMessage: string;
-  public listenDescModal: boolean;
-
-  constructor(private modalService: BsModalService,
-              private req: ReqService,
+  public deleteForm: FormGroup;
+  public queryForm: FormGroup;
+  public baseVar: BaseVar;
+  private componentName: string;
+  constructor(
+              private req: PostRequest,
               private fb: FormBuilder,
-              private commonFun: CommonFunService) {
+              private commonOperation: CommonOperation<TechnologyTemperatureQueryList>,
+              private commonFun: CommonFunService
+  ) {
   }
 
   ngOnInit() {
-    this.commonFun.setCurrentComponentName('TechnicspackTemperatureComponent');
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
-    this.listenDescModal = false;
+    this.baseVar = new BaseVar();
+    this.componentName = 'TechnicspackTemperatureComponent';
+    this.commonFun.setCurrentComponentName(this.componentName);
+    this.commonOperation.setOperator(this);
     this.addForm = this.fb.group({
-      name: ['', [Validators.required, digitValidator]],
+      name: ['', [Validators.required]],
       al_thickness: ['', [Validators.required, digitValidator]],
       al_width: ['', [Validators.required, digitValidator]],
       temperature_1_1: ['', [Validators.required, digitValidator]],
@@ -70,7 +67,7 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
       temperature_2_5_d: ['', [Validators.required, digitValidator]]
     });
     this.modifyForm = this.fb.group({
-      name: ['', [Validators.required, digitValidator]],
+      name: ['', [Validators.required]],
       al_thickness: ['', [Validators.required, digitValidator]],
       al_width: ['', [Validators.required, digitValidator]],
       temperature_1_1: ['', [Validators.required, digitValidator]],
@@ -94,8 +91,16 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
       temperature_2_5: ['', [Validators.required, digitValidator]],
       temperature_2_5_d: ['', [Validators.required, digitValidator]]
     });
+    this.queryForm = this.fb.group({
+      page: [''],
+      row: ['']
+    });
+    this.deleteForm = this.fb.group({
+      al_thickness: [''],
+      al_width: [''],
+    });
     this.technologyParamsPackWordList = [
-      new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
+      new TechnologyParamsPackWord('方 案 名 称', 'name', '', '', [new ValidMsg('required', '* 必填项')]),
       new TechnologyParamsPackWord('铝板厚度', 'al_thickness', '毫米', '将（在）生产铝板厚度', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
       new TechnologyParamsPackWord('铝板宽度', 'al_width', '毫米', '将（在）生产铝板宽度', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
       new TechnologyParamsPackWord('一涂一区温度', 'temperature_1_1', '	摄氏度', '一涂一区温度设定', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
@@ -120,198 +125,66 @@ export class TechnicspackTemperatureComponent implements OnInit, OnDestroy {
       new TechnologyParamsPackWord('二涂五区温度差值', 'temperature_2_5_d', '	摄氏度', '二涂五区温度安全值设定', [new ValidMsg('required', '* 必填项'), new ValidMsg('digit', '请输入数字')]),
     ];
   }
-
-  // 控制模态框, 增，修，查
-  public openModal(template: TemplateRef<any>, i): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    this.mustone = false;
-    // this.controlSearchText = false;
-    // 先判断要打开的是 哪个 模态框
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      // console.log('这是详情查看');
-      this.listenDescModal = true;
-      this.detail = this.datas[i];
-      this.modalRef = this.modalService.show(template);
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      // console.log('这是修改');
-      if (this.hasChecked.length !== 1) {
-        if (this.listenDescModal) {
-          this.mustone = false;
-          // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
-          this.detail.temperaturedata['name'] = this.detail.name;
-          this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
-          this.detail.temperaturedata['al_width'] = this.detail.alwidth;
-          this.modifyForm.reset(this.detail.temperaturedata);
-          this.modalRef = this.modalService.show(template);
-          this.listenDescModal = false;
-        } else {
-          this.mustone = true;
-        }
-      } else {
-        if (!this.listenDescModal) {
-          this.detail = this.datas[this.hasChecked[0]];
-        }
-        this.mustone = false;
-        // 把 detail 中的 name 和 finish_type 放到 detail 中的 amendata 对象中。
-        this.detail.temperaturedata['name'] = this.detail.name;
-        this.detail.temperaturedata['al_thickness'] = this.detail.althickness;
-        this.detail.temperaturedata['al_width'] = this.detail.alwidth;
-        this.modifyForm.reset(this.detail.temperaturedata);
-        this.modalRef = this.modalService.show(template);
-        this.listenDescModal = false;
-      }
-
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      // console.log('增加');
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-
-  // 关闭模态框, 增，修，查
-  public closeModal(): void {
-    this.listenDescModal = false;
-    this.modalRef.hide();
-  }
   // 监控翻页事件
   public getPageBody(event): void {
     this.pageBody = event;
-    this.Update();
+    this.foundByPage();
   }
 
-  // 全选 或 全不选
-  public getAllCheckBoxStatus(e): void {
-    if (e.srcElement.checked === true) {
-      this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.datas.length, 10);
-      this.checked = 'checked';
-    } else {
-      this.hasChecked = [];
-      this.checked = '';
-    }
+  public openModal(template: TemplateRef<any>, i): void {
+    this.commonOperation.openModal(template, i);
   }
 
-  // 得到已选择的checkBox
-  public getCheckBoxStatus(e, i): void {
-    const haschecklen = this.hasChecked.length;
-    if (e.srcElement.checked === true) {
-      this.hasChecked.push(i);
-    } else {
-      for (let j = 0; j < haschecklen; j++) {
-        if (this.hasChecked[j] === i) {
-          this.hasChecked.splice(j, 1);
-        }
-      }
-    }
-    if (this.hasChecked.length === 1) {
-      this.detail = this.datas[this.hasChecked[0]];
-    } else {
-      this.detail = null;
-    }
+  public closeModal(): void {
+    this.commonOperation.closeModal();
   }
 
-  // 删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
+  public checkAll(e): void {
+    this.commonOperation.checkAll(e);
+  }
+
+  public checkOne(e, data): void {
+    this.commonOperation.checkOne(e, data);
+  }
+
   public delete(): void {
-    const haschecklen = this.hasChecked.length;
-    if (haschecklen === 0) {
-      this.mustone = false;
-      this.gtone = true;
-    } else {
-      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'name')) {
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
-          const body = 'al_thickness=' + this.datas[this.hasChecked[j]]['althickness'] + '&&al_width=' + this.datas[this.hasChecked[j]]['alwidth'];
-          this.req.DeleteTechnicsPackTemperature(body)
-            .subscribe(res => {
-              if (j === haschecklen - 1) {
-                this.resMessage = res['message'];
-                this.status = Number(res.status);
-                this.Update();
-              }
-            });
-        }
-      }
-    }
+    this.commonOperation.delete(this.deleteForm, Url.Data.defaultTemperatureTechnologyPackage.delete, true);
   }
 
-  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
-  public paramsAdd(): void {
-    if (this.addForm.valid) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.AddTechnicsPackTemperature(this.addForm.value)
-        .subscribe(res => {
-          this.resMessage = res['message'];
-          this.status = Number(res.status);
-          this.Update();
-        });
-    } else {
-      this.inputvalid = true;
-    }
+  public save(): void {
+    this.commonOperation.save(this.addForm, Url.Data.defaultTemperatureTechnologyPackage.save, true);
   }
 
-//  修改表格内容
-  public paramsModify(): void {
-    if (this.modifyForm.valid) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.UpdateTechnicsPackTemperature(this.modifyForm.value)
-        .subscribe(res => {
-          this.status = Number(res.status);
-          this.resMessage = res['message'];
-          this.Update();
-        });
-    } else {
-      this.inputvalid = true;
-    }
+  public update(): void {
+    this.commonOperation.update(this.modifyForm, Url.Data.defaultTemperatureTechnologyPackage.update, true);
   }
 
-  // 刷新
-  public Update(): void {
-    this.gtone = false;
-    this.mustone = false;
-    this.req.FindTechnicsPackTemperature(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
-      (value) => {
-        this.num = Math.ceil(value.values.num / 10);
-        this.datas = value.values.amenddata;
-        for (let i = 0; i < this.datas.length; i++) {
-          this.datas[i]['temperaturedata'] = JSON.parse(this.datas[i]['temperaturedata']);
-        }
-        // 阻止用户点击 复选框时，会弹出查看模态框
-        const setinter = setInterval(() => {
-          const trs = document.getElementsByTagName('tr');
-          // trs 长度大于 1时， 取消setInterval
-          if (trs.length > 1) {
-            for (let i = 1; i < trs.length; ++i) {
-              const check = trs[i].children[0];
-              // 移除勾选框的title属性
-              check.setAttribute('title', '');
-              // check.removeAttribute('title');
-              // 取消勾选框冒泡默认行为
-              check.addEventListener('click', (e) => {
-                e.stopImmediatePropagation();
-              });
-            }
-            clearInterval(setinter);
-          }
-        });
-        this.hasChecked = [];
-        this.checked = '';
-      });
-  }
-
-  public cleanScreen(): void {
-    this.openstatus = true;
-    this.status = 0;
+  public foundByPage(): void {
+    this.queryForm.patchValue(this.pageBody);
+    this.commonOperation.foundByPage(this.queryForm, Url.Data.defaultTemperatureTechnologyPackage.foundByPage, true);
   }
 
   ngOnDestroy(): void {
-    if (this.modalRef !== undefined) {
-      this.modalRef.hide();
+    this.commonFun.rememberMark(this.componentName, this.pageBody);
+    this.commonOperation.initBaseVar();
+    this.commonOperation.closeModal();
+  }
+
+  public cleanScreen(): void {
+    this.baseVar.openStatus = true;
+    this.baseVar.state = 0;
+  }
+
+  public setData(data: Array<TechnologyTemperatureQueryList>): void {
+    this.datas = data;
+    for (let i = 0; i < this.datas.length; i++) {
+      this.datas[i].temperaturedata = JSON.parse(String(this.datas[i].temperaturedata));
+      this.datas[i]['al_thickness'] = this.datas[i].althickness;
+      this.datas[i]['al_width'] = this.datas[i].alwidth;
     }
+    this.commonOperation.setData(this.datas);
+  }
+  public setBaseVar(baseVar: BaseVar): void {
+    this.baseVar = baseVar;
   }
 }

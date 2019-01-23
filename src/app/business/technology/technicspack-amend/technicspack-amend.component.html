@@ -10,8 +10,8 @@
         <button type="button" class="btn btn-default" (click)="openModal(add, -1)"><span class="glyphicon glyphicon-plus"></span>增加</button>
         <button type="button" class="btn btn-default" (click)="delete()"><span class="glyphicon glyphicon-trash"></span>删除</button>
         <button type="button" class="btn btn-default" (click)="openModal(modify, -1)"><span class="glyphicon glyphicon-pencil"></span>修改</button>
-        <span *ngIf="gtone" class="remind">请至少选择一项进行操作</span>
-        <span *ngIf="mustone" class="remind">请选择一项进行操作</span>
+        <span *ngIf="baseVar.gtOne" class="remind">请至少选择一项进行操作</span>
+        <span *ngIf="baseVar.mustOne" class="remind">请选择一项进行操作</span>
       </div>
     </div>
     <div class="row content">
@@ -19,7 +19,7 @@
         <table class="table table-responsive table-bordered">
           <thead>
           <tr>
-            <th class="checkboxoption"><input type="checkbox" checked="{{checked}}" (click)="getAllCheckBoxStatus($event)">全选/全不选</th>
+            <th class="checkboxoption"><input type="checkbox" (click)="checkAll($event)">全选/全不选</th>
             <th>方案名称</th>
             <th>面漆类型</th>
             <th>底漆干膜厚度</th>
@@ -30,14 +30,14 @@
           </tr>
           </thead>
           <tbody>
-          <tr *ngFor="let param of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
-            <td><input type="checkbox" checked="{{checked}}" (click)="getCheckBoxStatus($event, i)"></td>
-            <td>{{param.name}}</td>
-            <td>{{param.finishtype}}</td>
-            <td>{{param['amenddata'].bottom_dry_thickness}}</td>
-            <td>{{param['amenddata'].bottom_dry_thickness_d}}</td>
-            <td>{{param['amenddata'].bottom_dry_thickness_d_l}}</td>
-            <td>{{param['amenddata'].bottom_dry_thickness_d_r}}</td>
+          <tr *ngFor="let data of datas; let i = index" (click)="openModal(lookdesc, i)" title="点击查看详情">
+            <td><input type="checkbox" (click)="checkOne($event, data)"></td>
+            <td>{{data.name}}</td>
+            <td>{{data.finishtype}}</td>
+            <td>{{data['amenddata'].bottom_dry_thickness}}</td>
+            <td>{{data['amenddata'].bottom_dry_thickness_d}}</td>
+            <td>{{data['amenddata'].bottom_dry_thickness_d_l}}</td>
+            <td>{{data['amenddata'].bottom_dry_thickness_d_r}}</td>
             <td>....</td>
           </tr>
           </tbody>
@@ -46,7 +46,7 @@
     </div>
     <div class="row text-center">
       <div class="col-xs-12">
-        <app-paging  [num]="num" (pageBodyChange)="getPageBody($event)"></app-paging>
+        <app-paging  [num]="baseVar.totalPage" (pageBodyChange)="getPageBody($event)"></app-paging>
       </div>
     </div>
   </div>
@@ -73,10 +73,10 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">每一个项都为必填项,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">每一个项都为必填项,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsAdd()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="save()">
         确定增加
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -106,10 +106,10 @@
     </form>
     <div class="clearfix"></div>
     <div class="text-center">
-      <span *ngIf="inputvalid" class="remind">每一个项都为必填项,请检查你的输入</span>
+      <span *ngIf="baseVar.invalidInput" class="remind">每一个项都为必填项,请检查你的输入</span>
     </div>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="paramsModify()">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="update()">
         确定修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -128,39 +128,39 @@
     </button>
   </div>
   <div class="modal-body">
-    <!--<p *ngFor="let a of technologyParamsPackWordList">{{a.chinese_variable_name}}&nbsp;:&nbsp;&nbsp;{{detail[a.word_variable_name]}} <span *ngIf="a.unit !== ''">({{a.unit}})</span> </p>-->
+    <!--<p *ngFor="let a of technologydatasPackWordList">{{a.chinese_variable_name}}&nbsp;:&nbsp;&nbsp;{{detail[a.word_variable_name]}} <span *ngIf="a.unit !== ''">({{a.unit}})</span> </p>-->
     <p>方 案 名 称&nbsp; :&nbsp;	{{detail.name}}</p>
     <p>面 漆 颜 色&nbsp;: &nbsp;	{{detail.finishtype}}</p>
-    <p>底漆干膜厚度&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness}}&nbsp;	微米</p>
-    <p>底漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness_d}}&nbsp;	微米</p>
-    <p>底漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.bottom_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>底漆干膜厚度修正右&nbsp;: &nbsp;	{{detail.amenddata.bottom_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度&nbsp; :&nbsp;	{{detail.amenddata.bottom_wet_thickness}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度误差&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度修正左&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>底漆湿膜厚度修正右&nbsp;: &nbsp;	{{detail.amenddata.bottom_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>背漆干膜厚度&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness}}&nbsp;	微米</p>
-    <p>背漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d}}&nbsp;	微米</p>
-    <p>背漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>背漆干膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.back_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度&nbsp;: &nbsp;	{{detail.amenddata.back_wet_thickness}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.back_wet_thickness_d}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度修正左&nbsp;:&nbsp;	{{detail.amenddata.back_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>背漆湿膜厚度修正右&nbsp;:&nbsp;	{{detail.amenddata.back_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>面漆干膜厚度&nbsp;: &nbsp;	{{detail.amenddata.surface_dry_thickness}}&nbsp;	微米</p>
-    <p>面漆干膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d}}&nbsp;	微米</p>
-    <p>面漆干膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d_l}}&nbsp;	微米</p>
-    <p>面漆干膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.surface_dry_thickness_d_r}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度&nbsp;: &nbsp;	{{detail.amenddata.surface_wet_thickness}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度误差&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度修正左&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d_l}}&nbsp;	微米</p>
-    <p>面漆湿膜厚度修正右&nbsp; :&nbsp;	{{detail.amenddata.surface_wet_thickness_d_r}}&nbsp;	微米</p>
-    <p>一涂排气风量&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_1}}&nbsp;	CMH</p>
-    <p>一涂排气风量差值&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_1_d}}&nbsp;	CMH</p>
-    <p>二涂排气风量&nbsp;: &nbsp;	{{detail.amenddata.exhaust_air_volume_2}}&nbsp;	CMH</p>
-    <p>二涂排气风量差值&nbsp; :&nbsp;	{{detail.amenddata.exhaust_air_volume_2_d}}&nbsp;	CMH</p>
+    <p>底漆干膜厚度&nbsp; :&nbsp;	{{detail['amenddata'].bottom_dry_thickness}}&nbsp;	微米</p>
+    <p>底漆干膜厚度误差&nbsp; :&nbsp;	{{detail['amenddata'].bottom_dry_thickness_d}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正左&nbsp; :&nbsp;	{{detail['amenddata'].bottom_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆干膜厚度修正右&nbsp;: &nbsp;	{{detail['amenddata'].bottom_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度&nbsp; :&nbsp;	{{detail['amenddata'].bottom_wet_thickness}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度误差&nbsp;: &nbsp;	{{detail['amenddata'].bottom_wet_thickness_d}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正左&nbsp;: &nbsp;	{{detail['amenddata'].bottom_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>底漆湿膜厚度修正右&nbsp;: &nbsp;	{{detail['amenddata'].bottom_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆干膜厚度&nbsp; :&nbsp;	{{detail['amenddata'].back_dry_thickness}}&nbsp;	微米</p>
+    <p>背漆干膜厚度误差&nbsp; :&nbsp;	{{detail['amenddata'].back_dry_thickness_d}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正左&nbsp; :&nbsp;	{{detail['amenddata'].back_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆干膜厚度修正右&nbsp; :&nbsp;	{{detail['amenddata'].back_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度&nbsp;: &nbsp;	{{detail['amenddata'].back_wet_thickness}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度误差&nbsp; :&nbsp;	{{detail['amenddata'].back_wet_thickness_d}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正左&nbsp;:&nbsp;	{{detail['amenddata'].back_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>背漆湿膜厚度修正右&nbsp;:&nbsp;	{{detail['amenddata'].back_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆干膜厚度&nbsp;: &nbsp;	{{detail['amenddata'].surface_dry_thickness}}&nbsp;	微米</p>
+    <p>面漆干膜厚度误差&nbsp; :&nbsp;	{{detail['amenddata'].surface_dry_thickness_d}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正左&nbsp; :&nbsp;	{{detail['amenddata'].surface_dry_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆干膜厚度修正右&nbsp; :&nbsp;	{{detail['amenddata'].surface_dry_thickness_d_r}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度&nbsp;: &nbsp;	{{detail['amenddata'].surface_wet_thickness}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度误差&nbsp; :&nbsp;	{{detail['amenddata'].surface_wet_thickness_d}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正左&nbsp; :&nbsp;	{{detail['amenddata'].surface_wet_thickness_d_l}}&nbsp;	微米</p>
+    <p>面漆湿膜厚度修正右&nbsp; :&nbsp;	{{detail['amenddata'].surface_wet_thickness_d_r}}&nbsp;	微米</p>
+    <p>一涂排气风量&nbsp; :&nbsp;	{{detail['amenddata'].exhaust_air_volume_1}}&nbsp;	CMH</p>
+    <p>一涂排气风量差值&nbsp; :&nbsp;	{{detail['amenddata'].exhaust_air_volume_1_d}}&nbsp;	CMH</p>
+    <p>二涂排气风量&nbsp;: &nbsp;	{{detail['amenddata'].exhaust_air_volume_2}}&nbsp;	CMH</p>
+    <p>二涂排气风量差值&nbsp; :&nbsp;	{{detail['amenddata'].exhaust_air_volume_2_d}}&nbsp;	CMH</p>
     <div class="text-center">
-      <button type="button" class="btn btn-info" aria-label="Close" (click)="modalRef.hide(); openModal(modify)">
+      <button type="button" class="btn btn-info" aria-label="Close" (click)="closeModal(); openModal(modify)">
         跳转到修改
       </button>
       <button type="button" class="btn btn-danger" aria-label="Close" (click)="closeModal()">
@@ -172,9 +172,9 @@
 </ng-template>
 
 
-<div [hidden]="openstatus">
-  <div class="status text-center"  [class.success]="status === 10" [class.fail]="status === 11 || status === 13 || status === 12">
-    <span>{{resMessage}}</span>
+<div [hidden]="baseVar.openStatus">
+  <div class="status text-center"  [class.success]="baseVar.state === 10" [class.fail]="baseVar.state === 11 || baseVar.state === 13 || baseVar.state === 12">
+    <span>{{baseVar.resMsg}}</span>
   </div>
 </div>
 

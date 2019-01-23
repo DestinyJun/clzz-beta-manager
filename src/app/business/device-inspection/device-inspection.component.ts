@@ -1,11 +1,12 @@
 import {Component, OnDestroy, OnInit, TemplateRef} from '@angular/core';
 import {Field, ItemList, PageBody, ValidMsg} from '../../shared/global.service';
-import {BsModalRef} from 'ngx-bootstrap/modal/bs-modal-ref.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
-import {BsModalService} from 'ngx-bootstrap/modal';
+import { BsModalService} from 'ngx-bootstrap/modal';
 import {ReqService} from '../../shared/req.service';
 import {CommonFunService} from '../../shared/common-fun.service';
 import {digitAndLetterValidator, digitValidator} from '../../validator/Validators';
+import {Url} from '../../user-defined-service/Url';
+import {BaseVar, CommonOperation} from '../../user-defined-service/CommonOperation';
 
 @Component({
   selector: 'app-device-inspection',
@@ -16,44 +17,34 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
   public datas: Array<ItemList>;
   public fieldsAdd: Array<Field>;
   public fieldsModify: Array<Field>;
-  public modalRef: BsModalRef;
   public pageBody: PageBody;
-  public num: number;
   public addForm: FormGroup;
   public modifyForm: FormGroup;
   public detail: ItemList;
-  public hasChecked: Array<number> = [];
-  public checked: string;
   public Fmodalid: any;
-  public openstatus: boolean;
-  public status: number;
-  public inputvalid: boolean;
-  public mustone: boolean;
-  public gtone: boolean;
-  public resMessage: string;
   public validTimeFormat: boolean;
-  // public controlSearchText: boolean;
-  // 用来监听模态框 是否 是从查看详情 跳转到 修改模态框
-  public listenDescModal: boolean;
   public QRcodeValue: string;
+  public baseVar: BaseVar;
+  private componentName: string;
+  public timeStamp: string;
+  private queryForm: FormGroup;
+  private deleteForm: FormGroup;
   constructor(
     private modalService: BsModalService,
     private req: ReqService,
     private fb: FormBuilder,
+    private commonOperation: CommonOperation<ItemList>,
     private commonFun: CommonFunService
   ) {
   }
 
   ngOnInit() {
-    this.commonFun.setCurrentComponentName('DeviceInspectionComponent');
-    this.detail = new ItemList(null, null, null, null, null, null, null, null, null, null, null, null, null, null);
-    this.status = 0;
-    this.openstatus = true;
-    this.inputvalid = false;
-    this.mustone = false;
-    this.gtone = false;
+    this.baseVar = new BaseVar();
+    this.componentName = 'DeviceInspectionComponent';
+    this.commonFun.setCurrentComponentName(this.componentName);
+    this.commonOperation.setOperator(this);
+    this.detail = new ItemList(null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     this.validTimeFormat = false;
-    this.listenDescModal = false;
     //  增加表单
     this.addForm = this.fb.group({
       itemname: ['', [Validators.required]],
@@ -77,7 +68,15 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       unitcode: ['', [Validators.required]],
       itemmembers: ['', [Validators.required]],
       starttime: ['', [Validators.required]],
+      start_time: ['', [Validators.required]],
       timecell: ['', [Validators.required]]
+    });
+    this.deleteForm = this.fb.group({
+      itemcode: [''],
+    });
+    this.queryForm = this.fb.group({
+      page: [''],
+      row: [''],
     });
     this.fieldsAdd = [
       new Field('巡检名称',	'itemname', 'text', [new ValidMsg('required', '* 必填项')]),
@@ -87,6 +86,7 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
       new Field('巡检明细',	'itemdetail', 'text', [new ValidMsg('required', '* 必填项')]),
       // new Field('生产线编号',	'unitcode'),
       new Field('巡检巡检成员',	'itemmembers', 'text', [new ValidMsg('required', '* 必填项')]),
+      // new Field('开始时间（单位：小时）',	'starttime', 'datetime-local', [new ValidMsg('required', '* 必填项')]),
       new Field('巡检时间间隔（单位：小时）',	'timecell', 'text', [new ValidMsg('required', '* 必填项')]),
     ];
     this.fieldsModify = [
@@ -108,355 +108,63 @@ export class DeviceInspectionComponent implements OnInit, OnDestroy {
   public selectLine(value, form): void {
     form.patchValue({'unitcode': value});
   }
-// 控制模态框, 增，修，查，二维码
-  public openModal(template: TemplateRef<any>, i): void {
-    this.inputvalid = false;
-    this.gtone = false;
-    this.mustone = false;
-    // 先判断要打开的是 哪个 模态框
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      this.listenDescModal = true;
-      this.commonFun.objDeepCopy(this.datas[i], this.detail);
-      this.detail.starttime = this.commonFun.defineTimeFormat(this.detail.starttime);
-      this.detail.endtime = this.commonFun.defineTimeFormat(this.detail.endtime);
-      this.modalRef = this.modalService.show(template);
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'modify') {
-      if (this.hasChecked.length !== 1) {
-        if (this.listenDescModal) {
-          this.mustone = false;
-          const date = new Date(this.detail.starttime);
-          this.modifyForm.reset(this.detail);
-          this.modalRef = this.modalService.show(template);
-          // 只能放在打开模态框的后面，因为模态框的作用跟ngIf一样的处理元素规则
-          document.getElementById('modifyYear').innerHTML = String(date.getFullYear());
-          document.getElementById('modifyMonth').innerHTML = String(date.getMonth() + 1);
-          document.getElementById('modifyDay').innerHTML = String(date.getDate());
-          document.getElementById('modifyHour').innerHTML = String(date.getHours());
-          document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
-          this.listenDescModal = false;
-        }else {
-          this.mustone = true;
-        }
-      } else {
-        if (!this.listenDescModal) {
-          this.detail = this.datas[this.hasChecked[0]];
-        }
-        this.mustone = false;
-        this.modifyForm.reset(this.detail);
-        this.modalRef = this.modalService.show(template);
-        this.listenDescModal = false;
-      }
-
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'add') {
-      this.modalRef = this.modalService.show(template);
-    }
-    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
-      // 打印二维码
-      this.QRcodeValue = this.datas[i].itemcode;
-      this.modalRef = this.modalService.show(template);
-    }
-  }
-  // 关闭模态框, 增，修，查
-  public closeModal(): void {
-    this.listenDescModal = false;
-    this.modalRef.hide();
-  }
-
   // 监控翻页事件
   public getPageBody(event: PageBody): void {
     this.pageBody = event;
-    this.Update();
+    this.foundByPage();
   }
-  // 全选 或 全不选
-  public getAllCheckBoxStatus(e): void {
-    if (e.srcElement.checked === true) {
-      this.hasChecked = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-      this.hasChecked.splice(this.datas.length, 10);
-      this.checked = 'checked';
-    } else {
-      this.hasChecked = [];
-      this.checked = '';
+  public openModal(e, template: TemplateRef<any>, i): void {
+    e.stopPropagation();
+    this.commonOperation.openModal(template, i);
+    if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'openQRcode') {
+      this.QRcodeValue = this.datas[i].itemcode;
     }
+    this.timeStamp = this.detail.starttime;
   }
-  // 按编号查找
-  // public numSearch(searchContext, template: TemplateRef<any>, e): void {
-  //   e.stopPropagation();
-  //   if (this.controlSearchText) {
-  //     this.req.ItemFindInNumber(this.commonFun.parameterSerialization({itemcode: searchContext})).subscribe((res) => {
-  //       if (String(res.values) !== 'null') {
-  //         this.detail = res.values;
-  //         this.modalRef = this.modalService.show(template);
-  //         this.controlSearchText = false;
-  //       }else {
-  //         this.status = 13;
-  //         this.resMessage = '巡检编号不存在';
-  //       }
-  //     });
-  //   }else {
-  //     this.controlSearchText = true;
-  //   }
-  // }
-  // 得到已选择的checkBox
-  public getCheckBoxStatus(e, i): void {
-    const haschecklen = this.hasChecked.length;
-    if (e.srcElement.checked === true) {
-      this.hasChecked.push(i);
-    } else {
-      for (let j = 0; j < haschecklen; j++ ) {
-        if (this.hasChecked[j] === i) {
-          this.hasChecked.splice(j, 1);
-        }
-      }
-    }
-    if (this.hasChecked.length === 1) {
-      this.commonFun.objDeepCopy(this.datas[this.hasChecked[0]], this.detail);
-    } else {
-      this.detail = null;
-    }
+  public closeModal(): void {
+    this.commonOperation.closeModal();
   }
-//  删除表格 并且 重新请求数据(不管删除多少条，只请求数据刷新一次)
-  public deleteItem(): void {
-    // this.controlSearchText = false;
-    const haschecklen = this.hasChecked.length;
-    if (haschecklen === 0) {
-      this.mustone = false;
-      this.gtone = true;
-    } else {
-      if (this.commonFun.deleteChecked(this.datas, this.hasChecked, 'itemcode')) {
-        this.mustone = false;
-        this.openstatus = false;
-        for (let j = 0; j < haschecklen; j++) {
-          this.req.ItemDelete('itemcode=' +  this.datas[this.hasChecked[j]].itemcode)
-            .subscribe(res => {
-              if (j === haschecklen - 1) {
-                this.resMessage = res.message;
-                this.status = Number(res.status);
-                this.Update();
-              }
-            });
-        }
-      }
-    }
+  public checkAll(e): void {
+    this.commonOperation.checkAll(e);
   }
-  // 生产线的添加 并且 重新请求数据，防止增加的是第十一条表格
-  public itemAdd(): void {
-    this.getTime(this.addForm, 'add');
-    if (this.addForm.valid) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.ItemAdd(this.commonFun.parameterSerialization(this.addForm.value))
-        .subscribe(res => {
-          this.resMessage = res.message;
-          this.status = Number(res.status);
-          this.Update();
-        });
-    }else {
-      this.inputvalid = true;
-    }
+  public checkOne(e, data): void {
+    this.commonOperation.checkOne(e, data);
   }
-//  修改表格内容
-  public itemModify(): void {
-    this.getTime(this.modifyForm, 'modify');
-    if (this.modifyForm.valid) {
-      this.openstatus = false;
-      this.inputvalid = false;
-      this.modalRef.hide();
-      this.req.ItemModify(this.commonFun.parameterSerialization(this.modifyForm.value))
-        .subscribe(res => {
-          this.resMessage = res.message;
-          this.status = Number(res.status);
-          this.Update();
-        });
-    }else {
-      this.inputvalid = true;
-    }
+  public delete(): void {
+    this.commonOperation.delete(this.deleteForm, Url.Data.deviceInspection.delete, true);
   }
-  // 刷新
-  public Update(): void {
-    this.gtone = false;
-    this.mustone = false;
-    this.req.ItemFind(this.commonFun.parameterSerialization(this.pageBody)).subscribe(
-      (value) => {
-        this.hasChecked = [];
-        this.checked = '';
-        this.num = Math.ceil(value.values.num / 10);
-        this.datas = value.values.itemInfoDTOs;
-        // event.stopPropagation();    阻止冒泡,即该方法不仅仅可以阻止冒泡，还可以阻止捕获和处于目标阶段。
-        //     stopImmediatePropagation() 和 stopPropagation()的区别在哪儿呢？
-        // 　　后者只会阻止冒泡或者是捕获。 但是前者除此之外还会阻止该元素的其他事件发生，但是后者就不会阻止其他事件的发生。
-        // 阻止用户点击 复选框时，会弹出查看模态框
-        const setinter = setInterval(() => {
-          const trs = document.getElementsByTagName('tr');
-          if (trs.length > 1) {
-            for (let i = 1; i < trs.length; ++i) {
-              const check = trs[i].children[0];
-              const QR = trs[i].children[6];
-              // 移除勾选框的title属性
-              check.setAttribute('title', '');
-              // check.removeAttribute('title');
-              // 移除打印二维码的title属性
-              QR.setAttribute('title', '');
-              // 取消勾选框冒泡默认行为
-              check.addEventListener('click', (e) => {
-                e.stopImmediatePropagation();
-              });
-              // 取消打印二维码按钮的默认行为
-              QR.addEventListener('click', (e) => {
-                e.stopImmediatePropagation();
-              });
-            }
-            // trs 长度大于 1时， 取消setInterval
-            clearInterval(setinter);
-          }
-        });
-      });
+  public save(): void {
+    this.commonOperation.save(this.addForm, Url.Data.deviceInspection.save, true);
   }
-
-  // 时间格式验证 和 得到时间戳
-  public getTime(form: FormGroup, type: string): void {
-    let isCorrectYear = true;
-    let isCorrectMouth = true;
-    let isCorrectDay = true;
-    let isCorrectHour = true;
-    let isCorrectMinutes = true;
-    const date = new Date();
-    const year = document.getElementById(type + 'Year').innerHTML;
-    const mouth = document.getElementById(type + 'Month').innerHTML;
-    const day = document.getElementById(type + 'Day').innerHTML;
-    const hour = document.getElementById(type + 'Hour').innerHTML;
-    const minutes = document.getElementById(type + 'Minutes').innerHTML;
-    // 判断年是否成立
-    for (let i = 0; i < year.length; ++i) {
-      if (year.charCodeAt(i) < 48 || year.charCodeAt(i) > 57) {
-        isCorrectYear = false;
-        break;
-      }
-    }
-    if (isCorrectYear && (Number(year) >= 0 && year !== '')) {
-      date.setFullYear(Number(year));
-      isCorrectYear = true;
-    }else {
-      isCorrectYear = false;
-    }
-    // 判断月
-    for (let i = 0; i < mouth.length; ++i) {
-      if (mouth.charCodeAt(i) < 48 || mouth.charCodeAt(i) > 57) {
-        isCorrectMouth = false;
-        break;
-      }
-    }
-    if (isCorrectMouth && (Number(mouth) >= 0 && Number(mouth) <= 12 && mouth !== '')) {
-      date.setMonth(Number(mouth) - 1);
-      isCorrectMouth = true;
-    }else {
-      isCorrectMouth = false;
-    }
-    // 判断日
-    for (let i = 0; i < day.length; ++i) {
-      if (day.charCodeAt(i) < 48 || day.charCodeAt(i) > 57) {
-        isCorrectDay = false;
-        break;
-      }
-    }
-    if (isCorrectYear && isCorrectMouth && isCorrectDay) {
-      if (Number(mouth) === 2) {
-        if ((Number(year) % 4 === 0 && Number(year) % 100 !== 0) || Number(year) % 400 !== 0) {
-          if (Number(day) >= 0 && Number(day) <= 29) {
-            date.setDate(Number(day));
-            isCorrectDay = true;
-          }else {
-            isCorrectDay = false;
-          }
-        }else {
-          if (Number(day) >= 0 && Number(day) <= 28) {
-            date.setDate(Number(day));
-            isCorrectDay = true;
-          }else {
-            isCorrectDay = false;
-          }
-        }
-      }else if (Number(isCorrectMouth) === 0 && Number(isCorrectMouth)  === 2 && Number(isCorrectMouth)  === 4 && Number(isCorrectMouth)  === 6 && Number(isCorrectMouth)  === 7 && Number(isCorrectMouth)  === 9 && Number(isCorrectMouth)  === 11) {
-        if (Number(day) >= 0 && Number(day) <= 31) {
-          date.setDate(Number(day));
-          isCorrectDay = true;
-        }else {
-          isCorrectDay = false;
-        }
-      }else {
-        if (Number(day) >= 0 && Number(day) <= 30) {
-          date.setDate(Number(day));
-          isCorrectDay = true;
-        }else {
-          isCorrectDay = false;
-        }
-      }
-    }else {
-      isCorrectDay = false;
-    }
-    // 判断小时 24 小时制
-    for (let i = 0; i < hour.length; ++i) {
-      if (hour.charCodeAt(i) < 48 || hour.charCodeAt(i) > 57) {
-        isCorrectHour = false;
-        break;
-      }
-    }
-    if (isCorrectHour && (Number(hour) >= 0 && Number(hour) <= 23 && hour !== '')) {
-      date.setHours(Number(hour));
-      isCorrectHour = true;
-    }else {
-      isCorrectHour = false;
-    }
-    // 判断分钟
-    for (let i = 0; i < minutes.length; ++i) {
-      if (minutes.charCodeAt(i) < 48 || minutes.charCodeAt(i) > 57) {
-        isCorrectMinutes = false;
-        break;
-      }
-    }
-    if (isCorrectMinutes && (Number(minutes) >= 0 && Number(minutes) <= 59) && minutes !== '') {
-      date.setMinutes(Number(minutes));
-      isCorrectMinutes = true;
-    }else {
-      isCorrectMinutes = false;
-    }
-    if (isCorrectYear && isCorrectMouth && isCorrectDay && isCorrectMinutes && isCorrectHour) {
-      this.validTimeFormat = false;
-      form.patchValue({starttime: date.getTime()});
-    }else {
-      this.validTimeFormat = false;
-    }
+  public update(): void {
+    this.commonOperation.update(this.modifyForm, Url.Data.deviceInspection.update, true);
   }
-
-  // 获取本地当前时间
-  public getLocalTime(type: string): void {
-    // 获取一个时间
-    const date = new Date();
-    if (type === 'add') {
-      document.getElementById('addYear').innerHTML = String(date.getFullYear());
-      document.getElementById('addMonth').innerHTML = String(date.getMonth() + 1);
-      document.getElementById('addDay').innerHTML = String(date.getDate());
-      document.getElementById('addHour').innerHTML = String(date.getHours());
-      document.getElementById('addMinutes').innerHTML = String(date.getMinutes());
-    }else {
-      document.getElementById('modifyYear').innerText = String(date.getFullYear());
-      document.getElementById('modifyMonth').innerText = String(date.getMonth() + 1);
-      document.getElementById('modifyDay').innerText = String(date.getDate());
-      document.getElementById('modifyHour').innerHTML = String(date.getHours());
-      document.getElementById('modifyMinutes').innerHTML = String(date.getMinutes());
-    }
+  public foundByPage(): void {
+    this.queryForm.patchValue(this.pageBody);
+    this.commonOperation.foundByPage(this.queryForm, Url.Data.deviceInspection.foundByPage, true);
   }
-// 清除屏幕
-  public cleanScreen(): void {
-    this.openstatus = true;
-    this.status = 0;
-  }
-
   ngOnDestroy(): void {
-    if (this.modalRef !== undefined) {
-      this.modalRef.hide();
+    this.commonFun.rememberMark(this.componentName, this.pageBody);
+    this.commonOperation.initBaseVar();
+    this.commonOperation.closeModal();
+  }
+  public setData(data: Array<ItemList>): void {
+    this.datas = data;
+    for (let i = 0; i < this.datas.length; i++) {
+      this.datas[i].start_time = new Date(this.datas[i].starttime).toLocaleString();
+      this.datas[i].end_time = new Date(this.datas[i].endtime).toLocaleString();
     }
+  }
+  public setBaseVar(baseVar: BaseVar): void {
+    this.baseVar = baseVar;
+  }
+  public cleanScreen(): void {
+    this.baseVar.openStatus = true;
+    this.baseVar.state = 0;
+  }
+  public getDateData(e, form: FormGroup): void {
+    form.patchValue({
+      starttime: e.getTime()
+    });
   }
 }

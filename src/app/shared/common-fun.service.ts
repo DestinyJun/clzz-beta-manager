@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import {Map, PageBody} from './global.service';
+import {BaseVar} from '../user-defined-service/CommonOperation';
 
 @Injectable()
 export class CommonFunService {
@@ -8,13 +9,25 @@ export class CommonFunService {
   // 存放已经被浏览过的组件，并把上次的会话保存。下次再打开组件的时候还原上次会话的界面
   private list = Map.getMap();
   constructor() {}
+
+  public static parameterSerialization1(object: Object): string {
+    let result = '';
+    for (const f in object) {
+      if (result) {
+        result = result + '&' + f + '=' + object[f];
+      } else {
+        result = f + '=' + object[f];
+      }
+    }
+    return result;
+  }
   /**
    *
    * @param object 需要参数序列化的对象
    * @return 返回序列化好的字符串
    */
   public parameterSerialization(object: Object): string {
-    let result: string;
+    let result = '';
     for (const f in object) {
       if (result) {
         result = result + '&' + f + '=' + object[f];

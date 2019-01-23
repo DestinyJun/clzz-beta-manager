@@ -5,7 +5,8 @@ import {BsModalRef, BsModalService} from 'ngx-bootstrap';
 import {AppManager} from '../../shared/global.service';
 import {ReqService} from '../../shared/req.service';
 import {CommonFunService} from '../../shared/common-fun.service';
-import {FileUploader} from 'ng2-file-upload';
+import {PostRequest} from '../../user-defined-service/PostRequest';
+import {Url} from '../../user-defined-service/Url';
 
 @Component({
   selector: 'app-mobile',
@@ -30,7 +31,7 @@ export class MobileComponent implements OnInit, OnDestroy {
     public http: HttpClient,
     public fb: FormBuilder,
     public modalService: BsModalService,
-    public req: ReqService,
+    public req: PostRequest,
     public commonFun: CommonFunService
   ) {
     this.infoForm = fb.group({
@@ -53,7 +54,7 @@ export class MobileComponent implements OnInit, OnDestroy {
       new Options('APP06', '设备巡检')
 
     ];
-    this.req.getAppInfo().subscribe(value => {
+    this.req.post(Url.Data.AppManager.query, null).subscribe(value => {
       this.apps = value.data;
     });
   }
@@ -91,9 +92,9 @@ export class MobileComponent implements OnInit, OnDestroy {
       this.submitMsg = '正在上传.....';
       this.formData.append('infomation', JSON.stringify(this.infoForm.value));
       this.loaded = 0;
-      const xml = new XMLHttpRequest();
-      xml.open('POST', 'http://119.23.219.22:80/element-admin/version/an-upload', true);
-      xml.upload.onprogress = (e => {
+      const xMLHttpRequest = new XMLHttpRequest();
+      xMLHttpRequest.open('POST', 'http://119.23.219.22:80/element-admin/version/an-upload', true);
+      xMLHttpRequest.upload.onprogress = (e => {
         if (e.lengthComputable) {
           this.loaded = Math.ceil(100 * (e.loaded / e.total));
           document.getElementsByClassName('progress-bar')[0].setAttribute('aria-valuenow', String(this.loaded));
@@ -103,15 +104,15 @@ export class MobileComponent implements OnInit, OnDestroy {
           }
         }
       });
-      this.send(xml);
+      this.send(xMLHttpRequest);
     } else {
       alert('请填写完整的信息!');
     }
   }
 
-public send(xml: XMLHttpRequest): void {
+public send(xMLHttpRequest: XMLHttpRequest): void {
     this.status = 14;
-    xml.send(this.formData);
+    xMLHttpRequest.send(this.formData);
 }
 
   // 下载文件

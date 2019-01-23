@@ -9,8 +9,11 @@ import {ReqService} from './shared/req.service';
 import {HashLocationStrategy, LocationStrategy} from '@angular/common';
 import {LoginGuard} from './guard/login.guard';
 import {TreeModule} from 'ng2-tree';
- import {CommonfunService} from './shared/commonfun.service';
  import {CommonFunService} from './shared/common-fun.service';
+ import {DMLOperationImpl} from './user-defined-service/DMLOperationImpl';
+ import {CommonOperation} from './user-defined-service/CommonOperation';
+ import {ModalModule} from 'ngx-bootstrap';
+ import {PostRequest} from './user-defined-service/PostRequest';
 
 @NgModule({
   imports: [
@@ -18,6 +21,7 @@ import {TreeModule} from 'ng2-tree';
     AppRouterModule,
     HttpClientModule,
     ReactiveFormsModule,
+    ModalModule.forRoot(),
     TreeModule
   ],
   declarations: [
@@ -27,7 +31,9 @@ import {TreeModule} from 'ng2-tree';
     GlobalService,
     ReqService,
     CommonFunService,
-    CommonfunService,
+    DMLOperationImpl,
+    CommonOperation,
+    PostRequest,
     LoginGuard,
     {provide: LocationStrategy, useClass: HashLocationStrategy}],
   bootstrap: [AppComponent]

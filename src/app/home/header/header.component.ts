@@ -1,12 +1,12 @@
 import {Component, EventEmitter, Input, OnDestroy, OnInit, Output, TemplateRef} from '@angular/core';
 import {Router} from '@angular/router';
-import {HttpClient} from '@angular/common/http';
 import {BsModalRef, BsModalService} from 'ngx-bootstrap';
-import {ReqService} from '../../shared/req.service';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {GlobalService, PersonInfo} from '../../shared/global.service';
 import {SelectLineIdsStatus} from '../../business/users/users.component';
 import 'rxjs/Rx';
+import {PostRequest} from '../../user-defined-service/PostRequest';
+import {Url} from '../../user-defined-service/Url';
 
 @Component({
   selector: 'app-header',
@@ -32,9 +32,8 @@ export class HeaderComponent implements OnInit, OnDestroy {
 
   constructor(
     private route: Router,
-    private http: HttpClient,
     private modalService: BsModalService,
-    private req: ReqService,
+    private req: PostRequest,
     private fb: FormBuilder,
     public localSessionStorage: GlobalService,
   ) {
@@ -46,7 +45,6 @@ export class HeaderComponent implements OnInit, OnDestroy {
     this.userLineIds = [];
     this.cisMenu = false;
     this.infoToggle = true;
-    // this.bool = false;
     this.personInfoModifyForm = this.fb.group({
       id: ['', Validators.required],
       userCode: ['', Validators.required],
@@ -66,11 +64,11 @@ export class HeaderComponent implements OnInit, OnDestroy {
       udt: [{value: '', disabled: true}, Validators.required]
     });
     // 查找机构
-    this.req.FindDepartOrgani().subscribe(value => {
+    this.req.post(Url.Data.departmentBaseInfo.find, null).subscribe(value => {
       this.organization = value.values.organizations;
     });
     // 查找系统所有id
-    this.req.FindsystemSysid().subscribe(value => {
+    this.req.post(Url.Data.productionLineBaseInfo.find, null).subscribe(value => {
       if (value.values) {
         // 再初始化 userLineIds 并向里面增加所有生产线，sys_status 为 0 时，没有该权限，反之为1时，有权限。
         for (let i = 0; i < value.values.length; ++i) {
@@ -94,7 +92,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // 控制模态框
   public openModal(template: TemplateRef<any>): void {
     if (Object.getOwnPropertyNames(template['_def']['references'])[0] === 'lookdesc') {
-      this.req.getUserInfo({'sid': this.localSessionStorage.get('sid')}).subscribe(value => {
+      this.req.post(Url.Data.onlineUser.query, {'sid': this.localSessionStorage.get('sid')}).subscribe(value => {
         this.personInfo = value.data;
         // modifyIds 用来保存用户的生产线权限id
         let sysids = this.personInfo['sysids'];
@@ -106,7 +104,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
           const lastf = /^\[/;
           sysids = sysids.replace(lastf, '');
           sysids = sysids.replace(firstf, '');
-          let ids = sysids.split(',');
+          const ids = sysids.split(',');
           // 如果存在某个 生产线权限，则相应的 sys_status 变成 1
           // 第一个 for 用来 遍历modifyids
           // 第二个for 用来 找查 modifyids 中的每一个 生产线id。如果存在，则相应的sysb
@@ -155,7 +153,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
       }
     }
     this.personInfoModifyForm.patchValue({sysids: sysIdsStr.toString()});
-    this.req.UserInfoModify(this.personInfoModifyForm.value)
+    this.req.post(Url.Data.onlineUser.update, this.personInfoModifyForm.value)
       .subscribe(res => {
         this.status = Number(res.status);
         setTimeout(() => {
@@ -173,7 +171,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
   // 退出请求
   public loginOut(): void {
     this.route.navigate(['/login']);
-    this.req.Logout({sid: sessionStorage.getItem('sid')})
+    this.req.post(Url.Data.loginOut, {sid: sessionStorage.getItem('sid')})
       .subscribe(res => {
         if (Number(res.status) === 10) {
           alert('退出登录成功!');

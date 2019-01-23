@@ -7,6 +7,7 @@ import {SidebarComponent} from './sidebar/sidebar.component';
 import {FooterComponent} from './footer/footer.component';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {ModalModule} from 'ngx-bootstrap';
+import {BasedModule} from '../based/based.module';
 
 @NgModule({
   imports: [
